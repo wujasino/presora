@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Zap, Eye, Shield, ChevronDown, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag } from 'lucide-react';
+import { Zap, Eye, Shield, ChevronDown, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag, Wallet, Repeat } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -71,8 +71,9 @@ const TRUST_POINTS = [
    isn't on the page, so a stale entry degrades quietly rather than breaking. */
 const NAV_SECTIONS = [
   { id: 'how-it-works', label: 'How it works' },
-  { id: 'manifest', label: 'Why it matters' },
+  { id: 'manifest', label: 'The problem' },
   { id: 'sample-report', label: 'Sample report' },
+  { id: 'monetize', label: 'Make money' },
   { id: 'pricing', label: 'Pricing' },
   { id: 'faq', label: 'FAQ' },
 ];
@@ -156,23 +157,23 @@ const Landing = () => {
                   This is the "new category, pay attention" moment, same
                   spirit as .ai-presence-accent below. */}
               <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full mb-7 font-data uppercase tracking-wider border border-primary/30 bg-primary/10 text-primary">
-                <Sparkles className="w-3 h-3" /> New in SEO: Generative Engine Optimization (GEO)
+                <Sparkles className="w-3 h-3" /> New service category: GEO Audits for agencies
               </span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.05] tracking-tight">
-                Check if{' '}
-                <span className="ai-presence-accent" data-text="ChatGPT recommends">
-                  <span className="ai-presence-accent-text">ChatGPT recommends</span>
+                Show clients they're{' '}
+                <span className="ai-presence-accent" data-text="invisible on ChatGPT">
+                  <span className="ai-presence-accent-text">invisible on ChatGPT</span>
                 </span>{' '}
-                your company.
+                — then sell them the fix.
               </h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-4">
-                More and more customers ask AI assistants for recommendations instead of
-                searching Google. Monitor and improve your brand's visibility across 6
-                leading AI models at once.
+                AI assistants are replacing search for your clients' buyers, and most agencies
+                still have no way to prove it — or bill for fixing it. Presora runs a live,
+                white-labelable visibility audit across 6 AI models in about 15 seconds.
               </p>
               <p className="text-sm text-foreground/70 max-w-xl mx-auto mb-10">
-                The only AI visibility tool that shows you{' '}
-                <span className="text-foreground font-medium">the actual answer, not just a number.</span>
+                The only AI visibility audit built to be{' '}
+                <span className="text-foreground font-medium">handed to a client, not just kept on your own dashboard.</span>
               </p>
             </motion.div>
 
@@ -316,25 +317,28 @@ const Landing = () => {
           </div>
         </section>
 
-        {/* ── Why: short, punchy — not a manifesto ──────────────────── */}
+        {/* ── Problem: the question agencies can't answer yet ───────── */}
         <section id="manifest" className="py-20 px-4 scroll-mt-28">
           <div className="max-w-3xl mx-auto text-center">
             <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
               <span className="inline-block px-3 py-1 text-xs badge rounded-lg mb-5 font-data uppercase tracking-wider">
-                Why it matters
+                The 2026 problem
               </span>
               <h2 className="text-3xl sm:text-4xl font-display text-foreground leading-[1.15] mb-4">
-                AI gives one answer, not ten blue links.{' '}
-                <span className="text-primary">Miss it, and the customer never sees you.</span>
+                Every client meeting now includes a question your stack can't answer.<br />
+                <span className="text-primary">"Are we even visible on ChatGPT?"</span>
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-8">
-                A search page let people pick from ten results. AI picks one — from whatever it already knows about your category. Presora shows you exactly where you stand, with the raw model answers behind every score.
+                Rank trackers, backlink tools and social dashboards were built for a search page
+                that shows ten results. AI shows one answer — and for a growing share of buyers,
+                that's the only answer they ever see. Without a real audit, you're guessing
+                alongside your client instead of leading them.
               </p>
               <button
                 onClick={() => document.getElementById('hero-input')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
               >
-                See how AI sees your brand
+                Run a free audit on a prospect
                 <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
@@ -539,8 +543,8 @@ const Landing = () => {
       {/* ── CTA box ───────────────────────────────────────────────── */}
       <section className="py-20 px-4 cta-box">
         <div className="max-w-2xl mx-auto text-center glass-card p-12">
-          <h2 className="text-2xl font-display text-foreground mb-3">Run your first analysis</h2>
-          <p className="text-muted-foreground text-sm mb-8">Start monitoring your AI brand presence today — free, no card required.</p>
+          <h2 className="text-2xl font-display text-foreground mb-3">Run your first client audit</h2>
+          <p className="text-muted-foreground text-sm mb-8">Scan a prospect's brand today — free, no card required.</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
               onClick={() => document.getElementById('hero-input')?.scrollIntoView({ behavior: 'smooth' })}
@@ -587,6 +591,71 @@ const Landing = () => {
       </section>
 
 
+      {/* ── Monetize: features translated into agency revenue ─────────
+          B2B value prop — every card names a feature that already ships
+          (white-label PDF export, Competitor Tracker, the scan itself) and
+          states the concrete way it turns into billable work or renewal
+          ammunition. No invented "agencies save X hours" average — there's
+          no customer base yet to derive one from (same reasoning as
+          AgencyRoiCalculator on /agencies, which stays the place for an
+          agency to run its own numbers interactively). */}
+      <section id="monetize" className="py-24 px-4 border-t border-[hsl(var(--glass-border))] scroll-mt-28">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs badge rounded-lg mb-4 font-data uppercase tracking-wider">
+              <Wallet className="w-3 h-3" /> Built to be sold
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-display text-foreground mb-3">
+              Three ways this pays for itself
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Not features for their own sake — each one maps to a specific way it turns
+              into billable work.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                Icon: Mail,
+                title: 'A sharper, faster pitch',
+                desc: 'Attach a prospect\'s own AI visibility score to your first outreach email instead of a generic capabilities deck — it\'s a reason to reply about their problem, not your services.',
+              },
+              {
+                Icon: PenLine,
+                title: 'A new line item, not new overhead',
+                desc: 'Brand the audit as your own (Agency plan) and hand it over as a discovery deliverable. The report is generated in seconds, so there\'s no production time to bill against.',
+              },
+              {
+                Icon: Repeat,
+                title: 'A reason to check in every month',
+                desc: 'Competitor Tracker re-runs a real, freshly-measured benchmark on a schedule, so a renewal conversation has an actual number behind it instead of "everything\'s fine."',
+              },
+            ].map(({ Icon, title, desc }, i) => (
+              <motion.div
+                key={title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="rounded-2xl border border-[hsl(var(--glass-border))] bg-card/60 p-6"
+              >
+                <div className="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-primary/10 border border-primary/20 mb-4">
+                  <Icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-base font-semibold text-foreground mb-2">{title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Pricing ──────────────────────────────────────────────────
           The landing page had no pricing at all — a visitor had to guess
           whether the product even had plans. Cards come from @/lib/plans so
@@ -608,8 +677,8 @@ const Landing = () => {
               Simple, transparent pricing
             </h2>
             <p className="text-muted-foreground text-sm mt-3 max-w-lg mx-auto">
-              Start free — three brand analyses, no card required. Upgrade only when
-              you want to track more brands, more often.
+              Start free — three audits, no card required. Upgrade to Agency when you're
+              ready to brand reports as your own and track more clients at once.
             </p>
           </motion.div>
 
@@ -625,6 +694,30 @@ const Landing = () => {
               onCycleChange={setBillingCycle}
               onPlanSelect={() => navigate('/register')}
             />
+          </motion.div>
+
+          {/* Fear-removal + direct CTA for the reader actually deciding on
+              Agency — the price alone doesn't answer "what if this doesn't
+              work for my clients," so this names the actual, no-risk way to
+              find out before committing to $199/mo. */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-8 max-w-2xl mx-auto rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 text-center"
+          >
+            <p className="text-sm font-semibold text-foreground mb-1.5">Running an agency?</p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+              Start on the Free plan and brand your very first audit today — no contract,
+              no sales call, cancel anytime. Move to Agency ($199/mo) only once you're
+              already sending client-ready reports and it's paying for itself.
+            </p>
+            <Link
+              to="/agencies"
+              className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+            >
+              See exactly what agencies get <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </motion.div>
 
           <p className="text-center text-xs text-muted-foreground mt-8">
