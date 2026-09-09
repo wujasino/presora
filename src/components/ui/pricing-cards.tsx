@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card } from "@/components/ui/card";
-import { Check, X, Plus, ChevronDown, Gauge } from "lucide-react";
+import { Check, X, Plus, ChevronDown, Gauge, Building2 } from "lucide-react";
 import { useTranslation } from "@/lib/locale";
 
 type BillingCycle = 'monthly' | 'yearly';
@@ -21,6 +21,8 @@ export interface PricingTierCard {
   priceYearly: string;
   periodMonthly: string;
   periodYearly: string;
+  /** Real, enforced cap on distinct tracked brands (enforce_analysis_limit() DB trigger) — not a display-only number. */
+  maxBrands: number;
   isPopular: boolean;
   /** Plan the user is already subscribed to — renders the CTA as inert instead of clickable. */
   isCurrent?: boolean;
@@ -166,12 +168,20 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                   {plan.description}
                 </p>
 
-                {quota && (
-                  <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 rounded-full px-2.5 py-1">
-                    <Gauge className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-                    {quota}
-                  </p>
-                )}
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {quota && (
+                    <p className="inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 rounded-full px-2.5 py-1">
+                      <Gauge className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                      {quota}
+                    </p>
+                  )}
+                  {plan.maxBrands > 0 && (
+                    <p className="inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 rounded-full px-2.5 py-1">
+                      <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                      {plan.maxBrands === 1 ? 'Track 1 brand' : `Track up to ${plan.maxBrands} brands`}
+                    </p>
+                  )}
+                </div>
 
                 <Button
                   onClick={() => onPlanSelect(plan.id, billingCycle)}

@@ -39,6 +39,7 @@ export const PLANS: PricingTierCard[] = [
     priceYearly: 'Free',
     periodMonthly: '',
     periodYearly: '',
+    maxBrands: 1,
     isPopular: false,
     buttonLabel: 'Start for free',
     features: [
@@ -59,6 +60,7 @@ export const PLANS: PricingTierCard[] = [
     priceYearly: USD.starter_yearly,
     periodMonthly: PERIOD_MONTH,
     periodYearly: PERIOD_YEAR,
+    maxBrands: 1,
     isPopular: false,
     buttonLabel: 'Choose plan',
     features: [
@@ -78,6 +80,7 @@ export const PLANS: PricingTierCard[] = [
     priceYearly: USD.solo_yearly,
     periodMonthly: PERIOD_MONTH,
     periodYearly: PERIOD_YEAR,
+    maxBrands: 1,
     isPopular: false,
     buttonLabel: 'Choose plan',
     features: [
@@ -98,13 +101,14 @@ export const PLANS: PricingTierCard[] = [
     priceYearly: USD.growth_yearly,
     periodMonthly: PERIOD_MONTH,
     periodYearly: PERIOD_YEAR,
+    maxBrands: 5,
     isPopular: true,
     buttonLabel: 'Choose plan',
     features: [
       { name: '50 brand analyses per month', isIncluded: true },
       { name: 'All 6 LLM sources + Perplexity', isIncluded: true },
       { name: 'Full source table with confidence', isIncluded: true },
-      { name: 'Competitor comparison', isIncluded: true },
+      { name: 'Competitor comparison (up to 5 scans/10 min)', isIncluded: true },
       { name: '1-year history & weekly digest', isIncluded: true },
       { name: 'API access', isIncluded: true },
       { name: 'Priority email support', isIncluded: true },
@@ -118,6 +122,7 @@ export const PLANS: PricingTierCard[] = [
     priceYearly: USD.enterprise_yearly,
     periodMonthly: PERIOD_MONTH,
     periodYearly: PERIOD_YEAR,
+    maxBrands: 25,
     isPopular: false,
     buttonLabel: 'Choose plan',
     features: [

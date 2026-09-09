@@ -4,16 +4,9 @@ import { Zap, AlertTriangle, CreditCard, RefreshCw } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { PricingCards, type PricingTierCard } from '@/components/ui/pricing-cards';
-import { ContactForm } from '@/components/ui/contact-form';
+import { USD, PLANS } from '@/lib/plans';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
-
-const PRICES = {
-  starter_monthly: '$39', starter_yearly: '$374',
-  solo_monthly: '$59',  solo_yearly: '$566',
-  growth_monthly: '$89.99', growth_yearly: '$863.99',
-  credits_20: '$29', credits_50: '$55', credits_120: '$99',
-};
 
 interface Props {
   open: boolean;
@@ -28,22 +21,17 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
   const [loadingCredits, setLoadingCredits] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [showDowngrade, setShowDowngrade] = useState(false);
-  const [showContactSales, setShowContactSales] = useState(false);
   const [downgrading, setDowngrading] = useState(false);
 
   useEffect(() => { if (!open) setMessage(''); }, [open]);
 
-  const prices = PRICES;
+  const prices = USD;
   const period_month = '/mo';
   const period_year  = '/yr';
 
   const handlePlanSelect = async (planId: string) => {
     if (planId === currentPlan) return;
     if (planId === 'free') { setShowDowngrade(true); return; }
-    if (planId === 'enterprise') {
-      setShowContactSales(true);
-      return;
-    }
     setLoading(planId);
     setMessage('');
     try {
@@ -61,6 +49,10 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
         growth: {
           monthly: import.meta.env.VITE_STRIPE_BUSINESS_PRICE_ID,
           yearly: import.meta.env.VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID,
+        },
+        enterprise: {
+          monthly: import.meta.env.VITE_STRIPE_AGENCY_PRICE_ID,
+          yearly: import.meta.env.VITE_STRIPE_AGENCY_YEARLY_PRICE_ID,
         },
       };
       const priceId = priceMap[planId]?.[billingCycle];
@@ -129,86 +121,25 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
     { id: 'credits_120', label: '120 extra analyses', price: prices.credits_120, analyses: 120, popular: false },
   ];
 
-  const plans: PricingTierCard[] = [
-    {
-      id: 'free', name: 'Free', description: 'Start with three free brand analyses, no credit card required.',
-      priceMonthly: 'Free', priceYearly: 'Free', periodMonthly: '', periodYearly: '',
-      isPopular: false, isCurrent: currentPlan === 'free',
-      buttonLabel: currentPlan === 'free' ? 'Current plan' : 'Start for free',
-      features: [
-        { name: '3 free brand analyses', isIncluded: true },
-        { name: 'Overall AI Visibility Score', isIncluded: true },
-        { name: 'Perception radar (5 dimensions)', isIncluded: true },
-        { name: 'AI Verdict — actionable summary', isIncluded: true },
-        { name: 'Sentiment trend (30 days)', isIncluded: false },
-        { name: 'Brand knowledge context (RAG)', isIncluded: false },
-        { name: 'Competitor comparison', isIncluded: false },
-      ],
-    },
-    {
-      id: 'starter', name: 'Starter', description: 'For creators taking their first steps into AI visibility.',
-      priceMonthly: prices.starter_monthly, priceYearly: prices.starter_yearly,
-      periodMonthly: period_month, periodYearly: period_year,
-      isPopular: false, isCurrent: currentPlan === 'starter',
-      buttonLabel: currentPlan === 'starter' ? 'Current plan' : 'Choose plan',
-      features: [
-        { name: '5 brand analyses per month', isIncluded: true },
-        { name: '3 LLM sources (GPT-4o, Claude, Gemini)', isIncluded: true },
-        { name: 'Sentiment trend (30 days)', isIncluded: true },
-        { name: 'AI Verdict — actionable summary', isIncluded: true },
-        { name: 'Brand knowledge context (RAG)', isIncluded: false },
-        { name: 'Competitor comparison', isIncluded: false },
-      ],
-    },
-    {
-      id: 'solo', name: 'Solo', description: 'For indie founders and solo marketers tracking their brand.',
-      priceMonthly: prices.solo_monthly, priceYearly: prices.solo_yearly,
-      periodMonthly: period_month, periodYearly: period_year,
-      isPopular: false, isCurrent: currentPlan === 'solo',
-      buttonLabel: currentPlan === 'solo' ? 'Current plan' : 'Get started',
-      features: [
-        { name: '10 brand analyses per month', isIncluded: true },
-        { name: '3 LLM sources (GPT-4o, Claude, Gemini)', isIncluded: true },
-        { name: 'Sentiment trend (30 days)', isIncluded: true },
-        { name: 'Source breakdown chart', isIncluded: true },
-        { name: 'Brand knowledge context (RAG)', isIncluded: true },
-        { name: 'CSV export', isIncluded: true },
-        { name: 'Competitor comparison', isIncluded: false },
-      ],
-    },
-    {
-      id: 'growth', name: 'Business', description: 'For growing teams who need deeper competitive insights.',
-      priceMonthly: prices.growth_monthly, priceYearly: prices.growth_yearly,
-      periodMonthly: period_month, periodYearly: period_year,
-      isPopular: currentPlan !== 'growth', isCurrent: currentPlan === 'growth',
-      buttonLabel: currentPlan === 'growth' ? 'Current plan' : 'Get started',
-      features: [
-        { name: '50 brand analyses per month', isIncluded: true },
-        { name: 'All 6 LLM sources + Perplexity', isIncluded: true },
-        { name: 'Full source table with confidence', isIncluded: true },
-        { name: 'Competitor comparison', isIncluded: true },
-        { name: '1-year history & weekly digest', isIncluded: true },
-        { name: 'API access', isIncluded: true },
-        { name: 'Priority email support', isIncluded: true },
-      ],
-    },
-    {
-      id: 'enterprise', name: 'Agency', description: 'A tailored plan for teams that need full AI visibility control.',
-      priceMonthly: 'From $220', priceYearly: 'From $220',
-      periodMonthly: '/mo', periodYearly: '/mo',
-      isPopular: false, buttonLabel: 'Contact Sales',
-      features: [
-        { name: 'Unlimited analyses', isIncluded: true },
-        { name: 'Custom LLM sources + private models', isIncluded: true },
-        { name: 'Real-time monitoring & alerts', isIncluded: true },
-        { name: 'Unlimited history + webhooks', isIncluded: true },
-        { name: 'Slack & Teams integration', isIncluded: true },
-        { name: 'Dedicated account manager', isIncluded: true },
-        { name: 'White-label dashboard', isIncluded: true },
-        { name: 'SLA guarantee (99.9%)', isIncluded: true },
-      ],
-    },
-  ];
+  // Mirrors src/lib/plans.ts (the same source Pricing.tsx renders) rather
+  // than keeping a second hand-maintained copy — this modal's cards used to
+  // drift from the real pricing page (stale Agency price, "White-label
+  // dashboard" instead of the real "White-label PDF reports", a dead
+  // Contact Sales button after Agency got real checkout) for exactly the
+  // reason plans.ts's own doc comment warns about. Only the modal-specific
+  // bits (current-plan state, shorter /mo /yr period labels) are overridden
+  // here.
+  const plans: PricingTierCard[] = PLANS.map((plan) => ({
+    ...plan,
+    // priceMonthly/priceYearly are already correct here — plans.ts builds
+    // them from this same USD source — only the shorter /mo /yr period
+    // labels (vs. the full-page's /month /year) need overriding.
+    periodMonthly: plan.periodMonthly ? period_month : '',
+    periodYearly: plan.periodYearly ? period_year : '',
+    isPopular: plan.id === 'growth' && currentPlan !== 'growth',
+    isCurrent: currentPlan === plan.id,
+    buttonLabel: currentPlan === plan.id ? 'Current plan' : plan.buttonLabel,
+  }));
 
   return (
     <>
@@ -339,18 +270,6 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
         </DialogContent>
       </Dialog>
 
-      {/* Contact Sales — Agency plan */}
-      <Dialog open={showContactSales} onOpenChange={setShowContactSales}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Talk to sales about the Agency plan</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Tell us about your agency and what you need — a real person replies within 24 hours.
-            </DialogDescription>
-          </DialogHeader>
-          <ContactForm defaultSubject="Agency plan inquiry" compact />
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

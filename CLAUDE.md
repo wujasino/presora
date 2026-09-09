@@ -309,6 +309,38 @@ Running the old full-migration script from the Supabase SQL editor will
 re-add those dead branches (it predates `20240126`) — it is not a safe
 "re-sync" tool; prefer the numbered migrations in `supabase/migrations/`.
 
+## Distinct-brand cap (migration `20240143`)
+
+Pricing-page feedback needed a real answer to "how many brands/domains can I
+monitor at this price?" — `analyses_this_month` only ever capped total scan
+*volume*, not how many different brands a user spreads it across. Free /
+Starter / Solo: 1 brand, Business: 5, Agency: 25 (`maxBrands` in
+`src/lib/plans.ts`, shown as its own pill on the pricing cards).
+
+Enforced the same way as the monthly limit — inside `enforce_analysis_limit()`
+(the `BEFORE INSERT ON analyses` trigger), not in application code, since
+that's a real security boundary regardless of insert path (`useBrewing.ts`'s
+client-side insert with the user's own JWT, or `api-analyze.js`'s
+`supabaseAdmin` insert for API-key scans both go through it). A new
+`public.brand_key()` SQL function mirrors `src/lib/analyses.ts`'s
+`brandKey()` step-for-step, so "presora", "Presora.app" and
+"https://www.presora.app/" count as one brand in the trigger exactly like
+they already do client-side.
+
+Re-scanning a brand the user already has at least one analysis for is always
+allowed regardless of the cap — only *starting* a brand-new one once already
+at the limit is blocked (`RAISE EXCEPTION 'Brand limit reached for plan: ...'`,
+caught in `useBrewing.ts` the same way `'Analysis limit reached'` already
+is). An account that already exceeded its plan's cap before this shipped
+keeps every existing brand fully queryable/re-scannable; only adding another
+new one going forward is affected.
+
+`api-analyze.js` doesn't distinguish this trigger's exception from any other
+insert failure (same pre-existing gap as `'Analysis limit reached'` there —
+it only logs and still returns a 200 with `id: null`); not fixed here since
+neither this change nor the feedback that prompted it touched the API-key
+path.
+
 ## Diagnosing a failed scan
 
 `runBrandScan()` returns `failures` (per-model rejection messages) and
