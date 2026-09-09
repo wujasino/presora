@@ -261,7 +261,7 @@ const Pricing = () => {
               <Check className="w-3.5 h-3.5 text-primary" /> Cancel any paid plan anytime
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-primary" /> Agency: quoted around your exact volume
+              <Sparkles className="w-3.5 h-3.5 text-primary" /> Agency: $199/month, built for multi-client teams
             </span>
           </div>
         </div>

@@ -2,9 +2,9 @@ import { useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Calculator, Clock, TrendingUp } from 'lucide-react';
 
-/** Agency plan entry price — keep in sync with PLANS' `enterprise` tier in
- *  src/lib/plans.ts ("from $220"). Stated as the entry price, not a quote. */
-const AGENCY_PLAN_FROM = 220;
+/** Agency plan price — keep in sync with USD.enterprise_monthly in
+ *  src/lib/plans.ts. */
+const AGENCY_PLAN_FROM = 199;
 
 const Field = ({
   label, value, onChange, min, max, step, prefix, suffix,
@@ -156,8 +156,8 @@ export const AgencyRoiCalculator = () => {
           Every figure above comes from the sliders you just moved — we don't have
           customer averages to substitute for them. Only report <em>production</em> is
           counted as saved; 30% is deliberately held back for reviewing the output and
-          tailoring the pitch, which is work that doesn't go away. Agency pricing starts
-          at ${AGENCY_PLAN_FROM}/mo and is quoted around your actual volume.
+          tailoring the pitch, which is work that doesn't go away. The Agency plan is
+          ${AGENCY_PLAN_FROM}/mo, built for agencies managing multiple client accounts.
         </p>
       </div>
     </motion.div>
