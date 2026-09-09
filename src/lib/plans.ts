@@ -119,7 +119,7 @@ export const PLANS: PricingTierCard[] = [
     periodMonthly: PERIOD_MONTH,
     periodYearly: PERIOD_YEAR,
     isPopular: false,
-    buttonLabel: 'Contact Sales',
+    buttonLabel: 'Choose plan',
     features: [
       { name: 'Unlimited analyses', isIncluded: true },
       { name: 'Custom LLM sources + private models', isIncluded: true },
