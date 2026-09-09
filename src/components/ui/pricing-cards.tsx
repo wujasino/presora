@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card } from "@/components/ui/card";
-import { Check, X, Plus, ChevronDown } from "lucide-react";
+import { Check, X, Plus, ChevronDown, Gauge } from "lucide-react";
 import { useTranslation } from "@/lib/locale";
 
 type BillingCycle = 'monthly' | 'yearly';
@@ -120,7 +120,14 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
           const inheritedNames = new Set(
             plans.slice(0, index).flatMap((p) => p.features.filter((f) => f.isIncluded).map((f) => f.name))
           );
-          const newInTier = plan.features.filter((f) => f.isIncluded && !inheritedNames.has(f.name));
+          // features[0] is, by convention in src/lib/plans.ts, always the
+          // plan's real usage quota (analyses/month, or "Unlimited") — shown
+          // as its own callout below instead of buried as just another
+          // checklist bullet, so it stays excluded here to avoid repeating it.
+          const quota = plan.features[0]?.name;
+          const newInTier = plan.features
+            .filter((f) => f.isIncluded && !inheritedNames.has(f.name))
+            .filter((f) => f.name !== quota);
           // Cards still have to stay a scannable height, so anything past the
           // cap is left to the full comparison table below rather than
           // stretching the column.
@@ -158,6 +165,13 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                 <p className="text-xs text-muted-foreground mt-3 leading-relaxed min-h-[2.5rem]">
                   {plan.description}
                 </p>
+
+                {quota && (
+                  <p className="mt-2 inline-flex items-center gap-1.5 text-xs font-medium text-primary bg-primary/10 rounded-full px-2.5 py-1">
+                    <Gauge className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                    {quota}
+                  </p>
+                )}
 
                 <Button
                   onClick={() => onPlanSelect(plan.id, billingCycle)}

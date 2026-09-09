@@ -34,7 +34,7 @@ export const PLANS: PricingTierCard[] = [
   {
     id: 'free',
     name: 'Free',
-    description: 'Start with three free brand analyses, no credit card required.',
+    description: 'Start with three free brand analyses, no credit card required. Perfect for a first look before you commit.',
     priceMonthly: 'Free',
     priceYearly: 'Free',
     periodMonthly: '',
