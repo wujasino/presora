@@ -108,7 +108,7 @@ export const PLANS: PricingTierCard[] = [
       { name: '50 brand analyses per month', isIncluded: true },
       { name: 'All 6 LLM sources + Perplexity', isIncluded: true },
       { name: 'Full source table with confidence', isIncluded: true },
-      { name: 'Competitor comparison (up to 5 scans/10 min)', isIncluded: true },
+      { name: 'Competitor comparison — real-time scan queue: 5 scans/10 min to ensure API stability', isIncluded: true },
       { name: '1-year history & weekly digest', isIncluded: true },
       { name: 'API access', isIncluded: true },
       { name: 'Priority email support', isIncluded: true },
