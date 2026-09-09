@@ -54,19 +54,23 @@ const Agencies = () => {
                 <Building2 className="w-3 h-3" /> For agencies & consultants
               </span>
               <h1 className="text-4xl sm:text-5xl font-bold text-foreground mb-5 leading-[1.1] text-balance">
-                Turn one scan into a service you can sell{' '}
-                <span className="text-primary">this week</span>
+                Generate the GEO audit that opens{' '}
+                <span className="text-primary">your client's next budget</span>
               </h1>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-10 leading-relaxed">
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-4 leading-relaxed">
                 Run a Presora scan on a prospect's brand, and it generates a client-ready
                 AI visibility audit — the kind of report that sells the follow-up work itself.
+              </p>
+              <p className="text-base text-foreground max-w-xl mx-auto mb-10 leading-relaxed">
+                <strong className="font-semibold">Export it as a PDF with your agency's own logo</strong> —
+                not ours, and not a screenshot.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <button
                   onClick={() => navigate('/register')}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
                 >
-                  Create your first audit
+                  Generate your first free client audit
                   <ArrowRight className="w-4 h-4" />
                 </button>
                 <button
@@ -399,7 +403,7 @@ const Agencies = () => {
                 onClick={() => navigate('/register')}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
               >
-                Start for free
+                Generate a free client audit
                 <ArrowRight className="w-4 h-4" />
               </button>
               <Link
