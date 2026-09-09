@@ -342,6 +342,8 @@ export function useBrewing() {
           if (dbError) {
             if (dbError.message.includes('Analysis limit reached')) {
               alert('Osiągnąłeś limit analiz w tym miesiącu. Przejdź na wyższy plan aby kontynuować.');
+            } else if (dbError.message.includes('Brand limit reached')) {
+              alert('Osiągnąłeś limit śledzonych marek dla swojego planu. Przejdź na wyższy plan, aby śledzić kolejną markę.');
             } else {
               console.error('Failed to save analysis:', dbError);
             }

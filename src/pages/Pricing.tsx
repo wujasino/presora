@@ -5,7 +5,6 @@ import { supabase } from '@/lib/supabase';
 import { PricingCards } from '@/components/ui/pricing-cards';
 import { USD, PLANS } from '@/lib/plans';
 import { CreditsUsageWidget } from '@/components/CreditsUsageWidget';
-import { ContactForm } from '@/components/ui/contact-form';
 import { useSessionUser } from '@/hooks/useAccountInfo';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -26,7 +25,6 @@ const Pricing = () => {
   const [message, setMessage] = useState<string>('');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [showDowngradeDialog, setShowDowngradeDialog] = useState(false);
-  const [showContactSalesDialog, setShowContactSalesDialog] = useState(false);
   const [downgrading, setDowngrading] = useState(false);
   const { data: sessionUser } = useSessionUser();
   const isLoggedIn = !!sessionUser?.id;
@@ -67,11 +65,6 @@ const Pricing = () => {
       window.location.href = '/register';
       return;
     }
-    if (planId === 'enterprise') {
-      setShowContactSalesDialog(true);
-      return;
-    }
-
     setLoading(planId);
     setMessage('');
 
@@ -91,6 +84,10 @@ const Pricing = () => {
         growth: {
           monthly: import.meta.env.VITE_STRIPE_BUSINESS_PRICE_ID,
           yearly: import.meta.env.VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID,
+        },
+        enterprise: {
+          monthly: import.meta.env.VITE_STRIPE_AGENCY_PRICE_ID,
+          yearly: import.meta.env.VITE_STRIPE_AGENCY_YEARLY_PRICE_ID,
         },
       };
       const priceId = priceMap[planId]?.[billingCycle];
@@ -223,19 +220,6 @@ const Pricing = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Contact Sales dialog — Agency plan */}
-      <Dialog open={showContactSalesDialog} onOpenChange={setShowContactSalesDialog}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Talk to sales about the Agency plan</DialogTitle>
-            <DialogDescription className="text-sm text-muted-foreground">
-              Tell us about your agency and what you need — a real person replies within 24 hours.
-            </DialogDescription>
-          </DialogHeader>
-          <ContactForm defaultSubject="Agency plan inquiry" compact />
-        </DialogContent>
-      </Dialog>
-
       <div className="pb-20 px-4 max-w-7xl mx-auto">
         {/* Page header — promise, what you get, present-tense payoff, who
             carries the risk. The Free plan (no card) is the soft offer;
@@ -261,7 +245,7 @@ const Pricing = () => {
               <Check className="w-3.5 h-3.5 text-primary" /> Cancel any paid plan anytime
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-primary" /> Agency: quoted around your exact volume
+              <Sparkles className="w-3.5 h-3.5 text-primary" /> Agency: $199/month, built for multi-client teams
             </span>
           </div>
         </div>

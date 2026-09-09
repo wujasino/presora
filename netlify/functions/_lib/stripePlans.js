@@ -17,6 +17,12 @@ export const PLAN_BY_PRICE_ID = {
   // a live DB trigger for no reason.
   ...(process.env.VITE_STRIPE_BUSINESS_PRICE_ID         ? { [process.env.VITE_STRIPE_BUSINESS_PRICE_ID]:         'growth'  } : {}),
   ...(process.env.VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID  ? { [process.env.VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID]:  'growth'  } : {}),
+  // Same naming note as BUSINESS above: env var says AGENCY (the plan's
+  // display name), internal plan id stays 'enterprise' — that's what
+  // enforce_analysis_limit()'s CASE and VALID_PLANS (admin-update-user.js)
+  // actually key on.
+  ...(process.env.VITE_STRIPE_AGENCY_PRICE_ID           ? { [process.env.VITE_STRIPE_AGENCY_PRICE_ID]:           'enterprise' } : {}),
+  ...(process.env.VITE_STRIPE_AGENCY_YEARLY_PRICE_ID    ? { [process.env.VITE_STRIPE_AGENCY_YEARLY_PRICE_ID]:    'enterprise' } : {}),
 };
 
 export const planForPriceId = (priceId) => PLAN_BY_PRICE_ID[priceId] || null;
