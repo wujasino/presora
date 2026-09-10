@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Zap, Eye, Shield, ChevronDown, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag, Wallet, Repeat } from 'lucide-react';
+import { Zap, Eye, Shield, ChevronDown, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag, Wallet, Repeat, Target } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -254,6 +254,39 @@ const Landing = () => {
                 <ChevronDown className="w-4 h-4" />
               </motion.div>
             </motion.button>
+          </div>
+        </section>
+
+        {/* ── What you get — quick-scan strip right under the hero ────
+            Three real, grounded outcomes (not invented stats): a sharper
+            pitch, a billable white-label deliverable, a reason to renew.
+            Same underlying facts as the "Three ways this pays for itself"
+            section further down (id="monetize") — this is the immediate,
+            above-the-fold version for a reader who won't scroll that far. */}
+        <section className="pb-16 px-4">
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="flex flex-col sm:flex-row items-start sm:items-center justify-center gap-x-10 gap-y-5"
+            >
+              {[
+                { Icon: Target, title: 'Win more pitches', desc: 'A real audit of the prospect, not a generic deck' },
+                { Icon: Wallet, title: 'Bill a new deliverable', desc: 'White-label PDF export, Agency plan' },
+                { Icon: Repeat, title: 'Give clients a reason to renew', desc: 'A fresh number to report every month' },
+              ].map(({ Icon, title, desc }) => (
+                <div key={title} className="flex items-center gap-2.5 text-left">
+                  <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
+                    <Icon className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-foreground leading-tight">{title}</div>
+                    <div className="text-[11px] text-muted-foreground leading-tight">{desc}</div>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </section>
 
