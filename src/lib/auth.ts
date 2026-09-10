@@ -64,8 +64,20 @@ export async function loginUser(email: string, password: string) {
   return data;
 }
 
+// getSession(), not getUser(): getSession() transparently refreshes an
+// expired access token (using the stored refresh token) before returning,
+// exactly like useSessionUser()/ProtectedRoute already rely on. getUser()
+// does not self-heal — it just sends whatever access token is currently in
+// memory and fails if it's expired. That split meant a visitor returning
+// after the tab sat inactive long enough for the access token to expire
+// (auto-refresh timers get throttled/suspended on inactive/background tabs)
+// could see ProtectedRoute correctly keep them signed in while this
+// function, checked separately on /login, reported "nobody's signed in" —
+// hiding the "already logged in as X" banner and leaving a real, valid
+// session looking exactly like a logout.
 export async function getAuthUser(): Promise<AuthUser | null> {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await supabase.auth.getSession();
+  const user = session?.user;
   if (!user) return null;
   return {
     id: user.id,

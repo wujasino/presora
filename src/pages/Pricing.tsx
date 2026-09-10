@@ -121,6 +121,24 @@ const Pricing = () => {
     }
   };
 
+  // Resumes a plan choice made before the visitor had an account. Pricing's
+  // own handlePlanSelect redirects an anonymous click to
+  // /register?plan=<id>, which now carries that param through email
+  // verification and onboarding and lands back here as /pricing?plan=<id>
+  // once a session exists — auto-firing the same handlePlanSelect so the
+  // visitor doesn't have to find and click their plan a second time.
+  // Strips the param immediately so a refresh or back-navigation to this
+  // URL doesn't silently reopen Stripe checkout.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const pendingPlan = params.get('plan');
+    if (!pendingPlan) return;
+    window.history.replaceState({}, '', window.location.pathname + window.location.search.replace(/[?&]plan=[^&]*/, '').replace(/^&/, '?'));
+    if (pendingPlan === 'free') return;
+    handlePlanSelect(pendingPlan);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const creditPacks = [
     { id: 'credits_20',  label: '20 extra analyses',  price: prices.credits_20,  analyses: 20,  popular: false },
     { id: 'credits_50',  label: '50 extra analyses',  price: prices.credits_50,  analyses: 50,  popular: true  },

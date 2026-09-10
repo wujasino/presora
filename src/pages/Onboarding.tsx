@@ -28,6 +28,11 @@ export default function Onboarding() {
   // Register.tsx's own ?brand= passthrough) so a visitor who already typed
   // their brand name on the Landing hero isn't asked to retype it here.
   const [brand, setBrand] = useState(searchParams.get('brand') || '');
+  // Carried through from Register.tsx when the visitor picked a paid plan
+  // before signing up — sends them to Pricing (which auto-resumes checkout)
+  // instead of Dashboard once onboarding is done, rather than silently
+  // dropping the choice back to Free.
+  const pendingPlan = searchParams.get('plan');
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [dir, setDir] = useState(1);
@@ -62,7 +67,7 @@ export default function Onboarding() {
     } catch {
       // non-fatal — still let them into the app
     } finally {
-      navigate('/dashboard', { replace: true });
+      navigate(pendingPlan ? `/pricing?plan=${encodeURIComponent(pendingPlan)}` : '/dashboard', { replace: true });
     }
   };
 
@@ -83,9 +88,11 @@ export default function Onboarding() {
       // non-fatal
     } finally {
       setSaving(false);
-      const dest = brand.trim()
-        ? `/brand-visibility?brand=${encodeURIComponent(brand.trim())}`
-        : '/dashboard';
+      const dest = pendingPlan
+        ? `/pricing?plan=${encodeURIComponent(pendingPlan)}`
+        : brand.trim()
+          ? `/brand-visibility?brand=${encodeURIComponent(brand.trim())}`
+          : '/dashboard';
       navigate(dest, { replace: true });
     }
   };

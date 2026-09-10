@@ -22,9 +22,9 @@ These combine into one overall AI Visibility Score, a model-by-model breakdown, 
 ## Plans & pricing (USD, monthly; yearly billing is roughly 20% cheaper)
 - **Free** — $0. 3 free brand analyses total, overall score, 5-dimension radar, AI verdict summary. No sentiment trend, no brand-knowledge context, no competitor comparison.
 - **Starter** — $39/mo. 5 analyses/month, 3 model sources (GPT-4o, Claude, Gemini), 30-day sentiment trend, AI verdict.
-- **Solo** — $59/mo. 10 analyses/month, same 3 model sources, sentiment trend, source breakdown chart, brand knowledge context (RAG), CSV export.
-- **Business** (internal id "growth") — $89.99/mo, most popular. 50 analyses/month, all 6 model sources including Perplexity, full source table with confidence scores, competitor comparison, 1-year history + weekly digest, API access, priority email support.
-- **Agency** (internal id "enterprise") — custom, from $220/mo. Unlimited analyses, custom/private models, real-time monitoring & alerts, unlimited history + webhooks, Slack/Teams integration, dedicated account manager, white-label dashboard, 99.9% SLA. Direct visitors to contact sales for this tier.
+- **Solo** — $59/mo. 15 analyses/month, up to 2 tracked brands, same 3 model sources, sentiment trend, source breakdown chart, brand knowledge context (RAG), CSV export.
+- **Business** (internal id "growth") — $99/mo, most popular. 50 analyses/month, up to 5 tracked brands, all 6 model sources including Perplexity, full source table with confidence scores, competitor comparison (real-time scan queue, 5 scans/10 min), 1-year history + weekly digest, API access, priority email support.
+- **Agency** (internal id "enterprise") — $199/mo. Unlimited analyses, up to 25 tracked brands, custom/private models, real-time monitoring & alerts, unlimited history + webhooks, Slack/Teams integration, dedicated account manager, white-label PDF reports (client-ready audits branded with the agency's own logo), 99.9% SLA. Self-serve checkout, same as every other paid plan — no need to contact sales.
 No contracts or lock-in on any paid plan — cancel anytime from Settings, access continues to the end of the billing period.
 
 ## Frequently asked questions
