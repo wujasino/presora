@@ -11,7 +11,7 @@ import { supabase } from '@/lib/supabase';
 export const PLAN_LIMITS: Record<string, number> = {
   Free: 3,
   Starter: 5,
-  Solo: 10,
+  Solo: 15,
   Growth: 50,
   Enterprise: 999999,
   Agency: 999999, // some accounts have this stored instead of 'Enterprise' (same tier, matches the Pricing page's "Agency" tier)

@@ -314,8 +314,11 @@ re-add those dead branches (it predates `20240126`) — it is not a safe
 Pricing-page feedback needed a real answer to "how many brands/domains can I
 monitor at this price?" — `analyses_this_month` only ever capped total scan
 *volume*, not how many different brands a user spreads it across. Free /
-Starter / Solo: 1 brand, Business: 5, Agency: 25 (`maxBrands` in
-`src/lib/plans.ts`, shown as its own pill on the pricing cards).
+Starter: 1 brand, Solo: 2, Business: 5, Agency: 25 (`maxBrands` in
+`src/lib/plans.ts`, shown as its own pill on the pricing cards). Solo's cap
+moved from 1 to 2 in migration `20240144`, alongside its analyses/month
+bump (see below) — both numbered the same CASE update, in the same
+`enforce_analysis_limit()` re-declaration.
 
 Enforced the same way as the monthly limit — inside `enforce_analysis_limit()`
 (the `BEFORE INSERT ON analyses` trigger), not in application code, since
@@ -334,6 +337,19 @@ caught in `useBrewing.ts` the same way `'Analysis limit reached'` already
 is). An account that already exceeded its plan's cap before this shipped
 keeps every existing brand fully queryable/re-scannable; only adding another
 new one going forward is affected.
+
+## Business plan price change ($89.99 -> $99) needs a new Stripe Price ID
+
+Migration `20240144` raised Solo's limits (10->15 analyses/month, 1->2
+brands) and `src/lib/plans.ts`/`index.html`/`salesKnowledge.js` were updated
+to advertise Business at $99/mo instead of $89.99 — but `create-checkout.js`
+still charges whatever `VITE_STRIPE_BUSINESS_PRICE_ID` points at, which was
+never repointed to a new $99 Stripe Price object. Until the owner creates
+one and updates that secret (GitHub Actions **and** Netlify env vars, same
+two-places split documented elsewhere in this file for the Agency price),
+Business checkout silently charges the old $89.99 while the page advertises
+$99 — a real price-mismatch, not just stale copy. Don't treat this as
+resolved by a content-only fix.
 
 `api-analyze.js` doesn't distinguish this trigger's exception from any other
 insert failure (same pre-existing gap as `'Analysis limit reached'` there —
