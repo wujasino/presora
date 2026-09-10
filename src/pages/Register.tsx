@@ -105,8 +105,19 @@ const SuccessScreen = ({ email }: { email: string }) => {
       // Carries the brand name through from GuestScanWidget's "Create free
       // account" CTA (?brand=...) so Onboarding's own brand-name step
       // doesn't ask the visitor to retype what they already typed once.
+      // Also carries a pending plan choice (?plan=... from Pricing.tsx's
+      // handlePlanSelect, set when an anonymous visitor picked a paid plan
+      // before having an account) through onboarding to Pricing, which
+      // auto-resumes checkout for it once a session exists — previously
+      // this param was set but never read anywhere, so choosing a plan
+      // while logged out silently dropped back to Free after signup.
       const brand = searchParams.get('brand');
-      navigate(brand ? `/onboarding?brand=${encodeURIComponent(brand)}` : '/onboarding', { replace: true });
+      const plan = searchParams.get('plan');
+      const params = new URLSearchParams();
+      if (brand) params.set('brand', brand);
+      if (plan) params.set('plan', plan);
+      const qs = params.toString();
+      navigate(qs ? `/onboarding?${qs}` : '/onboarding', { replace: true });
     } catch (err: any) {
       setError(err.message?.includes('expired') || err.message?.includes('invalid')
         ? 'Invalid or expired code. Please resend.'
