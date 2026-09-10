@@ -160,20 +160,21 @@ const Landing = () => {
                 <Sparkles className="w-3 h-3" /> New service category: GEO Audits for agencies
               </span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.05] tracking-tight">
-                Show clients they're{' '}
-                <span className="ai-presence-accent" data-text="invisible on ChatGPT">
-                  <span className="ai-presence-accent-text">invisible on ChatGPT</span>
+                Check if{' '}
+                <span className="ai-presence-accent" data-text="ChatGPT recommends">
+                  <span className="ai-presence-accent-text">ChatGPT recommends</span>
                 </span>{' '}
-                — then sell them the fix.
+                your client's brand.
               </h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-4">
-                AI assistants are replacing search for your clients' buyers, and most agencies
-                still have no way to prove it — or bill for fixing it. Presora runs a live,
-                white-labelable visibility audit across 6 AI models in about 15 seconds.
+                AI assistants are increasingly where your clients' customers ask for
+                recommendations instead of Google. Presora audits any brand across 6 AI
+                models in about 15 seconds.
               </p>
               <p className="text-sm text-foreground/70 max-w-xl mx-auto mb-10">
-                The only AI visibility audit built to be{' '}
-                <span className="text-foreground font-medium">handed to a client, not just kept on your own dashboard.</span>
+                Every scan doubles as a report you can hand straight to the client it's
+                about —{' '}
+                <span className="text-foreground font-medium">exported as a PDF under your own logo.</span>
               </p>
             </motion.div>
 

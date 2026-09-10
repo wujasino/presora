@@ -127,12 +127,12 @@ export const PLANS: PricingTierCard[] = [
     buttonLabel: 'Choose plan',
     features: [
       { name: 'Unlimited analyses', isIncluded: true },
+      { name: 'White-label PDF reports', isIncluded: true },
       { name: 'Custom LLM sources + private models', isIncluded: true },
       { name: 'Real-time monitoring & alerts', isIncluded: true },
       { name: 'Unlimited history + webhooks', isIncluded: true },
       { name: 'Slack & Teams integration', isIncluded: true },
       { name: 'Dedicated account manager', isIncluded: true },
-      { name: 'White-label PDF reports', isIncluded: true },
       { name: 'SLA guarantee (99.9%, contract-based)', isIncluded: true },
     ],
   },
