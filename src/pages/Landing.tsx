@@ -256,9 +256,8 @@ const Landing = () => {
               </motion.div>
             </motion.button>
           </div>
+          <LandingProductMockup />
         </section>
-
-        <LandingProductMockup />
 
         {/* ── What you get — quick-scan strip right under the hero ────
             Three real, grounded outcomes (not invented stats): a sharper
