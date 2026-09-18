@@ -20,6 +20,7 @@ import { StickyCtaPill } from '@/components/ui/sticky-cta-pill';
 import { FAQ_EN } from '@/lib/faq';
 import { PricingCards } from '@/components/ui/pricing-cards';
 import { PLANS } from '@/lib/plans';
+import { LandingProductMockup } from '@/components/LandingProductMockup';
 
 /* ── AI models actually queried ────────────────────────────────────
    Mirrors OPENROUTER_MODELS in netlify/functions/_lib/runScan.js — these
@@ -256,6 +257,8 @@ const Landing = () => {
             </motion.button>
           </div>
         </section>
+
+        <LandingProductMockup />
 
         {/* ── What you get — quick-scan strip right under the hero ────
             Three real, grounded outcomes (not invented stats): a sharper
