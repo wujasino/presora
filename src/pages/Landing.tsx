@@ -5,10 +5,9 @@ import { Zap, Eye, Shield, ChevronDown, HelpCircle, Mail, ArrowRight, Globe, Shi
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { GuestScanWidget } from '@/components/GuestScanWidget';
+import { HeroAuditMockup } from '@/components/HeroAuditMockup';
 import { ScrollAuditDemo } from '@/components/ScrollAuditDemo';
 import { SectionNav } from '@/components/SectionNav';
-import { GUEST_LIMIT } from '@/hooks/useBrewing';
 import { ScanResultPreview } from '@/components/ScanResultPreview';
 import { CookiePanel } from '@/components/ui/cookie-banner-1';
 import { SalesChatWidget } from '@/components/ui/sales-chat-widget';
@@ -20,7 +19,6 @@ import { StickyCtaPill } from '@/components/ui/sticky-cta-pill';
 import { FAQ_EN } from '@/lib/faq';
 import { PricingCards } from '@/components/ui/pricing-cards';
 import { PLANS } from '@/lib/plans';
-import { LandingProductMockup } from '@/components/LandingProductMockup';
 
 /* ── AI models actually queried ────────────────────────────────────
    Mirrors OPENROUTER_MODELS in netlify/functions/_lib/runScan.js — these
@@ -186,30 +184,7 @@ const Landing = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="max-w-xl mx-auto"
             >
-              {/* Runs a real scan inline instead of navigating to
-                  /brand-visibility — full data is fetched immediately, but
-                  4 of 5 dimensions (and the aggregate score) stay blurred
-                  until an email unlocks them. Real result, gated display —
-                  not a fabricated teaser number. */}
-              <GuestScanWidget />
-              <p className="mt-3 text-xs text-center text-muted-foreground">
-                Result in ~15 seconds &middot; {GUEST_LIMIT} free scans to start &middot; No credit card required
-              </p>
-              {/* Reuses the same AI_MODELS array as the full "AI models we
-                  query" section further down — one source of the model
-                  list, shown in two places, so this can't silently drift
-                  out of sync with what runScan.js actually queries (see
-                  CLAUDE.md's note on model tiering needing to agree
-                  everywhere it's stated). */}
-              <div className="mt-3 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[11px] text-muted-foreground/70">
-                <span className="uppercase tracking-widest">Live analysis across</span>
-                {AI_MODELS.map((m) => (
-                  <span key={m.name} className="inline-flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: m.color }} />
-                    {m.name.split(' ')[0]}
-                  </span>
-                ))}
-              </div>
+              <HeroAuditMockup />
             </motion.div>
 
             <motion.div
@@ -256,7 +231,6 @@ const Landing = () => {
               </motion.div>
             </motion.button>
           </div>
-          <LandingProductMockup />
         </section>
 
         {/* ── What you get — quick-scan strip right under the hero ────
