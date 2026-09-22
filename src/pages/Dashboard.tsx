@@ -422,11 +422,11 @@ const LiveSignal = ({ label }: { label: string }) => (
   </div>
 );
 
-const Dashboard = () => {
+const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const onScanRoute = location.pathname === '/brand-visibility';
+  const onScanRoute = demoScan || location.pathname === '/brand-visibility';
   const t = useTranslation().t;
   const analysisId = searchParams.get('id');
   const brandFromUrl = searchParams.get('brand') || '';

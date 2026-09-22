@@ -6,6 +6,10 @@ import { cn } from '@/lib/utils';
 export interface ChatMsg {
   role: 'user' | 'assistant';
   text: string;
+  link?: {
+    label: string;
+    href: string;
+  };
 }
 
 interface ChatWidgetShellProps {
@@ -111,15 +115,27 @@ export function ChatWidgetShell({
 
             <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
               {messages.map((m, i) => (
-                <div key={i} className={cn('flex', m.role === 'user' ? 'justify-end' : 'justify-start')}>
-                  <div
-                    className={cn(
-                      'max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap',
-                      m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
-                    )}
-                  >
-                    {m.text}
+                <div key={i} className="space-y-1.5">
+                  <div className={cn('flex', m.role === 'user' ? 'justify-end' : 'justify-start')}>
+                    <div
+                      className={cn(
+                        'max-w-[85%] rounded-xl px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap',
+                        m.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground'
+                      )}
+                    >
+                      {m.text}
+                    </div>
                   </div>
+                  {m.link && (
+                    <div className="flex justify-start">
+                      <a
+                        href={m.link.href}
+                        className="text-xs text-primary hover:text-primary/80 underline underline-offset-2 transition-colors"
+                      >
+                        {m.link.label} →
+                      </a>
+                    </div>
+                  )}
                 </div>
               ))}
               {loading && (

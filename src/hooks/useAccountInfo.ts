@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { initialSession, supabase } from '@/lib/supabase';
 
 /**
  * Keep in sync with the Pricing page copy AND the real enforcement in
@@ -67,6 +67,7 @@ const toSessionUser = (session: { user?: { id: string; email?: string | null; us
 });
 
 const fetchSessionUser = async (): Promise<SessionUser> => {
+  await initialSession;
   const { data: { session } } = await supabase.auth.getSession();
   return toSessionUser(session);
 };
@@ -85,7 +86,11 @@ export const useSessionUser = () => {
   const query = useQuery({ queryKey: ['session-user'], queryFn: fetchSessionUser });
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // INITIAL_SESSION is emitted while the same localStorage restore is in
+      // progress. The query awaits that restore, so this event must not
+      // overwrite a valid persisted session with a transient null value.
+      if (event === 'INITIAL_SESSION') return;
       queryClient.setQueryData<SessionUser>(['session-user'], toSessionUser(session));
     });
     return () => subscription.unsubscribe();
@@ -173,4 +178,3 @@ export const useAnalysesUsedThisMonth = () => {
     placeholderData: 0,
   });
 };
-
