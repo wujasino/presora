@@ -1,19 +1,16 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { Zap, Eye, Shield, ChevronDown, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag, Wallet, Repeat, Target } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Zap, Eye, Shield, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag, Wallet, Repeat, UserRound, UsersRound } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { HeroAuditMockup } from '@/components/HeroAuditMockup';
-import { ScrollAuditDemo } from '@/components/ScrollAuditDemo';
+import { LandingProductMockup } from '@/components/LandingProductMockup';
 import { SectionNav } from '@/components/SectionNav';
 import { ScanResultPreview } from '@/components/ScanResultPreview';
 import { CookiePanel } from '@/components/ui/cookie-banner-1';
 import { SalesChatWidget } from '@/components/ui/sales-chat-widget';
 import { NewsletterSignup } from '@/components/ui/newsletter-signup';
-import { GradientMeshBg } from '@/components/ui/gradient-mesh-bg';
-import { MouseSpotlight } from '@/components/ui/mouse-spotlight';
 import { ScrollProgressBar } from '@/components/ui/scroll-progress-bar';
 import { StickyCtaPill } from '@/components/ui/sticky-cta-pill';
 import { FAQ_EN } from '@/lib/faq';
@@ -65,11 +62,8 @@ const TRUST_POINTS = [
   },
 ];
 
-/* Sections offered in the sticky in-page nav, in page order. Keep in sync
-   with the matching `id` on each <section>; SectionNav skips any id that
-   isn't on the page, so a stale entry degrades quietly rather than breaking. */
+/* Sections offered in the sticky in-page nav, in page order. */
 const NAV_SECTIONS = [
-  { id: 'how-it-works', label: 'How it works' },
   { id: 'manifest', label: 'The problem' },
   { id: 'sample-report', label: 'Sample report' },
   { id: 'monetize', label: 'Make money' },
@@ -80,23 +74,10 @@ const NAV_SECTIONS = [
 const Landing = () => {
   const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress: heroScrollProgress } = useScroll({
-    target: heroRef,
-    offset: ['start start', 'end start'],
-  });
-  // Background drifts slower than the page scrolls (classic parallax), and
-  // fades out before the next section — subtle enough to still respect
-  // prefers-reduced-motion in spirit (pure transform + opacity, no layout
-  // shift either way).
-  const heroBgY = useTransform(heroScrollProgress, [0, 1], ['0%', '25%']);
-  const heroBgOpacity = useTransform(heroScrollProgress, [0, 1], [0.45, 0]);
+  const [pricingAudience, setPricingAudience] = useState<'individual' | 'team'>('individual');
 
   return (
     <div className="min-h-screen bg-background font-landing relative">
-      {/* Cursor-follow glow — fixed + z-0, so it always paints behind the
-          z-10 content wrapper below regardless of DOM order. */}
-      <MouseSpotlight />
       {/* Engagement hooks: a top progress bar (orientation — how much is
           left) and a floating "Check my brand" pill that appears once
           scrolled past the hero and scrolls back UP to the scan input
@@ -117,33 +98,10 @@ const Landing = () => {
 
       <main id="main-content">
       {/* ── Hero + Why (shared animated background) ───────────────── */}
-      <GradientMeshBg className="relative" variant="mono">
         <section
-          ref={heroRef}
           className="hero relative min-h-screen flex items-center pt-24 sm:pt-32 pb-10 px-4 overflow-hidden"
         >
-          {/* Parallax background layer — drifts slower than scroll, fades
-              out toward the next section. Built from the same indigo/mono
-              orb palette as GradientMeshBg (not a stock photo) so it stays
-              inside this app's established abstract-mesh visual language
-              instead of introducing off-brand imagery. */}
-          <motion.div
-            aria-hidden="true"
-            className="absolute inset-0 pointer-events-none"
-            style={{ y: heroBgY, opacity: heroBgOpacity }}
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                background: 'radial-gradient(ellipse 80% 60% at 50% 20%, hsl(var(--primary) / 0.16), transparent 70%)',
-              }}
-            />
-            {/* Background-to-transparent overlay for depth/legibility, using
-                the app's own background token rather than a literal black. */}
-            <div className="absolute inset-0 bg-gradient-to-b from-background via-transparent to-background" />
-          </motion.div>
-
-          <div className="relative max-w-2xl mx-auto text-center">
+          <div className="relative w-full max-w-6xl mx-auto text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -156,24 +114,21 @@ const Landing = () => {
                   This is the "new category, pay attention" moment, same
                   spirit as .ai-presence-accent below. */}
               <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full mb-7 font-data uppercase tracking-wider border border-primary/30 bg-primary/10 text-primary">
-                <Sparkles className="w-3 h-3" /> New service category: GEO Audits for agencies
+                <Sparkles className="w-3 h-3" /> For SEO &amp; digital agencies
               </span>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.05] tracking-tight">
-                Check if{' '}
-                <span className="ai-presence-accent" data-text="ChatGPT recommends">
-                  <span className="ai-presence-accent-text">ChatGPT recommends</span>
-                </span>{' '}
-                your client's brand.
+              <h1 className="hero-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.05] tracking-tight">
+                Turn{' '}
+                <span className="ai-presence-accent" data-text="AI visibility">
+                  <span className="ai-presence-accent-text">AI visibility</span>
+                </span>{' '}into your next client win.
               </h1>
               <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-4">
-                AI assistants are increasingly where your clients' customers ask for
-                recommendations instead of Google. Presora audits any brand across 6 AI
-                models in about 15 seconds.
+                Presora helps agencies show clients how ChatGPT, Claude and other AI assistants
+                recommend their brand — then turn the findings into an actionable audit in about 15 seconds.
               </p>
               <p className="text-sm text-foreground/70 max-w-xl mx-auto mb-10">
-                Every scan doubles as a report you can hand straight to the client it's
-                about —{' '}
-                <span className="text-foreground font-medium">exported as a PDF under your own logo.</span>
+                Scan a prospect or client, uncover the gaps, and{' '}
+                <span className="text-foreground font-medium">send a PDF report under your own agency logo.</span>
               </p>
             </motion.div>
 
@@ -182,9 +137,32 @@ const Landing = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="max-w-xl mx-auto"
+              className="w-full max-w-6xl mx-auto"
             >
-              <HeroAuditMockup />
+              <LandingProductMockup />
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35 }}
+                className="mx-auto mt-8 max-w-4xl text-center"
+              >
+                <h3 className="text-lg font-display text-foreground mb-1">The AI models we query</h3>
+                <p className="text-sm text-muted-foreground mb-5">
+                  Every scan asks these models the same questions about your brand, at the same time.
+                </p>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                  {AI_MODELS.map((m) => (
+                    <div
+                      key={m.name}
+                      className="flex items-center gap-2.5 rounded-xl border border-[hsl(var(--glass-border))] bg-card/50 px-4 py-2.5 text-sm text-muted-foreground"
+                    >
+                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: m.color }} />
+                      <span className="text-foreground">{m.name}</span>
+                      <span className="text-[11px] text-muted-foreground/60">{m.tier}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             </motion.div>
 
             <motion.div
@@ -217,113 +195,6 @@ const Landing = () => {
               </div>
             </motion.div>
 
-            {/* scroll hint */}
-            <motion.button
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
-              onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
-              className="mt-8 mx-auto flex flex-col items-center gap-1.5 text-muted-foreground/50 hover:text-muted-foreground transition-colors"
-            >
-              <span className="text-[10px] uppercase tracking-[0.25em]">Learn more</span>
-              <motion.div animate={{ y: [0, 4, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}>
-                <ChevronDown className="w-4 h-4" />
-              </motion.div>
-            </motion.button>
-          </div>
-        </section>
-
-        {/* ── What you get — quick-scan strip right under the hero ────
-            Three real, grounded outcomes (not invented stats): a sharper
-            pitch, a billable white-label deliverable, a reason to renew.
-            Same underlying facts as the "Three ways this pays for itself"
-            section further down (id="monetize") — this is the immediate,
-            above-the-fold version for a reader who won't scroll that far. */}
-        <section className="pb-16 px-4">
-          <div className="max-w-4xl mx-auto">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="flex flex-col sm:flex-row items-start sm:items-center justify-center gap-x-10 gap-y-5"
-            >
-              {[
-                { Icon: Target, title: 'Win more pitches', desc: 'A real audit of the prospect, not a generic deck' },
-                { Icon: Wallet, title: 'Bill a new deliverable', desc: 'White-label PDF export, Agency plan' },
-                { Icon: Repeat, title: 'Give clients a reason to renew', desc: 'A fresh number to report every month' },
-              ].map(({ Icon, title, desc }) => (
-                <div key={title} className="flex items-center gap-2.5 text-left">
-                  <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                    <Icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-semibold text-foreground leading-tight">{title}</div>
-                    <div className="text-[11px] text-muted-foreground leading-tight">{desc}</div>
-                  </div>
-                </div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-
-        {/* ── How it works ─────────────────────────────────────────── */}
-        <section id="how-it-works" className="pb-20 px-4 scroll-mt-28">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-center text-sm text-muted-foreground mb-5 sm:mb-6">How it works</h2>
-            {/* Scroll-scrubbed: the three steps light up and the scan bar
-                fills from the reader's own scroll position, so the ~15s
-                audit is shown running rather than just described, and the
-                three explanations arrive one at a time instead of as one
-                block. Falls back to a fully-revealed static state under
-                prefers-reduced-motion. */}
-            <ScrollAuditDemo />
-
-            {/* ── Trust bar — real product facts, not invented usage stats ── */}
-            <div className="mt-10 sm:mt-14 flex flex-col sm:flex-row items-center justify-center gap-x-8 gap-y-4">
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                  <Sparkles className="w-4 h-4 text-primary" />
-                </div>
-                <div className="text-left">
-                  <div className="text-sm font-semibold text-foreground leading-tight">Up to 6 AI models</div>
-                  <div className="text-[11px] text-muted-foreground leading-tight">ChatGPT, Claude &amp; Gemini — plus 3 more on Business</div>
-                </div>
-              </div>
-
-              <div className="hidden sm:block w-px h-9 bg-[hsl(var(--glass-border))]" />
-
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                  <Clock className="w-4 h-4 text-primary" />
-                </div>
-                <div className="text-left">
-                  <div className="text-sm font-semibold text-foreground leading-tight">~15 seconds</div>
-                  <div className="text-[11px] text-muted-foreground leading-tight">to get your AI visibility score</div>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Proof teaser: shows the actual output, not just a promise ── */}
-            <motion.button
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              onClick={() => document.getElementById('sample-report')?.scrollIntoView({ behavior: 'smooth' })}
-              className="group mt-8 mx-auto flex items-center gap-3 sm:gap-4 rounded-2xl border border-[hsl(var(--glass-border))] bg-card/60 backdrop-blur-xl px-4 py-3 sm:px-5 sm:py-3.5 shadow-sm hover:border-primary/40 hover:bg-card/80 transition-colors text-left"
-            >
-              <span className="shrink-0 inline-flex flex-col items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                <span className="text-base sm:text-lg font-display font-semibold text-emerald-600 dark:text-emerald-400 leading-none">78</span>
-                <span className="text-[8px] uppercase tracking-wider text-emerald-600/70 dark:text-emerald-400/70 leading-none mt-0.5">/100</span>
-              </span>
-              <span className="min-w-0">
-                <span className="block text-xs sm:text-sm font-medium text-foreground">
-                  Sample: Tesla scored 78 — recommended by ChatGPT &amp; Claude
-                </span>
-                <span className="inline-flex items-center gap-1 text-xs text-primary group-hover:gap-1.5 transition-all mt-0.5">
-                  See the full report <ArrowRight className="w-3 h-3" />
-                </span>
-              </span>
-            </motion.button>
           </div>
         </section>
 
@@ -380,7 +251,6 @@ const Landing = () => {
           </div>
         </section>
 
-      </GradientMeshBg>
 
       {/* ── Action, not just a report ─────────────────────────────── */}
       <section className="py-24 px-4 border-t border-[hsl(var(--glass-border))]">
@@ -462,45 +332,6 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* ── Integrations ──────────────────────────────────────────── */}
-      <section className="py-16 px-4 border-t border-[hsl(var(--glass-border))]">
-        <div className="max-w-4xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h3 className="text-lg font-display text-foreground mb-1">The AI models we query</h3>
-            <p className="text-sm text-muted-foreground mb-8">
-              Every scan asks these models the same questions about your brand, at the same time.
-              Free covers ChatGPT; Starter and Solo add Claude and Gemini; Business unlocks all six.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="flex flex-wrap items-center justify-center gap-3"
-          >
-            {AI_MODELS.map((m) => (
-              <div
-                key={m.name}
-                className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-[hsl(var(--glass-border))] bg-card/50 text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
-              >
-                <span
-                  className="w-2 h-2 rounded-full shrink-0"
-                  style={{ backgroundColor: m.color }}
-                />
-                <span className="text-foreground">{m.name}</span>
-                <span className="text-[11px] text-muted-foreground/60">{m.tier}</span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
       {/* ── Testimonials ──────────────────────────────────────────── */}
       <section className="py-24 px-4 border-t border-[hsl(var(--glass-border))]">
         <div className="max-w-6xl mx-auto">
@@ -549,57 +380,6 @@ const Landing = () => {
           </p>
         </div>
       </section>
-
-      {/* ── CTA box ───────────────────────────────────────────────── */}
-      <section className="py-20 px-4 cta-box">
-        <div className="max-w-2xl mx-auto text-center glass-card p-12">
-          <h2 className="text-2xl font-display text-foreground mb-3">Run your first client audit</h2>
-          <p className="text-muted-foreground text-sm mb-8">Scan a prospect's brand today — free, no card required.</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <button
-              onClick={() => document.getElementById('hero-input')?.scrollIntoView({ behavior: 'smooth' })}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
-            >
-              Start for free
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-          <p className="text-xs text-muted-foreground/50 mt-4">No credit card required</p>
-
-          {/* Risk-reversal guarantees */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-6 text-xs text-muted-foreground">
-            {[
-              { icon: ShieldCheck, label: '14-day money-back guarantee' },
-              { icon: Clock, label: 'Cancel anytime, one click' },
-              { icon: Zap, label: 'Results in under 15 seconds' },
-            ].map((g) => (
-              <span key={g.label} className="inline-flex items-center gap-1.5">
-                <g.icon className="w-3.5 h-3.5 text-primary" />
-                {g.label}
-              </span>
-            ))}
-          </div>
-
-          {/* Trust badges */}
-          <div className="flex flex-wrap items-center justify-center gap-4 mt-8 pt-8 border-t border-[hsl(var(--glass-border))]">
-            {[
-              { icon: '🔒', label: 'SSL / TLS', sub: 'Encrypted connection' },
-              { icon: '🇪🇺', label: 'GDPR Ready', sub: 'EU-compliant data' },
-              { icon: '💳', label: 'Secure payments', sub: 'SSL-encrypted checkout' },
-              { icon: '🔐', label: '2FA', sub: 'Account protection' },
-            ].map(badge => (
-              <div key={badge.label} className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl border border-[hsl(var(--glass-border))] bg-card/40">
-                <span className="text-lg">{badge.icon}</span>
-                <div className="text-left">
-                  <p className="text-xs font-semibold text-foreground">{badge.label}</p>
-                  <p className="text-[10px] text-muted-foreground">{badge.sub}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
 
       {/* ── Monetize: features translated into agency revenue ─────────
           B2B value prop — every card names a feature that already ships
@@ -672,7 +452,7 @@ const Landing = () => {
           these prices can't drift from /pricing or from Stripe checkout.
           Every CTA goes to /register: nobody is signed in here, and the
           checkout on /pricing requires a session anyway. */}
-      <section id="pricing" className="py-24 px-4 border-t border-[hsl(var(--glass-border))] scroll-mt-28">
+      <section id="pricing" className="bg-card/20 py-24 px-4 border-t border-[hsl(var(--glass-border))] scroll-mt-28">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -692,6 +472,27 @@ const Landing = () => {
             </p>
           </motion.div>
 
+          <div className="mb-10 flex justify-center">
+            <div className="inline-flex items-center rounded-2xl border-2 border-border bg-card p-1.5 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setPricingAudience('individual')}
+                className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${pricingAudience === 'individual' ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-transparent bg-transparent text-foreground hover:border-border hover:bg-muted'}`}
+                aria-pressed={pricingAudience === 'individual'}
+              >
+                <UserRound className="h-4 w-4" /> Individual
+              </button>
+              <button
+                type="button"
+                onClick={() => setPricingAudience('team')}
+                className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${pricingAudience === 'team' ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-transparent bg-transparent text-foreground hover:border-border hover:bg-muted'}`}
+                aria-pressed={pricingAudience === 'team'}
+              >
+                <UsersRound className="h-4 w-4" /> Team &amp; Enterprise
+              </button>
+            </div>
+          </div>
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -699,10 +500,14 @@ const Landing = () => {
             transition={{ delay: 0.1 }}
           >
             <PricingCards
-              plans={PLANS}
+              plans={pricingAudience === 'individual'
+                ? PLANS.filter((plan) => ['free', 'starter', 'solo'].includes(plan.id))
+                : PLANS.filter((plan) => ['starter', 'growth', 'enterprise'].includes(plan.id))}
               billingCycle={billingCycle}
               onCycleChange={setBillingCycle}
               onPlanSelect={() => navigate('/register')}
+              showBillingToggle
+              className="[&_.rounded-2xl]:border-border [&_.rounded-2xl]:bg-card [&_.rounded-2xl]:shadow-none [&_.rounded-2xl:hover]:shadow-none [&_.bg-muted\\/30]:bg-card/70"
             />
           </motion.div>
 

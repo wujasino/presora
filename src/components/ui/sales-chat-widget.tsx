@@ -12,6 +12,31 @@ const SUGGESTIONS = [
   'Which AI models do you check?',
 ];
 
+const getRouteLink = (text: string): ChatMsg['link'] => {
+  const question = text.toLowerCase();
+
+  if (/\b(price|pricing|cost|plan|plans|cena|cennik|koszt|pakiet)\b/.test(question)) {
+    return { label: 'See all plans and pricing', href: '/pricing' };
+  }
+  if (/\b(agency|agencies|agencj|white.label|client|clients)\b/.test(question)) {
+    return { label: 'Explore Presora for agencies', href: '/agencies' };
+  }
+  if (/\b(api|webhook|integration|integrat|developer|developers)\b/.test(question)) {
+    return { label: 'See product features', href: '/features' };
+  }
+  if (/\b(model|models|chatgpt|claude|gemini|perplexity|mistral|llama)\b/.test(question)) {
+    return { label: 'See the AI models we query', href: '/#hero-input' };
+  }
+  if (/\b(report|reports|sample|action plan|recommendation)\b/.test(question)) {
+    return { label: 'View a sample report', href: '/#sample-report' };
+  }
+  if (/\b(sign up|signup|register|start|free|trial|zał[oó]ż|zaczn)\b/.test(question)) {
+    return { label: 'Start your free audit', href: '/register' };
+  }
+
+  return undefined;
+};
+
 export function SalesChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([GREETING]);
@@ -35,7 +60,11 @@ export function SalesChatWidget() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || 'Something went wrong.');
-      setMessages(m => [...m, { role: 'assistant', text: data.reply || "Sorry, I didn't catch that." }]);
+      setMessages(m => [...m, {
+        role: 'assistant',
+        text: data.reply || "Sorry, I didn't catch that.",
+        link: getRouteLink(trimmed),
+      }]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {

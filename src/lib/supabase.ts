@@ -40,11 +40,15 @@ const auth = new AuthClient({
   url: authUrl,
   headers: { apikey: supabaseAnonKey, Authorization: `Bearer ${supabaseAnonKey}` },
   storageKey,
+  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   autoRefreshToken: true,
   persistSession: true,
   detectSessionInUrl: true,
   flowType: 'implicit',
 });
+
+// Restore the persisted session once before auth-dependent routes render.
+export const initialSession = auth.getSession();
 
 // Same fetchWithAuth logic supabase-js uses for its rest/storage clients:
 // attach the current session's access token if there is one, otherwise

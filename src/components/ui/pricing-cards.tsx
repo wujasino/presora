@@ -149,7 +149,7 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                 <div className="flex items-center justify-between gap-2 mb-4 min-h-[1.5rem]">
                   <span className="text-sm font-medium text-muted-foreground">{plan.name}</span>
                   {plan.isPopular && (
-                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap text-white bg-gradient-to-r from-amber-500 to-orange-500 shadow-sm">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap text-amber-200 border border-amber-400/30 bg-amber-400/10">
                       {t('popular')}
                     </span>
                   )}

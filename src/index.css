@@ -273,14 +273,94 @@
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
   }
 
+  .hero-headline {
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+    font-weight: 700;
+  }
+
+  /* The landing preview contains a compact, app-like demo with its own
+     palette. Keep its existing hierarchy in dark mode while translating the
+     shared surfaces and typography when the page switches to light mode. */
+  .landing-product-mockup-light [class~="bg-[#101725]"],
+  .landing-product-mockup-light [class~="bg-[#0b101b]"],
+  .landing-product-mockup-light [class~="bg-[#151d2b]"] {
+    background-color: hsl(var(--card)) !important;
+  }
+  .landing-product-mockup-light [class~="bg-background"] {
+    background-color: transparent !important;
+  }
+  .landing-product-mockup-light [class~="bg-[#0c121e]"],
+  .landing-product-mockup-light [class~="bg-[#101722]"] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  .landing-product-mockup-light [class~="border-slate-700"],
+  .landing-product-mockup-light [class~="border-slate-700/80"],
+  .landing-product-mockup-light [class~="border-slate-800"] {
+    border-color: hsl(var(--border)) !important;
+  }
+  .landing-product-mockup-light [class~="text-slate-100"],
+  .landing-product-mockup-light [class~="text-slate-200"],
+  .landing-product-mockup-light [class~="text-slate-300"] {
+    color: hsl(var(--foreground)) !important;
+  }
+  .landing-product-mockup-light [class~="text-slate-400"],
+  .landing-product-mockup-light [class~="text-slate-500"],
+  .landing-product-mockup-light [class~="text-slate-600"] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  .landing-product-mockup-light [class*="bg-slate-700"],
+  .landing-product-mockup-light [class*="bg-slate-800"] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  .landing-product-mockup-light [class*="bg-slate-600"] {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  .landing-product-mockup-light [class*="border-slate-700"],
+  .landing-product-mockup-light [class*="border-slate-800"] {
+    border-color: hsl(var(--border)) !important;
+  }
+  .landing-product-mockup-light [class*="text-white"] {
+    color: hsl(var(--foreground)) !important;
+  }
+  .landing-product-mockup-light button[class*="bg-slate-700"] {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+  .landing-product-mockup-light button[class*="bg-slate-200"] {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  .landing-product-mockup-light button:disabled {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--secondary-foreground)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  .landing-product-mockup-light input,
+  .landing-product-mockup-light textarea {
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+    background-color: hsl(var(--background)) !important;
+  }
+  .landing-product-mockup-light [class*="divide-slate-800"] > :not([hidden]) ~ :not([hidden]) {
+    border-color: hsl(var(--border)) !important;
+  }
+  /* Real app screens rendered inside the fixed-height preview carry their
+     own full-page min-height. Remove it only in the preview so Brand Scan
+     cannot create an unbounded nested scroll area. */
+  .landing-product-mockup [class~="min-h-screen"] {
+    min-height: 0 !important;
+  }
+
   /* ── Hero "AI presence" accent — chromatic-split ghosting: two
      colour-offset duplicates of the text behind the real glyphs, screen-
      blended so they read as a soft digital fringe rather than a shadow. ── */
   .ai-presence-accent {
     position: relative;
     display: inline-block;
-    font-family: 'Libre Baskerville', Georgia, serif;
-    font-style: italic;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-style: normal;
+    font-weight: 700;
   }
   .ai-presence-accent-text {
     position: relative;
