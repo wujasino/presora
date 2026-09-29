@@ -10,7 +10,14 @@ test.describe('Public pages', () => {
     // On mobile the navbar collapses "Sign in" behind a hamburger menu, so
     // check for the wordmark instead — present in both layouts.
     await expect(page.getByRole('link', { name: 'Presora — AI brand visibility' })).toBeVisible();
-    await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(page.getByText('AI competitive intelligence for agencies')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(
+      'Find out why competitors get recommended by AI — and what to do to outrank them.',
+    );
+    await expect(page.getByRole('heading', { name: 'A repeatable path from gap to growth' })).toBeVisible();
+    for (const step of ['Measure', 'Explain', 'Act', 'Measure again']) {
+      await expect(page.getByText(step, { exact: true })).toBeVisible();
+    }
     expect(consoleIssues, JSON.stringify(consoleIssues)).toEqual([]);
   });
 

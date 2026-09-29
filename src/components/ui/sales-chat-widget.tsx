@@ -1,13 +1,13 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ChatWidgetShell, type ChatMsg } from '@/components/ui/chat-widget-shell';
 
 const GREETING: ChatMsg = {
   role: 'assistant',
-  text: "Hi! I can answer questions about Presora — how AI visibility scoring works, pricing, models we query, anything like that. What would you like to know?",
+  text: "Hi, welcome to Presora. I can help you understand competitor insights, explore plans, or find the right next step for your team.\n\nWhat would you like to know?",
 };
 
 const SUGGESTIONS = [
-  'What does Presora actually do?',
+  'How can Presora help my agency?',
   'How much does it cost?',
   'Which AI models do you check?',
 ];
@@ -43,31 +43,51 @@ export function SalesChatWidget() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const inFlight = useRef(false);
 
-  const send = async (text: string) => {
+  const send = async (text: string, retry = false) => {
     const trimmed = text.trim();
-    if (!trimmed || loading) return;
+    if (!trimmed || inFlight.current) return;
+    inFlight.current = true;
     setError('');
-    const next = [...messages, { role: 'user' as const, text: trimmed }];
+    const next = retry ? messages : [...messages, { role: 'user' as const, text: trimmed }];
     setMessages(next);
     setInput('');
     setLoading(true);
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 30_000);
     try {
+      // Exclude the local greeting and links; keep the payload below the API's 8 KB limit.
+      const history = next.slice(1).map(({ role, text }) => ({ role, text }));
+      while (history.length > 1 && new TextEncoder().encode(JSON.stringify({ messages: history })).length > 7000) {
+        history.shift();
+        while (history[0]?.role === 'assistant') history.shift();
+      }
       const res = await fetch('/.netlify/functions/chat-sales', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: history }),
+        signal: controller.signal,
       });
+      if (!res.ok) throw new Error(res.status === 429
+        ? 'You’ve sent a few questions quickly. Please wait a moment, then try again.'
+        : 'Presora couldn’t answer just now. Please try again.');
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || 'Something went wrong.');
+      if (typeof data.reply !== 'string' || !data.reply.trim()) throw new Error('The reply was empty. Please try again.');
       setMessages(m => [...m, {
         role: 'assistant',
-        text: data.reply || "Sorry, I didn't catch that.",
+        text: data.reply.trim(),
         link: getRouteLink(trimmed),
       }]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setError(err instanceof Error && err.name === 'AbortError'
+        ? 'This answer is taking longer than expected. Please try again.'
+        : err instanceof TypeError || err instanceof SyntaxError
+          ? 'We couldn’t connect to the assistant. Please try again.'
+          : err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
+      window.clearTimeout(timeout);
+      inFlight.current = false;
       setLoading(false);
     }
   };
@@ -75,6 +95,11 @@ export function SalesChatWidget() {
   return (
     <ChatWidgetShell
       title="Ask Presora"
+      subtitle="AI assistant · Product & pricing"
+      onRetry={() => {
+        const last = messages[messages.length - 1];
+        if (last?.role === 'user') void send(last.text, true);
+      }}
       messages={messages}
       loading={loading}
       error={error}

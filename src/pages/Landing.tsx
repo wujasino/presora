@@ -87,7 +87,7 @@ const Landing = () => {
       <main id="main-content">
       {/* ── Hero + Why (shared animated background) ───────────────── */}
         <section
-          className="hero relative min-h-screen flex items-center pt-24 sm:pt-32 pb-10 px-4 overflow-hidden"
+          className="hero relative min-h-screen flex items-center pt-24 sm:pt-28 pb-10 px-4 overflow-hidden"
         >
           <div className="relative w-full max-w-6xl mx-auto text-center">
             <motion.div
@@ -101,20 +101,20 @@ const Landing = () => {
                   not casually re-adding indigo to background/wash chrome).
                   This is the "new category, pay attention" moment, same
                   spirit as .ai-presence-accent below. */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full mb-7 font-data uppercase tracking-wider border border-primary/30 bg-primary/10 text-primary">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full mb-5 font-medium border border-primary/20 bg-primary/5 text-primary">
                 <Sparkles className="w-3 h-3" /> AI competitive intelligence for agencies
               </span>
-              <h1 className="hero-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.05] tracking-tight">
+              <h1 className="hero-headline max-w-4xl mx-auto text-[1.875rem] sm:text-4xl lg:text-5xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.2] tracking-tight text-balance">
                 Find out why{' '}
                 <span className="ai-presence-accent" data-text="competitors">
                   <span className="ai-presence-accent-text">competitors</span>
                 </span>{' '}get recommended by AI — and what to do to outrank them.
               </h1>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
+              <p className="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl mx-auto mb-4">
                 Presora compares your brand with the competitors AI recommends, explains the gaps
                 behind those answers, and turns them into a prioritized action plan.
               </p>
-              <p className="text-sm text-foreground/70 max-w-2xl mx-auto mb-10">
+              <p className="text-sm leading-relaxed text-foreground/70 max-w-2xl mx-auto mb-8">
                 <span className="text-foreground font-semibold">Measure → Explain → Act → Measure again.</span>{' '}
                 Give clients a reason to keep improving, not a dashboard they check once.
               </p>
