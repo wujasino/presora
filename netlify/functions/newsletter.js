@@ -2,10 +2,10 @@
  * POST /.netlify/functions/newsletter
  * Body: { email: string }
  */
-const { createClient } = require('@supabase/supabase-js');
-const crypto = require('crypto');
-const ws = require('ws');
-const { appendRow } = require('./_lib/googleSheets');
+import { createClient } from '@supabase/supabase-js';
+import crypto from 'node:crypto';
+import ws from 'ws';
+import { appendRow } from './_lib/googleSheets.js';
 
 // Node < 22 has no native WebSocket — supabase-js inits Realtime eagerly.
 if (!globalThis.WebSocket) {
@@ -100,7 +100,7 @@ const corsHeaders = (origin) => ({
 // Stricter email regex: requires TLD of at least 2 chars
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,253}\.[a-zA-Z]{2,}$/;
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const origin = event.headers.origin || '';
   const headers = corsHeaders(origin);
 

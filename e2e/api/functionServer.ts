@@ -57,15 +57,14 @@ export function startFunctionServer(handler: NetlifyHandler): Promise<{ server: 
   });
 }
 
-export function closeServer(server: http.Server): Promise<void> {
+export function closeServer(server: http.Server | undefined): Promise<void> {
+  if (!server) return Promise.resolve();
   return new Promise((resolve) => server.close(() => resolve()));
 }
 
 /**
- * Loads a Netlify Function's `exports.handler`. These specs run as ESM
- * (this project's package.json says "type": "module"), so `require()` isn't
- * available — dynamic `import()` of the CommonJS file works instead, with
- * Node's cjs-module-lexer interop exposing `exports.X` as named exports.
+ * Loads a Netlify Function's handler using the native ESM loader, matching
+ * netlify/functions/package.json ("type": "module").
  *
  * Pass `fresh: true` to force a genuinely new module evaluation (e.g. to
  * pick up a changed `process.env` before the module reads it at load time)

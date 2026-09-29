@@ -14,6 +14,9 @@ test.describe('Public pages', () => {
     await expect(page.getByRole('heading', { level: 1 })).toContainText(
       'Find out why competitors get recommended by AI — and what to do to outrank them.',
     );
+    await expect(
+      page.getByText('Give clients a reason to keep improving, not a dashboard they check once.', { exact: true }),
+    ).toHaveCount(0);
     await expect(page.getByRole('heading', { name: 'A repeatable path from gap to growth' })).toBeVisible();
     for (const step of ['Measure', 'Explain', 'Act', 'Measure again']) {
       await expect(page.getByText(step, { exact: true })).toBeVisible();

@@ -21,8 +21,8 @@
  * on every scan anyway — a hiccup here must never make the app claim
  * scanning is down when it isn't.
  */
-const { createClient } = require('@supabase/supabase-js');
-const ws = require('ws');
+import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
 if (!globalThis.WebSocket) globalThis.WebSocket = ws;
 
@@ -50,7 +50,7 @@ const corsHeaders = (origin) => ({
   'Vary': 'Origin',
 });
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const headers = corsHeaders(event.headers.origin || '');
 
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers };

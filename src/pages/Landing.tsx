@@ -114,10 +114,6 @@ const Landing = () => {
                 Presora compares your brand with the competitors AI recommends, explains the gaps
                 behind those answers, and turns them into a prioritized action plan.
               </p>
-              <p className="text-sm leading-relaxed text-foreground/70 max-w-2xl mx-auto mb-8">
-                <span className="text-foreground font-semibold">Measure → Explain → Act → Measure again.</span>{' '}
-                Give clients a reason to keep improving, not a dashboard they check once.
-              </p>
             </motion.div>
 
             <motion.div

@@ -7,8 +7,8 @@
  * of a local-only toggle. Always operates on the verified user's own email,
  * never a client-supplied one.
  */
-const { createClient } = require('@supabase/supabase-js');
-const ws = require('ws');
+import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 
 if (!globalThis.WebSocket) {
   globalThis.WebSocket = ws;
@@ -42,7 +42,7 @@ const corsHeaders = (origin) => ({
   'Vary': 'Origin',
 });
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const headers = corsHeaders(event.headers.origin || '');
 
   if (event.httpMethod === 'OPTIONS') {

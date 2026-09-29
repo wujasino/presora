@@ -49,10 +49,8 @@ test.describe('/.netlify/functions/newsletter-preference — misconfigured envir
   // so Netlify couldn't invoke the function at all and returned a bare 502.
   //
   // This needs a genuinely fresh module evaluation with the env vars unset,
-  // which an in-process re-import can't guarantee (Node's CJS interop caches
-  // netlify/functions/*.js by file path, ignoring cache-busting query
-  // strings) — so this spawns a real child process instead, exactly like a
-  // fresh Netlify cold start would.
+  // including transitive dependencies — so this spawns a real child
+  // process instead, exactly like a fresh Netlify cold start would.
   test('a missing Supabase URL/key degrades to a clean 500, not a crash', async () => {
     const { stdout } = await execFileAsync('node', ['e2e/api/fixtures/checkMisconfigured.mjs']);
     const result = JSON.parse(stdout);

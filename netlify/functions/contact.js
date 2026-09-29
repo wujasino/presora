@@ -3,9 +3,9 @@
  * Body: { name, email, subject, message }
  * Saves to Supabase + sends email notification via Resend (optional)
  */
-const { createClient } = require('@supabase/supabase-js');
-const ws = require('ws');
-const { appendRow } = require('./_lib/googleSheets');
+import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
+import { appendRow } from './_lib/googleSheets.js';
 
 if (!globalThis.WebSocket) globalThis.WebSocket = ws;
 
@@ -67,7 +67,7 @@ const corsHeaders = (origin) => ({
   'Vary': 'Origin',
 });
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const origin = event.headers.origin || '';
   const headers = corsHeaders(origin);
 

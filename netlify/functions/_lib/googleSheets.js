@@ -31,7 +31,7 @@
  * a missing GOOGLE_SHEETS_ID as "not configured yet" and skips silently,
  * the same way Mailchimp/Resend integrations degrade elsewhere.
  */
-const crypto = require('crypto');
+import crypto from 'node:crypto';
 
 const base64url = (input) =>
   Buffer.from(input).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -115,4 +115,4 @@ async function appendRow(sheetName, values) {
   }
 }
 
-module.exports = { appendRow };
+export { appendRow };

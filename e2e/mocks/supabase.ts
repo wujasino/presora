@@ -258,6 +258,7 @@ export async function mockAuthenticatedApp(page: Page, opts: {
   await mockEmptyTables(page);
   await mockReferralFunction(page, referral);
   await mockNewsletterPreference(page, false);
+  await page.route('**/.netlify/functions/scan-status', route => json(route, 200, { enabled: true }));
 
   return { session, profile, analyses, referral };
 }
