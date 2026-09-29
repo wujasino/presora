@@ -4,7 +4,7 @@ import { Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
- * A small floating "Check my brand" pill that appears once the reader has
+ * A small floating "Compare my brand" pill that appears once the reader has
  * scrolled past the hero (so it never duplicates the hero's own CTA) and
  * hides again near the footer (so it doesn't stack with the newsletter
  * form / footer CTA down there). Clicking it scrolls back UP to the same
@@ -55,7 +55,7 @@ export const StickyCtaPill = () => {
           )}
         >
           <Sparkles className="w-4 h-4" />
-          Check my brand
+          Compare my brand
         </motion.button>
       )}
     </AnimatePresence>

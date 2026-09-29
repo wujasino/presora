@@ -17,23 +17,11 @@ import { FAQ_EN } from '@/lib/faq';
 import { PricingCards } from '@/components/ui/pricing-cards';
 import { PLANS } from '@/lib/plans';
 
-/* ── AI models actually queried ────────────────────────────────────
-   Mirrors OPENROUTER_MODELS in netlify/functions/_lib/runScan.js — these
-   are the six models a scan really hits, in tier order.
-
-   This block used to list Slack, HubSpot, Zapier, Google Analytics, Semrush
-   and Notion under the heading "Powered by leading AI models". None of them
-   are AI models, and none of them are integrations that exist: nothing in
-   netlify/functions talks to any of those services. Promising integrations
-   that aren't built is the most expensive kind of copy to be caught on, so
-   the logos are gone rather than relabelled. */
-const AI_MODELS = [
-  { name: 'ChatGPT (GPT-4o)', vendor: 'OpenAI', color: '#10a37f', tier: 'All plans' },
-  { name: 'Claude', vendor: 'Anthropic', color: '#d97757', tier: 'Starter and up' },
-  { name: 'Gemini', vendor: 'Google', color: '#4285f4', tier: 'Starter and up' },
-  { name: 'Perplexity', vendor: 'Perplexity AI', color: '#20808d', tier: 'Business' },
-  { name: 'Mistral', vendor: 'Mistral AI', color: '#ff7000', tier: 'Business' },
-  { name: 'Llama 3', vendor: 'Meta', color: '#0866ff', tier: 'Business' },
+const GROWTH_LOOP = [
+  { Icon: Eye, step: 'Measure', desc: 'See which brands AI recommends across 6 leading models.' },
+  { Icon: HelpCircle, step: 'Explain', desc: 'Understand the signals that put competitors ahead.' },
+  { Icon: PenLine, step: 'Act', desc: 'Get a ranked plan of pages, proof and mentions to create.' },
+  { Icon: Repeat, step: 'Measure again', desc: 'Re-scan to prove what changed and where you gained ground.' },
 ];
 
 /* ── Trust points ─────────────────────────────────────────────────── */
@@ -79,7 +67,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-background font-landing relative">
       {/* Engagement hooks: a top progress bar (orientation — how much is
-          left) and a floating "Check my brand" pill that appears once
+          left) and a floating "Compare my brand" pill that appears once
           scrolled past the hero and scrolls back UP to the scan input
           rather than navigating away, so a reader who scrolled past the
           first CTA without acting always has the same one back within
@@ -114,21 +102,21 @@ const Landing = () => {
                   This is the "new category, pay attention" moment, same
                   spirit as .ai-presence-accent below. */}
               <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs rounded-full mb-7 font-data uppercase tracking-wider border border-primary/30 bg-primary/10 text-primary">
-                <Sparkles className="w-3 h-3" /> For SEO &amp; digital agencies
+                <Sparkles className="w-3 h-3" /> AI competitive intelligence for agencies
               </span>
               <h1 className="hero-headline text-4xl sm:text-5xl lg:text-6xl xl:text-7xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.05] tracking-tight">
-                Turn{' '}
-                <span className="ai-presence-accent" data-text="AI visibility">
-                  <span className="ai-presence-accent-text">AI visibility</span>
-                </span>{' '}into your next client win.
+                Find out why{' '}
+                <span className="ai-presence-accent" data-text="competitors">
+                  <span className="ai-presence-accent-text">competitors</span>
+                </span>{' '}get recommended by AI — and what to do to outrank them.
               </h1>
-              <p className="text-lg text-muted-foreground max-w-xl mx-auto mb-4">
-                Presora helps agencies show clients how ChatGPT, Claude and other AI assistants
-                recommend their brand — then turn the findings into an actionable audit in about 15 seconds.
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-4">
+                Presora compares your brand with the competitors AI recommends, explains the gaps
+                behind those answers, and turns them into a prioritized action plan.
               </p>
-              <p className="text-sm text-foreground/70 max-w-xl mx-auto mb-10">
-                Scan a prospect or client, uncover the gaps, and{' '}
-                <span className="text-foreground font-medium">send a PDF report under your own agency logo.</span>
+              <p className="text-sm text-foreground/70 max-w-2xl mx-auto mb-10">
+                <span className="text-foreground font-semibold">Measure → Explain → Act → Measure again.</span>{' '}
+                Give clients a reason to keep improving, not a dashboard they check once.
               </p>
             </motion.div>
 
@@ -146,19 +134,24 @@ const Landing = () => {
                 transition={{ delay: 0.35 }}
                 className="mx-auto mt-8 max-w-4xl text-center"
               >
-                <h3 className="text-lg font-display text-foreground mb-1">The AI models we query</h3>
+                <h3 className="text-lg font-display text-foreground mb-1">A repeatable path from gap to growth</h3>
                 <p className="text-sm text-muted-foreground mb-5">
-                  Every scan asks these models the same questions about your brand, at the same time.
+                  Presora does more than measure visibility. It tells you why competitors win and what to change next.
                 </p>
-                <div className="flex flex-wrap items-center justify-center gap-3">
-                  {AI_MODELS.map((m) => (
+                <div className="grid grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
+                  {GROWTH_LOOP.map(({ Icon, step, desc }, index) => (
                     <div
-                      key={m.name}
-                      className="flex items-center gap-2.5 rounded-xl border border-[hsl(var(--glass-border))] bg-card/50 px-4 py-2.5 text-sm text-muted-foreground"
+                      key={step}
+                      className="rounded-xl border border-[hsl(var(--glass-border))] bg-card/50 p-4"
                     >
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: m.color }} />
-                      <span className="text-foreground">{m.name}</span>
-                      <span className="text-[11px] text-muted-foreground/60">{m.tier}</span>
+                      <div className="mb-3 flex items-center gap-2">
+                        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="font-data text-[10px] uppercase tracking-wider text-muted-foreground">0{index + 1}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">{step}</p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{desc}</p>
                     </div>
                   ))}
                 </div>
@@ -175,7 +168,7 @@ const Landing = () => {
                 onClick={() => document.getElementById('sample-report')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm text-primary hover:underline inline-flex items-center gap-1.5"
               >
-                Or see a sample report first <ArrowRight className="w-3.5 h-3.5" />
+                See how Presora explains the gap <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
               {/* Risk reversal, at the point of decision. These three used to
@@ -207,19 +200,18 @@ const Landing = () => {
               </span>
               <h2 className="text-3xl sm:text-4xl font-display text-foreground leading-[1.15] mb-4">
                 Every client meeting now includes a question your stack can't answer.<br />
-                <span className="text-primary">"Are we even visible on ChatGPT?"</span>
+                <span className="text-primary">"Why does AI recommend them instead of us?"</span>
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-8">
                 Rank trackers, backlink tools and social dashboards were built for a search page
-                that shows ten results. AI shows one answer — and for a growing share of buyers,
-                that's the only answer they ever see. Without a real audit, you're guessing
-                alongside your client instead of leading them.
+                that shows ten results. AI gives buyers a short list. Presora shows which competitors
+                make that list, the signals that put them there, and the actions most likely to close the gap.
               </p>
               <button
                 onClick={() => document.getElementById('hero-input')?.scrollIntoView({ behavior: 'smooth' })}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
               >
-                Run a free audit on a prospect
+                Compare a brand with its competitors
                 <ArrowRight className="w-4 h-4" />
               </button>
             </motion.div>
@@ -240,10 +232,10 @@ const Landing = () => {
                 What you get
               </span>
               <h2 className="text-3xl sm:text-4xl font-display text-foreground mb-3">
-                Your report, seconds after scanning
+                From score to reason to next move
               </h2>
               <p className="text-muted-foreground max-w-2xl mx-auto">
-                One visibility score, a breakdown across five signals, how each AI model talks about you, and the single highest-impact action to take next.
+                See who gets recommended, why they are ahead across five decision signals, and the highest-impact action to take next.
               </p>
             </motion.div>
 
@@ -265,8 +257,8 @@ const Landing = () => {
               <Sparkles className="w-3 h-3" /> Action, not just a report
             </span>
             <h2 className="text-3xl sm:text-4xl font-display text-foreground mb-3">
-              Know you're invisible? That's step one.<br />
-              <span className="text-primary">Here's what to publish next.</span>
+              Don't just see the gap.<br />
+              <span className="text-primary">Know exactly how to close it.</span>
             </h2>
             <p className="text-sm text-muted-foreground max-w-xl mx-auto">
               Every scan ends with a ranked, plain-English action plan: the specific pages, comparisons and mentions that move AI models to recommend you.

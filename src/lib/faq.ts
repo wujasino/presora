@@ -10,7 +10,7 @@ export interface FaqItem {
 export const FAQ_EN: FaqItem[] = [
   {
     q: 'What does Presora actually do?',
-    a: 'We ask the AI assistants your customers use — ChatGPT, Claude, Gemini and others — about your brand, then show you exactly what they said. You get one score out of 100, each assistant\'s answer, and a short list of things to fix, most important first.',
+    a: 'We ask the AI assistants your customers use — ChatGPT, Claude, Gemini and others — which brands they recommend in your category. Presora compares you with those competitors, explains the signals behind the gap, and ranks the actions most likely to close it.',
   },
   {
     q: 'What is Generative Engine Optimization (GEO)?',

@@ -1,6 +1,6 @@
 # Presora
 
-> Presora is a SaaS tool that measures how AI models — ChatGPT (GPT-4o), Claude, Gemini, Perplexity, Mistral and Llama — perceive a brand, and recommends concrete steps to improve that perception. Founded 2024. Contact: contact.presora@gmail.com.
+> Presora is a competitive intelligence platform that shows why ChatGPT, Claude, Gemini, Perplexity, Mistral and Llama recommend competitors, then turns those gaps into prioritized actions to outrank them. Founded 2024. Contact: contact.presora@gmail.com.
 
 Presora runs a brand name through multiple large language models and scores the result across 5 dimensions:
 
