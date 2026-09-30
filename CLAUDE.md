@@ -338,18 +338,17 @@ is). An account that already exceeded its plan's cap before this shipped
 keeps every existing brand fully queryable/re-scannable; only adding another
 new one going forward is affected.
 
-## Business plan price change ($89.99 -> $99) needs a new Stripe Price ID
+## Business plan price ($99) — Stripe Price ID resolved
 
 Migration `20240144` raised Solo's limits (10->15 analyses/month, 1->2
 brands) and `src/lib/plans.ts`/`index.html`/`salesKnowledge.js` were updated
-to advertise Business at $99/mo instead of $89.99 — but `create-checkout.js`
-still charges whatever `VITE_STRIPE_BUSINESS_PRICE_ID` points at, which was
-never repointed to a new $99 Stripe Price object. Until the owner creates
-one and updates that secret (GitHub Actions **and** Netlify env vars, same
-two-places split documented elsewhere in this file for the Agency price),
-Business checkout silently charges the old $89.99 while the page advertises
-$99 — a real price-mismatch, not just stale copy. Don't treat this as
-resolved by a content-only fix.
+to advertise Business at $99/mo instead of $89.99. `VITE_STRIPE_BUSINESS_PRICE_ID`
+/ `VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID` have since been repointed by the
+owner to new $99/mo and $950/yr Stripe Price objects, in both GitHub Actions
+secrets and Netlify env vars — no code change was needed, since
+`create-checkout.js`/`stripePlans.js`/`Pricing.tsx`/`pricing-modal.tsx` all
+already read those same env var names for this plan. Checkout now matches
+what the page advertises.
 
 `api-analyze.js` doesn't distinguish this trigger's exception from any other
 insert failure (same pre-existing gap as `'Analysis limit reached'` there —
