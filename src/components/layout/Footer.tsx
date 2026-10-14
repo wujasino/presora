@@ -22,16 +22,37 @@ const DiscordIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const LINKS = [
-  { label: 'About', to: '/about' },
-  { label: 'For Agencies', to: '/agencies' },
-  { label: 'Dashboard', to: '/dashboard' },
-  { label: 'Pricing', to: '/pricing' },
-  { label: 'API Docs', to: '/docs/api' },
-  { label: 'Contact', to: '/contact' },
-  { label: 'Status', to: '/status' },
-  { label: 'Privacy Policy', to: '/polityka-prywatnosci' },
-  { label: 'Terms of Service', to: '/regulamin' },
+const LINK_GROUPS = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Features', to: '/features' },
+      { label: 'Dashboard', to: '/dashboard' },
+      { label: 'Pricing', to: '/pricing' },
+      { label: 'For Agencies', to: '/agencies' },
+    ],
+  },
+  {
+    title: 'Resources',
+    links: [
+      { label: 'API Docs', to: '/docs/api' },
+      { label: 'System Status', to: '/status' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About', to: '/about' },
+      { label: 'Contact', to: '/contact' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { label: 'Privacy Policy', to: '/polityka-prywatnosci' },
+      { label: 'Terms of Service', to: '/regulamin' },
+    ],
+  },
 ];
 
 // Only profiles that actually exist. The Twitter/LinkedIn/GitHub entries
@@ -45,38 +66,54 @@ const SOCIALS = [
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-[hsl(var(--glass-border))] bg-card/20 py-10 px-4">
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
-        <Link to="/" className="flex items-center gap-2.5 w-fit shrink-0">
-          <Wordmark className="text-2xl" />
-        </Link>
+    <footer className="border-t border-[hsl(var(--glass-border))] bg-card/20 px-4 py-12">
+      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1.1fr_2fr] lg:gap-16">
+        <div>
+          <Link to="/" className="flex w-fit items-center gap-2.5">
+            <Wordmark className="text-2xl" />
+          </Link>
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            Monitor how leading AI models describe and recommend your brand.
+          </p>
+          <div className="mt-5 flex items-center gap-3">
+            {SOCIALS.map(({ href, Icon, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={label}
+                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[hsl(var(--glass-border))] bg-card/50 text-muted-foreground transition-colors hover:border-primary/40 hover:text-primary"
+              >
+                <Icon className="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+        </div>
 
-        <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          {LINKS.map(({ label, to }) => (
-            <Link key={label} to={to} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-              {label}
-            </Link>
-          ))}
-        </nav>
-
-        <div className="flex items-center gap-3 shrink-0">
-          {SOCIALS.map(({ href, Icon, label }) => (
-            <a
-              key={label}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={label}
-              className="w-9 h-9 rounded-xl border border-[hsl(var(--glass-border))] bg-card/50 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
-            >
-              <Icon className="w-4 h-4" />
-            </a>
+        <div className="grid grid-cols-2 gap-x-8 gap-y-9 sm:grid-cols-4">
+          {LINK_GROUPS.map((group) => (
+            <nav key={group.title} aria-label={`${group.title} links`}>
+              <h2 className="font-data text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground">
+                {group.title}
+              </h2>
+              <ul className="mt-4 space-y-3">
+                {group.links.map(({ label, to }) => (
+                  <li key={label}>
+                    <Link to={to} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           ))}
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto mt-8 pt-6 border-t border-[hsl(var(--glass-border))] text-center">
-        <p className="text-xs text-muted-foreground">© 2026 Presora. All rights reserved.</p>
+      <div className="mx-auto mt-10 flex max-w-6xl flex-col gap-2 border-t border-[hsl(var(--glass-border))] pt-6 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <p>© 2026 Presora. All rights reserved.</p>
+        <p>AI visibility and reputation management.</p>
       </div>
     </footer>
   );
