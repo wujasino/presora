@@ -46,7 +46,7 @@ const LockedOverlay = ({ title, description, onUpgrade, t }: { title: string; de
     {/* Blurred bg */}
     <div className="absolute inset-0 bg-background/60 backdrop-blur-md" />
     {/* Subtle gradient top */}
-    <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+    <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
 
     <div className="relative flex flex-col items-center gap-4 text-center px-8">
       {/* Icon */}
@@ -193,7 +193,7 @@ const ScoreHero = ({
   };
 
   return (
-    <div className="relative rounded-2xl border border-border bg-card/90 dark:bg-card/40 backdrop-blur-xl overflow-hidden mb-6 shadow-sm dark:shadow-none">
+    <div className="relative rounded-2xl border border-border bg-card/90 dark:bg-card/40 backdrop-blur-xl overflow-hidden mb-6 shadow-xs dark:shadow-none">
       {/* Gradient mesh background */}
       <div aria-hidden className="pointer-events-none absolute inset-0">
         <div className="absolute -top-16 -left-16 w-72 h-72 rounded-full bg-primary/10 blur-3xl" />
@@ -330,7 +330,7 @@ const ScoreHero = ({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.4 }}
-            className="mt-5 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] p-4 flex flex-col sm:flex-row sm:items-center gap-3"
+            className="mt-5 rounded-xl border border-amber-500/25 bg-amber-500/6 p-4 flex flex-col sm:flex-row sm:items-center gap-3"
           >
             <div className="flex items-start gap-3 flex-1 min-w-0">
               <div className="shrink-0 w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center mt-0.5">
@@ -603,7 +603,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                   value={inputValue}
                   onChange={(e) => { setInputValue(e.target.value); setModerationError(''); }}
                   placeholder="e.g. Apple, Tesla, Nike…"
-                  className="w-full bg-card/40 backdrop-blur-xl border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground text-base rounded-xl py-3.5 pl-11 pr-4 focus:outline-none focus:border-primary/40 transition-colors"
+                  className="w-full bg-card/40 backdrop-blur-xl border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground text-base rounded-xl py-3.5 pl-11 pr-4 focus:outline-hidden focus:border-primary/40 transition-colors"
                 />
               </div>
               <button
@@ -706,7 +706,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                       value={newScanInput}
                       onChange={(e) => { setNewScanInput(e.target.value); setModerationError(''); }}
                       placeholder="Scan a different brand…"
-                      className="w-full bg-card/40 backdrop-blur-xl border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground text-sm rounded-xl py-2.5 pl-10 pr-3 focus:outline-none focus:border-primary/40 transition-colors"
+                      className="w-full bg-card/40 backdrop-blur-xl border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground text-sm rounded-xl py-2.5 pl-10 pr-3 focus:outline-hidden focus:border-primary/40 transition-colors"
                     />
                   </div>
                   <button
@@ -766,7 +766,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                     value={inputValue}
                     onChange={(e) => { setInputValue(e.target.value); setModerationError(''); }}
                     placeholder={t('placeholderExample')}
-                    className="w-full bg-card/40 backdrop-blur-xl border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground text-sm rounded-xl py-2.5 pl-10 pr-3 focus:outline-none focus:border-primary/40 transition-colors"
+                    className="w-full bg-card/40 backdrop-blur-xl border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground text-sm rounded-xl py-2.5 pl-10 pr-3 focus:outline-hidden focus:border-primary/40 transition-colors"
                   />
                 </div>
                 <button
@@ -924,7 +924,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                 page, after every chart; moved directly under the action
                 plan so it reads as core content, not an appendix. */}
             <div className="relative mb-5">
-              <div className={canSeeSources ? '' : 'pointer-events-none blur-sm select-none'} aria-hidden={!canSeeSources}>
+              <div className={canSeeSources ? '' : 'pointer-events-none blur-xs select-none'} aria-hidden={!canSeeSources}>
                 <SourceTable sources={result.sources} />
               </div>
               {!canSeeSources && (
@@ -1018,7 +1018,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                         onChange={e => setCompetitorInput(e.target.value)}
                         onKeyDown={e => { if (e.key === 'Enter') runCompare(); }}
                         placeholder={t('compare_placeholder')}
-                        className="w-full pl-8 h-9 text-sm rounded-lg border border-input bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
+                        className="w-full pl-8 h-9 text-sm rounded-lg border border-input bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-hidden transition-colors"
                       />
                     </div>
                     <button
@@ -1062,7 +1062,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                 />
               </div>
               <div className="col-span-12 lg:col-span-7 relative">
-                <div className={canSeeCharts ? '' : 'pointer-events-none blur-sm select-none'} aria-hidden={!canSeeCharts}>
+                <div className={canSeeCharts ? '' : 'pointer-events-none blur-xs select-none'} aria-hidden={!canSeeCharts}>
                   <SentimentChart data={result.sentimentTrend} />
                 </div>
                 {!canSeeCharts && (
@@ -1075,7 +1075,7 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
                 )}
               </div>
               <div className="col-span-12 lg:col-span-5 relative">
-                <div className={canSeeCharts ? '' : 'pointer-events-none blur-sm select-none'} aria-hidden={!canSeeCharts}>
+                <div className={canSeeCharts ? '' : 'pointer-events-none blur-xs select-none'} aria-hidden={!canSeeCharts}>
                   <SourceDonutChart data={result.sourceBreakdown} />
                 </div>
                 {!canSeeCharts && (

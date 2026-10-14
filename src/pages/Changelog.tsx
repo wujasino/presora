@@ -63,7 +63,7 @@ const Changelog = () => (
             transition={{ delay: i * 0.04 }}
             className="relative"
           >
-            <span className="absolute -left-[18px] top-1.5 w-2 h-2 rounded-full bg-primary ring-4 ring-background" />
+            <span className="absolute left-[-18px] top-1.5 w-2 h-2 rounded-full bg-primary ring-4 ring-background" />
             <div className="rounded-xl border border-border bg-card/40 p-4">
               <div className="flex items-center gap-2 mb-1.5">
                 <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide border ${TAG_STYLES[item.tag]}`}>

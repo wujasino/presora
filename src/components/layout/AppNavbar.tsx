@@ -79,7 +79,7 @@ export const AppNavbar = ({ collapsed = false, onToggle, onMobileToggle, chatOpe
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-1 sm:gap-2 border-b border-border bg-background/90 backdrop-blur px-2 sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-1 sm:gap-2 border-b border-border bg-background/90 backdrop-blur-sm px-2 sm:px-6">
       {/* Mobile hamburger — opens sidebar drawer */}
       <button
         onClick={onMobileToggle}
@@ -121,7 +121,7 @@ export const AppNavbar = ({ collapsed = false, onToggle, onMobileToggle, chatOpe
           ) : (
             <>
               <textarea
-                className="w-full rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground p-2.5 resize-none focus:outline-none focus:ring-1 focus:ring-primary mb-2"
+                className="w-full rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground p-2.5 resize-none focus:outline-hidden focus:ring-1 focus:ring-primary mb-2"
                 rows={4}
                 placeholder="Your feedback..."
                 value={feedbackText}

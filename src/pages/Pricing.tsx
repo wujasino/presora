@@ -291,7 +291,7 @@ const Pricing = () => {
                 onClick={() => setBillingCycle(cycle)}
                 className={`relative px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${
                   billingCycle === cycle
-                    ? 'bg-background text-foreground shadow-sm border border-input'
+                    ? 'bg-background text-foreground shadow-xs border border-input'
                     : 'text-muted-foreground hover:text-foreground'
                 }`}
               >
@@ -400,7 +400,7 @@ const Pricing = () => {
                 A marketing agency typically bills $150–300/hour. Starter costs less than that per month — and re-checks automatically, every month.
               </p>
             </div>
-            <div className="rounded-2xl border border-amber-500/25 bg-amber-500/[0.05] p-5">
+            <div className="rounded-2xl border border-amber-500/25 bg-amber-500/5 p-5">
               <AlertTriangle className="w-4 h-4 text-amber-500 mb-2" />
               <p className="text-sm font-semibold text-foreground">Where it's not a fit yet</p>
               <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
@@ -412,7 +412,7 @@ const Pricing = () => {
 
           {/* Turbo — a real bonus, sold on its own merit, included free
               rather than mentioned as an afterthought. */}
-          <div className="mt-4 rounded-2xl border border-primary/25 bg-primary/[0.05] p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="mt-4 rounded-2xl border border-primary/25 bg-primary/5 p-5 flex flex-col sm:flex-row sm:items-center gap-4">
             <div className="w-10 h-10 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
               <Sparkles className="w-5 h-5 text-primary" />
             </div>
@@ -436,7 +436,7 @@ const Pricing = () => {
           viewport={{ once: true }}
         >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="rounded-2xl border border-primary/30 bg-primary/[0.05] p-5">
+            <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5">
               <p className="text-[10px] uppercase tracking-wider text-primary font-semibold mb-2">Our promise</p>
               <p className="text-sm text-foreground leading-relaxed">
                 We show you the exact question we asked each AI model and the exact answer it gave —
@@ -482,7 +482,7 @@ const Pricing = () => {
               </div>
             ))}
             {/* Presora — the payoff */}
-            <div className="rounded-2xl border border-primary/30 bg-primary/[0.06] p-5 flex flex-col">
+            <div className="rounded-2xl border border-primary/30 bg-primary/6 p-5 flex flex-col">
               <p className="text-2xl font-display text-primary">~15 seconds</p>
               <p className="text-sm font-semibold text-foreground mt-2">Presora</p>
               <p className="text-xs text-muted-foreground mt-1.5 leading-relaxed">Every model queried in parallel, scored, and turned into a prioritized action plan — automatically.</p>
@@ -559,7 +559,7 @@ const Pricing = () => {
                 <Button
                   onClick={() => handleCreditsBuy(pack.id)}
                   disabled={loadingCredits === pack.id}
-                  variant={pack.popular ? 'default' : 'outline'}
+                  variant={pack.popular ? 'default' : 'outline-solid'}
                   className="w-full"
                 >
                   {loadingCredits === pack.id ? 'Loading...' : 'Buy pack'}

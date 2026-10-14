@@ -307,7 +307,7 @@ const AdminSettings = () => {
                   )}
                 </div>
                 <Button
-                  variant={enabled ? 'outline' : 'default'}
+                  variant={enabled ? 'outline-solid' : 'default'}
                   disabled={status === 'saving'}
                   onClick={() => toggle(!enabled)}
                   className="gap-1.5 shrink-0"
@@ -397,7 +397,7 @@ const AdminSettings = () => {
                   count — the count alone sent whoever saw it into the Netlify
                   logs to find out what actually broke. */}
               {enabled && failureCount > 0 && (
-                <div className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] p-3">
+                <div className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/6 p-3">
                   <p className="text-xs text-foreground">
                     {failureCount} recent scan failure{failureCount === 1 ? '' : 's'} — scanning pauses automatically at 3 in a row.
                     {lastFailureAt && (
@@ -405,7 +405,7 @@ const AdminSettings = () => {
                     )}
                   </p>
                   {lastError && (
-                    <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-muted-foreground break-words">
+                    <p className="mt-1.5 font-mono text-[11px] leading-relaxed text-muted-foreground wrap-break-word">
                       {lastError}
                     </p>
                   )}

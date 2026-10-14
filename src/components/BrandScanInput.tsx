@@ -48,7 +48,7 @@ export const BrandScanInput = ({
             placeholder={placeholder}
             aria-label="Brand name to scan"
             required
-            className="w-full bg-transparent text-foreground placeholder:text-muted-foreground text-base rounded-xl py-3 pl-10 pr-2 focus:outline-none"
+            className="w-full bg-transparent text-foreground placeholder:text-muted-foreground text-base rounded-xl py-3 pl-10 pr-2 focus:outline-hidden"
           />
         </div>
         <button
@@ -69,7 +69,7 @@ export const BrandScanInput = ({
               key={s}
               type="button"
               onClick={() => submit(s)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[hsl(var(--glass-border))] bg-card/80 shadow-sm text-sm text-foreground hover:border-primary/40 hover:bg-primary/5 hover:-translate-y-0.5 transition-all"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[hsl(var(--glass-border))] bg-card/80 shadow-xs text-sm text-foreground hover:border-primary/40 hover:bg-primary/5 hover:-translate-y-0.5 transition-all"
             >
               <Sparkles className="w-3 h-3 text-primary" />
               {s}

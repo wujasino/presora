@@ -77,7 +77,7 @@ const Landing = () => {
       <div className="relative z-10">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-100 focus:px-4 focus:py-2 focus:rounded-lg focus:bg-primary focus:text-primary-foreground focus:text-sm focus:font-medium"
       >
         Skip to content
       </a>
@@ -350,7 +350,7 @@ const Landing = () => {
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -6, scale: 1.02, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
                 whileTap={{ scale: 0.985 }}
-                className="rounded-2xl border border-[hsl(var(--glass-border))] p-7 flex flex-col gap-4 bg-card/60 backdrop-blur-sm shadow-lg shadow-primary/5"
+                className="rounded-2xl border border-[hsl(var(--glass-border))] p-7 flex flex-col gap-4 bg-card/60 backdrop-blur-xs shadow-lg shadow-primary/5"
               >
                 <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl border ${t.iconBg}`}>
                   <t.Icon className="w-6 h-6" />
@@ -461,11 +461,11 @@ const Landing = () => {
           </motion.div>
 
           <div className="mb-10 flex justify-center">
-            <div className="inline-flex items-center rounded-2xl border-2 border-border bg-card p-1.5 shadow-sm">
+            <div className="inline-flex items-center rounded-2xl border-2 border-border bg-card p-1.5 shadow-xs">
               <button
                 type="button"
                 onClick={() => setPricingAudience('individual')}
-                className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${pricingAudience === 'individual' ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-transparent bg-transparent text-foreground hover:border-border hover:bg-muted'}`}
+                className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${pricingAudience === 'individual' ? 'border-primary bg-primary text-primary-foreground shadow-xs' : 'border-transparent bg-transparent text-foreground hover:border-border hover:bg-muted'}`}
                 aria-pressed={pricingAudience === 'individual'}
               >
                 <UserRound className="h-4 w-4" /> Individual
@@ -473,7 +473,7 @@ const Landing = () => {
               <button
                 type="button"
                 onClick={() => setPricingAudience('team')}
-                className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${pricingAudience === 'team' ? 'border-primary bg-primary text-primary-foreground shadow-sm' : 'border-transparent bg-transparent text-foreground hover:border-border hover:bg-muted'}`}
+                className={`inline-flex items-center gap-2 rounded-xl border px-5 py-2.5 text-sm font-semibold transition-colors ${pricingAudience === 'team' ? 'border-primary bg-primary text-primary-foreground shadow-xs' : 'border-transparent bg-transparent text-foreground hover:border-border hover:bg-muted'}`}
                 aria-pressed={pricingAudience === 'team'}
               >
                 <UsersRound className="h-4 w-4" /> Team &amp; Enterprise
@@ -495,7 +495,7 @@ const Landing = () => {
               onCycleChange={setBillingCycle}
               onPlanSelect={() => navigate('/register')}
               showBillingToggle
-              className="[&_.rounded-2xl]:border-border [&_.rounded-2xl]:bg-card [&_.rounded-2xl]:shadow-none [&_.rounded-2xl:hover]:shadow-none [&_.bg-muted\\/30]:bg-card/70"
+              className="[&_.rounded-2xl]:border-border [&_.rounded-2xl]:bg-card [&_.rounded-2xl]:shadow-none [&_.rounded-2xl:hover]:shadow-none [&_.pricing-card-muted]:bg-card/70"
             />
           </motion.div>
 
@@ -507,7 +507,7 @@ const Landing = () => {
             initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mt-8 max-w-2xl mx-auto rounded-2xl border border-primary/25 bg-primary/[0.04] p-6 text-center"
+            className="mt-8 max-w-2xl mx-auto rounded-2xl border border-primary/25 bg-primary/4 p-6 text-center"
           >
             <p className="text-sm font-semibold text-foreground mb-1.5">Running an agency?</p>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">

@@ -88,7 +88,7 @@ const OtpInput = ({ value, onChange }: { value: string; onChange: (v: string) =>
           onChange={e => handleChange(i, e)}
           onKeyDown={e => handleKey(i, e)}
           onPaste={handlePaste}
-          className="w-11 h-14 text-center text-xl font-bold rounded-xl border border-[hsl(var(--glass-border))] bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
+          className="w-11 h-14 text-center text-xl font-bold rounded-xl border border-[hsl(var(--glass-border))] bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-hidden transition-colors"
         />
       ))}
     </div>
@@ -469,7 +469,7 @@ const Login = () => {
 
                   <div className="flex items-center gap-2 pt-0.5">
                     <Checkbox id="remember" checked={remember} onCheckedChange={v => setRemember(Boolean(v))} />
-                    <Label htmlFor="remember" className="!mb-0 text-sm text-muted-foreground cursor-pointer">{t('remember')}</Label>
+                    <Label htmlFor="remember" className="mb-0! text-sm text-muted-foreground cursor-pointer">{t('remember')}</Label>
                   </div>
 
                   <Button type="submit" className="w-full h-11 gap-2" disabled={loading}>

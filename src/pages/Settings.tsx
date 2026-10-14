@@ -826,7 +826,7 @@ export default function Settings() {
                       }}
                       className={cn('relative w-10 h-6 rounded-full transition-colors active:scale-95', voicePrefs.enabled ? 'bg-primary' : 'bg-muted')}
                     >
-                      <span className={cn('absolute top-1 w-4 h-4 rounded-full bg-white shadow transition-all duration-200', voicePrefs.enabled ? 'left-5' : 'left-1')} />
+                      <span className={cn('absolute top-1 w-4 h-4 rounded-full bg-white shadow-sm transition-all duration-200', voicePrefs.enabled ? 'left-5' : 'left-1')} />
                     </button>
                   </div>
                   {voicePrefs.enabled && (
@@ -1254,7 +1254,7 @@ export default function Settings() {
                       <select
                         value={exportFormat}
                         onChange={e => setExportFormat(e.target.value as 'csv' | 'json')}
-                        className="rounded-md border border-input bg-background px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary"
+                        className="rounded-md border border-input bg-background px-2 py-1 text-xs outline-hidden focus:ring-1 focus:ring-primary"
                       >
                         <option value="csv">CSV</option>
                         <option value="json">JSON</option>
@@ -1380,7 +1380,7 @@ export default function Settings() {
                       </div>
 
                       {referral.milestonesAvailable > 0 && (
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-primary/30 bg-primary/[0.06]">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-primary/30 bg-primary/6">
                           <div>
                             <p className="text-sm font-medium text-foreground">Reward ready to claim</p>
                             <p className="text-xs text-muted-foreground mt-0.5">

@@ -19,7 +19,7 @@ export function OfflineBanner() {
   if (healthy) return null;
 
   return (
-    <div className="sticky top-0 z-[100] flex items-center justify-center gap-2 bg-amber-500/15 border-b border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-medium px-4 py-2 text-center">
+    <div className="sticky top-0 z-100 flex items-center justify-center gap-2 bg-amber-500/15 border-b border-amber-500/30 text-amber-600 dark:text-amber-400 text-xs font-medium px-4 py-2 text-center">
       <WifiOff className="w-3.5 h-3.5 shrink-0" />
       Prace konserwacyjne — widzisz ostatnio zapisane dane w trybie offline.
     </div>

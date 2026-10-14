@@ -130,7 +130,7 @@ export const GuestScanWidget = ({ className }: { className?: string }) => {
                   </div>
                   <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
                     <div
-                      className={cn('h-full rounded-full', BAND_STYLE[band].meter, !isVisible && 'blur-sm')}
+                      className={cn('h-full rounded-full', BAND_STYLE[band].meter, !isVisible && 'blur-xs')}
                       style={{ width: `${value}%` }}
                     />
                   </div>

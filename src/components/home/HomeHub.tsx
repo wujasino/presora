@@ -422,7 +422,7 @@ const HomeHub = () => {
             are unaffected, so the honest framing is "read-only for now", not
             "something went wrong". */}
         {!scanningEnabled && (
-          <div className="mb-6 rounded-2xl border border-amber-500/25 bg-amber-500/[0.06] p-4 flex items-start gap-3">
+          <div className="mb-6 rounded-2xl border border-amber-500/25 bg-amber-500/6 p-4 flex items-start gap-3">
             <PauseCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
             <div className="min-w-0">
               <p className="text-sm font-medium text-foreground">New scans are paused</p>
@@ -532,7 +532,7 @@ const HomeHub = () => {
                 ))}
               </div>
               {skippedVisibleModels.length > 0 && (
-                <div className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/[0.06] p-3">
+                <div className="mt-4 rounded-xl border border-amber-500/25 bg-amber-500/6 p-3">
                   <p className="text-xs text-foreground">
                     Incomplete picture — {skippedVisibleModels.length} of {visibleModels.length} models
                     you already pay for weren't asked about {latest.brand_name}.
@@ -567,7 +567,7 @@ const HomeHub = () => {
         {!loading && topAlert && (
           <Link
             to={`/brand-visibility?id=${topAlert.id}`}
-            className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/[0.06] px-4 py-3 hover:bg-amber-500/10 transition-colors group"
+            className="mb-6 flex items-center gap-3 rounded-xl border border-amber-500/30 bg-amber-500/6 px-4 py-3 hover:bg-amber-500/10 transition-colors group"
           >
             <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
             <span className="text-sm text-foreground flex-1 min-w-0 truncate">
@@ -632,7 +632,7 @@ const HomeHub = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <button
                 onClick={() => runScan(latest.brand_name)}
-                className="group flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/[0.06] p-4 text-left transition-all duration-200 hover:border-primary/60 hover:-translate-y-0.5"
+                className="group flex items-center gap-3 rounded-2xl border border-primary/30 bg-primary/6 p-4 text-left transition-all duration-200 hover:border-primary/60 hover:-translate-y-0.5"
               >
                 <div className="inline-flex items-center justify-center w-9 h-9 rounded-lg bg-primary/15 shrink-0">
                   <RefreshCw className="w-4 h-4 text-primary" />

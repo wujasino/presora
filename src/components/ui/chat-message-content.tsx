@@ -11,7 +11,7 @@ function inline(text: string) {
 
 export function ChatMessageContent({ text }: { text: string }) {
   const blocks = text.trim().split(/\n\s*\n/);
-  return <div className="space-y-3 [overflow-wrap:anywhere]">
+  return <div className="space-y-3 wrap-anywhere">
     {blocks.map((block, index) => {
       const lines = block.split('\n');
       const unordered = lines.every(line => /^\s*[-*] /.test(line));

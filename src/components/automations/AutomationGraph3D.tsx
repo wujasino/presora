@@ -134,9 +134,9 @@ export const AutomationGraph3D = ({ config }: { config: MonitorConfig | null }) 
 
       <div
         ref={containerRef}
-        className="relative h-[420px] rounded-xl border border-border bg-gradient-to-b from-card/50 via-background to-card/30 overflow-hidden"
+        className="relative h-[420px] rounded-xl border border-border bg-linear-to-b from-card/50 via-background to-card/30 overflow-hidden"
       >
-        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full border border-border bg-background/80 backdrop-blur px-2.5 py-1 text-[11px] font-medium text-foreground">
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full border border-border bg-background/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-medium text-foreground">
           <CalendarClock className="w-3 h-3 text-primary" />
           {FREQUENCY_LABEL[config?.frequency ?? 'weekly']}
         </div>

@@ -253,7 +253,7 @@ const Profile = () => {
           {/* No progress bar on an unlimited plan — a bar against infinity has nothing to fill. */}
           {!unlimited && (
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-              <motion.div className="h-full rounded-full bg-gradient-to-r from-primary/70 to-primary"
+              <motion.div className="h-full rounded-full bg-linear-to-r from-primary/70 to-primary"
                 initial={{ width: 0 }} animate={{ width: `${usagePercent}%` }} transition={{ duration: 0.8, delay: 0.3 }} />
             </div>
           )}
@@ -369,7 +369,7 @@ const Profile = () => {
                   <motion.div key={brew.id}
                     initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                     onClick={() => navigate(`/dashboard?id=${encodeURIComponent(brew.id)}`)}
-                    className="glass-card-hover flex items-center justify-between p-4 cursor-pointer hover:!border-primary/30 active:scale-[0.995] transition-all group"
+                    className="glass-card-hover flex items-center justify-between p-4 cursor-pointer hover:border-primary/30! active:scale-[0.995] transition-all group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">

@@ -223,7 +223,7 @@ const AuditReport = () => {
   return (
     <div className="print-exact min-h-screen print:min-h-0 print:h-auto bg-background print:bg-white">
       {/* Screen-only toolbar — hidden on print */}
-      <div className="print:hidden sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur px-4 py-3 flex items-center justify-between">
+      <div className="print:hidden sticky top-0 z-10 border-b border-border bg-background/95 backdrop-blur-sm px-4 py-3 flex items-center justify-between">
         <Link to="/reports" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" /> Back to reports
         </Link>
@@ -252,13 +252,13 @@ const AuditReport = () => {
               </span>
             </div>
           ) : (
-            <Wordmark className="text-xl print:!text-black" />
+            <Wordmark className="text-xl print:text-black!" />
           )}
           <p className="text-xs text-muted-foreground print:text-black/60 text-right shrink-0">
             AI Visibility Audit · {scannedAt.toLocaleDateString(undefined, { day: '2-digit', month: 'long', year: 'numeric' })}
           </p>
         </div>
-        <div className="h-px bg-gradient-to-r from-primary/40 via-border to-transparent print:from-black/30 print:via-black/10 mb-8" />
+        <div className="h-px bg-linear-to-r from-primary/40 via-border to-transparent print:from-black/30 print:via-black/10 mb-8" />
 
         <h1 className="text-3xl sm:text-4xl font-display text-foreground print:text-black mb-2">
           {analysis.brand_name}
@@ -488,7 +488,7 @@ const AuditReport = () => {
 
         {/* Closing CTA — the agency's own, so a forwarded PDF sends the client
             back to them rather than to us. */}
-        <section className={`rounded-2xl border border-primary/20 bg-primary/[0.04] print:border-black/15 print:bg-transparent p-6 text-center ${NO_SPLIT}`}>
+        <section className={`rounded-2xl border border-primary/20 bg-primary/4 print:border-black/15 print:bg-transparent p-6 text-center ${NO_SPLIT}`}>
           <Sparkles className="w-5 h-5 text-primary print:text-black/60 mx-auto mb-2" />
           <p className="text-sm font-medium text-foreground print:text-black mb-1">Ready to close this gap?</p>
           <p className="text-sm text-muted-foreground print:text-black/70 mb-4">

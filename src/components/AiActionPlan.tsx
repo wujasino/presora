@@ -169,7 +169,7 @@ export const AiActionPlan = ({ analysisId, plan: accountPlan }: { analysisId: st
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 1.4, duration: 0.4 }}
-      className="relative mt-4 rounded-xl border border-primary/20 bg-primary/[0.04] p-4 sm:p-5 overflow-hidden"
+      className="relative mt-4 rounded-xl border border-primary/20 bg-primary/4 p-4 sm:p-5 overflow-hidden"
     >
       <div className="flex items-center gap-2 mb-0.5">
         <ClipboardList className="w-4 h-4 text-primary" />
@@ -190,7 +190,7 @@ export const AiActionPlan = ({ analysisId, plan: accountPlan }: { analysisId: st
       )}
 
       {displayPlan && (
-        <div className={cn('grid grid-cols-1 lg:grid-cols-10 gap-4', isGated && 'blur-sm select-none pointer-events-none')} aria-hidden={isGated}>
+        <div className={cn('grid grid-cols-1 lg:grid-cols-10 gap-4', isGated && 'blur-xs select-none pointer-events-none')} aria-hidden={isGated}>
           {/* Left column (~70%) — why-ignored + checklist */}
           <div className="lg:col-span-7 space-y-3">
             <div>
@@ -206,7 +206,7 @@ export const AiActionPlan = ({ analysisId, plan: accountPlan }: { analysisId: st
 
           {/* Right column (~30%) — Quick Win, pinned */}
           <div className="lg:col-span-3">
-            <div className="h-full rounded-lg border border-emerald-500/25 bg-emerald-500/[0.06] p-3">
+            <div className="h-full rounded-lg border border-emerald-500/25 bg-emerald-500/6 p-3">
               <div className="flex items-center gap-1.5 mb-1.5">
                 <Zap className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                 <p className="text-xs font-semibold text-foreground/90">Quick Win</p>

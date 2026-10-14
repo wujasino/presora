@@ -133,7 +133,7 @@ export function ChatWidgetShell({
               <button
                 type="button"
                 onClick={() => { onOpenChange(false); launcherRef.current?.focus(); }}
-                className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="p-2 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
                 aria-label="Close chat"
               >
                 <X className="w-4 h-4" />
@@ -146,7 +146,7 @@ export function ChatWidgetShell({
                   <div className={cn('flex', m.role === 'user' ? 'justify-end' : 'justify-start')}>
                     <div
                       className={cn(
-                        'max-w-[92%] rounded-2xl px-3.5 py-3 text-sm leading-relaxed [overflow-wrap:anywhere]',
+                        'max-w-[92%] rounded-2xl px-3.5 py-3 text-sm leading-relaxed wrap-anywhere',
                         m.role === 'user' ? 'bg-primary text-primary-foreground rounded-br-sm whitespace-pre-wrap' : 'bg-muted/60 text-foreground rounded-bl-sm'
                       )}
                     >
@@ -186,7 +186,7 @@ export function ChatWidgetShell({
                       key={s}
                       type="button"
                       onClick={() => onSend(s)}
-                      className="text-left text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-[hsl(var(--glass-border))] rounded-xl px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      className="text-left text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-[hsl(var(--glass-border))] rounded-xl px-3 py-2.5 transition-colors focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
                     >
                       {s}
                     </button>
@@ -212,7 +212,7 @@ export function ChatWidgetShell({
                 placeholder="Ask a question…"
                 aria-label="Ask a question"
                 maxLength={2000}
-                className="flex-1 min-w-0 resize-none px-3 py-2 rounded-xl bg-background border border-[hsl(var(--glass-border))] text-base sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                className="flex-1 min-w-0 resize-none px-3 py-2 rounded-xl bg-background border border-[hsl(var(--glass-border))] text-base sm:text-sm text-foreground placeholder:text-muted-foreground/60 outline-hidden focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
               />
               <button
                 type="submit"

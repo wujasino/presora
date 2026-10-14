@@ -53,7 +53,7 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
 
   return (
     <div
-      className={`rounded-2xl border border-[hsl(var(--glass-border))] bg-card/60 backdrop-blur-sm shadow-lg shadow-primary/5 p-8 ${className}`}
+      className={`rounded-2xl border border-[hsl(var(--glass-border))] bg-card/60 backdrop-blur-xs shadow-lg shadow-primary/5 p-8 ${className}`}
     >
       <AnimatePresence mode="wait">
         {!isSubmitted ? (

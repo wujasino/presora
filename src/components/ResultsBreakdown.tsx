@@ -81,7 +81,7 @@ const ActionPlan = ({ ranked, brandName, sources }: { ranked: { dim: DimKey; sco
     const quotes = (sources ?? []).filter(s => s.association?.trim()).slice(0, 2);
     return (
       <div className="space-y-2.5">
-        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] p-4 flex items-start gap-3">
+        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/6 p-4 flex items-start gap-3">
           <div className="shrink-0 w-8 h-8 rounded-lg bg-emerald-500/15 border border-emerald-500/25 flex items-center justify-center mt-0.5">
             <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>

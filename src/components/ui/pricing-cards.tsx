@@ -78,14 +78,14 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
             <ToggleGroupItem
               value="monthly"
               aria-label="Monthly billing"
-              className="px-6 py-1.5 text-sm font-medium data-[state=on]:bg-background data-[state=on]:shadow-sm data-[state=on]:border data-[state=on]:ring-1 data-[state=on]:ring-ring/20 rounded-md transition-colors"
+              className="px-6 py-1.5 text-sm font-medium data-[state=on]:bg-background data-[state=on]:shadow-xs data-[state=on]:border data-[state=on]:ring-1 data-[state=on]:ring-ring/20 rounded-md transition-colors"
             >
               {t('billing_cycle_monthly')}
             </ToggleGroupItem>
             <ToggleGroupItem
               value="yearly"
               aria-label="Annual billing"
-              className="px-6 py-1.5 text-sm font-medium data-[state=on]:bg-background data-[state=on]:shadow-sm data-[state=on]:border data-[state=on]:ring-1 data-[state=on]:ring-ring/20 rounded-md transition-colors"
+              className="px-6 py-1.5 text-sm font-medium data-[state=on]:bg-background data-[state=on]:shadow-xs data-[state=on]:border data-[state=on]:ring-1 data-[state=on]:ring-ring/20 rounded-md transition-colors"
             >
               {t('billing_cycle_yearly')}
             </ToggleGroupItem>
@@ -141,12 +141,12 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
               key={plan.id}
               className={cn(
                 "flex flex-col overflow-hidden rounded-2xl transition-shadow duration-300 hover:shadow-lg",
-                plan.isPopular ? "shadow-lg" : "shadow-sm"
+                plan.isPopular ? "shadow-lg" : "shadow-xs"
               )}
             >
               {/* Top: plan name, price, CTA */}
               <div className="p-6 pb-5">
-                <div className="flex items-center justify-between gap-2 mb-4 min-h-[1.5rem]">
+                <div className="flex items-center justify-between gap-2 mb-4 min-h-6">
                   <span className="text-sm font-medium text-muted-foreground">{plan.name}</span>
                   {plan.isPopular && (
                     <span className="text-[10px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full shrink-0 whitespace-nowrap text-amber-200 border border-amber-400/30 bg-amber-400/10">
@@ -164,7 +164,7 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                   )}
                 </div>
 
-                <p className="text-xs text-muted-foreground mt-3 leading-relaxed min-h-[2.5rem]">
+                <p className="text-xs text-muted-foreground mt-3 leading-relaxed min-h-10">
                   {plan.description}
                 </p>
 
@@ -186,7 +186,7 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                 <Button
                   onClick={() => onPlanSelect(plan.id, billingCycle)}
                   disabled={isLoading || plan.isCurrent}
-                  variant={plan.isCurrent ? 'secondary' : plan.isPopular ? 'default' : 'outline'}
+                  variant={plan.isCurrent ? 'secondary' : plan.isPopular ? 'default' : 'outline-solid'}
                   className={cn("w-full mt-4 rounded-xl", !plan.isPopular && !plan.isCurrent && "text-primary hover:text-primary")}
                   size="lg"
                 >
@@ -200,7 +200,7 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
               </div>
 
               {/* Bottom: included features + inheritance note */}
-              <div className="flex-1 border-t border-border bg-muted/30 p-6 pt-5">
+              <div className="pricing-card-muted flex-1 border-t border-border bg-muted/30 p-6 pt-5">
                 <ul className="space-y-3">
                   {included.map((feature) => (
                     <li key={feature.name} className="flex items-start gap-2.5">
@@ -246,10 +246,10 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
           </div>
 
           {showComparison && (
-            <div className="mt-6 border rounded-lg overflow-x-auto shadow-sm">
+            <div className="mt-6 border rounded-lg overflow-x-auto shadow-xs">
               <table className="min-w-full divide-y divide-border/80">
                 <thead>
-                  <tr className="bg-muted/30">
+                  <tr className="pricing-card-muted bg-muted/30">
                     <th scope="col" className="px-5 py-3 text-left text-sm font-semibold text-foreground/80 min-w-[180px]">
                       Feature
                     </th>

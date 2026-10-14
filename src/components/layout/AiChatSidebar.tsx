@@ -121,7 +121,7 @@ export const AiChatSidebar = ({ open, onClose }: AiChatSidebarProps) => {
               id="ai-chat-sidebar-input"
               name="message"
               aria-label="Type a message"
-              className="flex-1 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground px-3 py-2 focus:outline-none focus:ring-1 focus:ring-primary"
+              className="flex-1 rounded-lg border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground px-3 py-2 focus:outline-hidden focus:ring-1 focus:ring-primary"
               placeholder="Type a message..."
               value={input}
               onChange={e => setInput(e.target.value)}

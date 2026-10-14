@@ -245,7 +245,7 @@ const Agencies = () => {
                   Your client emails us instead of you.
                 </p>
               </div>
-              <div className="rounded-2xl border border-primary/25 bg-primary/[0.05] p-5">
+              <div className="rounded-2xl border border-primary/25 bg-primary/5 p-5">
                 <p className="text-[10px] uppercase tracking-wider text-primary/70 mb-3">With branding set</p>
                 <div className="rounded-xl border border-primary/20 bg-background/60 p-4">
                   <p className="text-sm font-semibold text-foreground">Your Agency</p>

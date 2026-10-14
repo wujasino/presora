@@ -70,7 +70,7 @@ const LandingProductMockupContent = () => {
     if (RealScreen) {
       return (
         <Suspense fallback={<div className="flex min-h-[320px] items-center justify-center text-xs text-slate-400">Loading dashboard view...</div>}>
-          <div className="min-h-[320px] overflow-hidden rounded-lg bg-background [&_main]:!min-h-0">
+          <div className="min-h-[320px] overflow-hidden rounded-lg bg-background [&_main]:min-h-0!">
             <RealScreen />
           </div>
         </Suspense>
@@ -132,7 +132,7 @@ const LandingProductMockupContent = () => {
         <h3 className="mt-5 text-2xl font-semibold tracking-tight text-slate-100 sm:text-3xl">Brand analysis</h3>
         <p className="mt-2 text-xs text-slate-400">Enter the brand name you want to analyze</p>
         <form onSubmit={(event) => { event.preventDefault(); showNotice(`Demo scan queued for ${scanUrl || 'your brand'}`); }} className="mt-8 flex w-full max-w-xl gap-2">
-          <input aria-label="Brand name" value={scanUrl} onChange={(event) => setScanUrl(event.target.value)} placeholder="e.g. Apple, Tesla, Nike..." className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-[#101725] px-5 py-3 text-sm text-slate-200 outline-none placeholder:text-slate-400 focus:border-slate-500" />
+          <input aria-label="Brand name" value={scanUrl} onChange={(event) => setScanUrl(event.target.value)} placeholder="e.g. Apple, Tesla, Nike..." className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-[#101725] px-5 py-3 text-sm text-slate-200 outline-hidden placeholder:text-slate-400 focus:border-slate-500" />
           <button className="rounded-xl bg-slate-200 px-5 py-3 text-sm font-medium text-slate-900 transition hover:bg-white">Analyze</button>
         </form>
         <p className="mt-6 text-[9px] uppercase tracking-[0.2em] text-slate-500">Or try a popular brand</p>
@@ -162,7 +162,7 @@ const LandingProductMockupContent = () => {
         </div> : <div className="mt-10 rounded-xl border border-slate-700 bg-[#101725] p-4 text-xs text-slate-400">Your automation preview will appear here before it is saved.</div>}
         <form onSubmit={(event) => { event.preventDefault(); if (automationPrompt.trim()) showNotice('Automation prepared for review'); }} className="absolute bottom-0 left-0 right-0 flex items-center gap-2 rounded-xl border border-slate-700 bg-[#101725] p-1.5">
           <button type="button" onClick={() => showNotice('Automation options opened')} className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 text-slate-400">⌄</button>
-          <input aria-label="Automation prompt" value={automationPrompt} onChange={(event) => setAutomationPrompt(event.target.value)} placeholder="e.g. track Tesla and Rivian daily" className="min-w-0 flex-1 bg-transparent px-2 text-[10px] text-slate-200 outline-none placeholder:text-slate-400" />
+          <input aria-label="Automation prompt" value={automationPrompt} onChange={(event) => setAutomationPrompt(event.target.value)} placeholder="e.g. track Tesla and Rivian daily" className="min-w-0 flex-1 bg-transparent px-2 text-[10px] text-slate-200 outline-hidden placeholder:text-slate-400" />
           <button aria-label="Send automation prompt" className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-500 text-slate-950 hover:bg-slate-300">↑</button>
         </form>
       </div>;
@@ -182,7 +182,7 @@ const LandingProductMockupContent = () => {
         </div>
         {googleTab === 'Audit a page' ? <div className="space-y-3">
           <form onSubmit={(event) => { event.preventDefault(); showNotice(`Demo audit started for ${googleUrl || 'the example page'}`); }} className="flex gap-2">
-            <input aria-label="Page URL" value={googleUrl} onChange={(event) => setGoogleUrl(event.target.value)} placeholder="example.com or https://example.com/page" className="h-10 min-w-0 flex-1 rounded-lg border border-slate-700 bg-[#101725] px-3 text-xs text-slate-200 outline-none placeholder:text-slate-500" />
+            <input aria-label="Page URL" value={googleUrl} onChange={(event) => setGoogleUrl(event.target.value)} placeholder="example.com or https://example.com/page" className="h-10 min-w-0 flex-1 rounded-lg border border-slate-700 bg-[#101725] px-3 text-xs text-slate-200 outline-hidden placeholder:text-slate-500" />
             <button className="shrink-0 rounded-lg bg-slate-200 px-3 py-2 text-[10px] font-semibold text-slate-900 transition hover:bg-white">⌕ Audit page</button>
           </form>
           <div className="rounded-xl border border-slate-700 bg-[#101725] p-3">
@@ -311,7 +311,7 @@ const LandingProductMockupContent = () => {
                   <input
                     value={value}
                     onChange={(event) => setClientBranding((current) => ({ ...current, [key]: event.target.value }))}
-                    className="mt-1 w-full rounded-lg border border-slate-700 bg-[#0b101b] px-2.5 py-2 text-[10px] text-slate-200 outline-none placeholder:text-slate-500 focus:border-slate-500"
+                    className="mt-1 w-full rounded-lg border border-slate-700 bg-[#0b101b] px-2.5 py-2 text-[10px] text-slate-200 outline-hidden placeholder:text-slate-500 focus:border-slate-500"
                   />
                 </label>
               ))}
@@ -361,7 +361,7 @@ const LandingProductMockupContent = () => {
         <span className="h-2 w-2 rounded-full bg-rose-400" />
         <span className="h-2 w-2 rounded-full bg-amber-400" />
         <span className="h-2 w-2 rounded-full bg-emerald-400" />
-        <div className={`ml-3 h-4 flex-1 rounded ${isDark ? 'bg-white/[0.04]' : 'bg-slate-200'}`} />
+        <div className={`ml-3 h-4 flex-1 rounded ${isDark ? 'bg-white/4' : 'bg-slate-200'}`} />
       </div>
 
       <div className="grid h-[590px] grid-cols-[60px_1fr] sm:grid-cols-[176px_1fr]">

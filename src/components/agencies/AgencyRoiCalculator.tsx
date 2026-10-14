@@ -115,7 +115,7 @@ export const AgencyRoiCalculator = () => {
       </div>
 
       {/* Result */}
-      <div className="rounded-2xl border border-primary/25 bg-primary/[0.05] p-6 flex flex-col">
+      <div className="rounded-2xl border border-primary/25 bg-primary/5 p-6 flex flex-col">
         <div className="flex items-center gap-2 mb-5">
           <TrendingUp className="w-4 h-4 text-primary" />
           <p className="text-sm font-semibold text-foreground">What that works out to</p>

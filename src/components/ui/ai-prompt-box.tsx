@@ -44,7 +44,7 @@ interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ className, ...props }, ref) => (
     <textarea
         className={cn(
-            "flex w-full rounded-md border-none bg-transparent px-3 py-2.5 text-base text-gray-100 placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] resize-none scrollbar-thin scrollbar-thumb-[#444444] scrollbar-track-transparent hover:scrollbar-thumb-[#555555]",
+            "flex w-full rounded-md border-none bg-transparent px-3 py-2.5 text-base text-gray-100 placeholder:text-gray-400 focus-visible:outline-hidden focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50 min-h-[44px] resize-none scrollbar-thin scrollbar-thumb-[#444444] scrollbar-track-transparent hover:scrollbar-thumb-[#555555]",
             className
         )}
         ref={ref}
@@ -85,7 +85,7 @@ const DialogOverlay = React.forwardRef<
   <DialogPrimitive.Overlay
     ref={ref}
     className={cn(
-      "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-black/60 backdrop-blur-xs data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -131,7 +131,7 @@ DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
 // Button Component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "outline" | "ghost";
+  variant?: "default" | "outline-solid" | "ghost";
   size?: "default" | "sm" | "lg" | "icon";
 }
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -145,12 +145,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       default: "h-10 px-4 py-2",
       sm: "h-8 px-3 text-sm",
       lg: "h-12 px-6",
-      icon: "h-8 w-8 rounded-full aspect-[1/1]",
+      icon: "h-8 w-8 rounded-full aspect-square",
     };
     return (
       <button
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50",
+          "inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50",
           variantClasses[variant],
           sizeClasses[size],
           className
@@ -454,7 +454,7 @@ const PromptInputAction: React.FC<PromptInputActionProps> = ({
 const CustomDivider: React.FC = () => (
   <div className="relative h-6 w-[1.5px] mx-1">
     <div
-      className="absolute inset-0 bg-gradient-to-t from-transparent via-[#9b87f5]/70 to-transparent rounded-full"
+      className="absolute inset-0 bg-linear-to-t from-transparent via-[#9b87f5]/70 to-transparent rounded-full"
       style={{
         clipPath: "polygon(0% 0%, 100% 0%, 100% 40%, 140% 50%, 100% 60%, 100% 100%, 0% 100%, 0% 60%, -40% 50%, 0% 40%)",
       }}
@@ -721,7 +721,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                     : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
                 )}
               >
-                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 flex items-center justify-center shrink-0">
                   <motion.div
                     animate={{ rotate: showSearch ? 360 : 0, scale: showSearch ? 1.1 : 1 }}
                     whileHover={{ rotate: showSearch ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
@@ -737,7 +737,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                       animate={{ width: "auto", opacity: 1 }}
                       exit={{ width: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="text-xs overflow-hidden whitespace-nowrap text-[#1EAEDB] flex-shrink-0"
+                      className="text-xs overflow-hidden whitespace-nowrap text-[#1EAEDB] shrink-0"
                     >
                       Search
                     </motion.span>
@@ -757,7 +757,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                     : "bg-transparent border-transparent text-[#9CA3AF] hover:text-[#D1D5DB]"
                 )}
               >
-                <div className="w-5 h-5 flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 flex items-center justify-center shrink-0">
                   <motion.div
                     animate={{ rotate: showThink ? 360 : 0, scale: showThink ? 1.1 : 1 }}
                     whileHover={{ rotate: showThink ? 360 : 15, scale: 1.1, transition: { type: "spring", stiffness: 300, damping: 10 } }}
@@ -773,7 +773,7 @@ export const PromptInputBox = React.forwardRef((props: PromptInputBoxProps, ref:
                       animate={{ width: "auto", opacity: 1 }}
                       exit={{ width: 0, opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="text-xs overflow-hidden whitespace-nowrap text-[#8B5CF6] flex-shrink-0"
+                      className="text-xs overflow-hidden whitespace-nowrap text-[#8B5CF6] shrink-0"
                     >
                       Think
                     </motion.span>

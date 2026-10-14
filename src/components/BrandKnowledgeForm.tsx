@@ -129,7 +129,7 @@ export default function BrandKnowledgeForm({ brandName, forceExpandSignal }: Bra
       <div ref={rootRef}>
         <button
           onClick={() => setExpanded(true)}
-          className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border border-primary/20 bg-primary/[0.04] hover:bg-primary/[0.08] transition-colors text-left"
+          className="w-full flex items-center gap-2 px-4 py-2.5 rounded-xl border border-primary/20 bg-primary/4 hover:bg-primary/8 transition-colors text-left"
         >
           <BookOpen className="w-3.5 h-3.5 text-primary shrink-0" />
           <span className="text-xs text-muted-foreground flex-1">Add brand context to improve accuracy</span>
@@ -203,7 +203,7 @@ export default function BrandKnowledgeForm({ brandName, forceExpandSignal }: Bra
                     onChange={e => setText(e.target.value)}
                     placeholder="E.g. Brand X is a manufacturer... founded in... their flagship product is... their values are..."
                     rows={4}
-                    className="w-full bg-background/60 border border-[hsl(var(--glass-border))] rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 px-4 py-3 resize-none focus:outline-none focus:border-primary/40 transition-colors"
+                    className="w-full bg-background/60 border border-[hsl(var(--glass-border))] rounded-xl text-sm text-foreground placeholder:text-muted-foreground/50 px-4 py-3 resize-none focus:outline-hidden focus:border-primary/40 transition-colors"
                   />
                   <span className={cn(
                     'absolute bottom-2.5 right-3 text-[10px] font-data',
@@ -263,7 +263,7 @@ export default function BrandKnowledgeForm({ brandName, forceExpandSignal }: Bra
                           <FileText className="w-3.5 h-3.5 text-muted-foreground/50 shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
                             <p className={cn(
-                              'text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap break-words',
+                              'text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap wrap-break-word',
                               expandedFragment !== fragment.id && 'line-clamp-2'
                             )}>
                               {fragment.content}

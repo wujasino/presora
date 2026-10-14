@@ -92,7 +92,7 @@ export default function AvatarNotifications() {
   return (
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (v) load() }}>
       <PopoverTrigger asChild>
-        <button className="relative inline-flex items-center justify-center rounded-full p-2 hover:bg-muted focus:outline-none border border-border" aria-label="Notifications">
+        <button className="relative inline-flex items-center justify-center rounded-full p-2 hover:bg-muted focus:outline-hidden border border-border" aria-label="Notifications">
           <Bell className="h-4 w-4 text-muted-foreground" />
           {unreadCount > 0 && (
             <span
@@ -130,7 +130,7 @@ export default function AvatarNotifications() {
                     onClick={() => markRead(item.id)}
                     className={cn(
                       "group flex items-start gap-3 p-4 hover:bg-muted/50 transition cursor-pointer",
-                      !item.read_at && "bg-primary/[0.04]"
+                      !item.read_at && "bg-primary/4"
                     )}
                   >
                     <div className={cn("w-7 h-7 rounded-full border flex items-center justify-center shrink-0 mt-0.5", iconBg)}>

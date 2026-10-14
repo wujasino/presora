@@ -17,7 +17,7 @@ export const HeroAuditMockup = () => (
         <Search className="h-4 w-4 shrink-0 text-slate-400" />
         <span className="truncate">Your company or a competitor (e.g. Apple)</span>
       </div>
-      <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">
+      <button className="inline-flex items-center justify-center gap-2 rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white shadow-xs transition hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200">
         <Sparkles className="h-4 w-4" />
         Generate my free AI audit
         <ArrowRight className="h-4 w-4" />
@@ -29,7 +29,7 @@ export const HeroAuditMockup = () => (
       {EXAMPLES.map((example) => (
         <button
           key={example}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/60 px-3 py-1.5 font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5 dark:border-white/10 dark:bg-white/[0.04]"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white/60 px-3 py-1.5 font-medium text-foreground transition hover:border-primary/40 hover:bg-primary/5 dark:border-white/10 dark:bg-white/4"
         >
           <Sparkles className="h-3 w-3" />
           {example}

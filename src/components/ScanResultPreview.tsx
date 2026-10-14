@@ -115,7 +115,7 @@ export const ScanResultPreview = () => {
       </div>
 
       {/* Top action */}
-      <div className="relative mx-5 sm:mx-7 mb-6 rounded-xl border border-primary/20 bg-primary/[0.05] p-4 flex items-start gap-3">
+      <div className="relative mx-5 sm:mx-7 mb-6 rounded-xl border border-primary/20 bg-primary/5 p-4 flex items-start gap-3">
         <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center mt-0.5">
           <ArrowUpRight className="w-4 h-4 text-primary" />
         </div>

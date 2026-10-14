@@ -86,7 +86,7 @@ export const BrewingProgress = ({ progress, brandName, models, onCancel }: Brewi
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm"
+          className="mb-6 inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-xs"
         >
           <span className="relative flex h-1.5 w-1.5">
             <span className="absolute inline-flex h-full w-full rounded-full bg-primary animate-ping opacity-75" />
@@ -151,7 +151,7 @@ export const BrewingProgress = ({ progress, brandName, models, onCancel }: Brewi
             reads as a real (wrong) score. */}
         <div className="mt-5 w-full h-[3px] bg-muted/40 rounded-full overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary/60 via-primary to-primary/60"
+            className="h-full bg-linear-to-r from-primary/60 via-primary to-primary/60"
             animate={{ width: `${Math.min(progress, 100)}%` }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           />

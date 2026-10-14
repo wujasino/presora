@@ -59,13 +59,13 @@ export const SourceIdentification = ({ sources, planTier }: SourceIdentification
             <div className="px-4 pb-4 pt-1 space-y-3 border-t border-[hsl(var(--glass-border))]">
               <div className="pt-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {strong.length > 0 && (
-                  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.04] p-3">
+                  <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/4 p-3">
                     <p className="text-[10px] uppercase tracking-wider text-emerald-600 dark:text-emerald-400 mb-1.5">Speaking with real signal</p>
                     <p className="text-xs text-foreground">{strong.map(s => s.model).join(', ')}</p>
                   </div>
                 )}
                 {weak.length > 0 && (
-                  <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.04] p-3">
+                  <div className="rounded-lg border border-amber-500/20 bg-amber-500/4 p-3">
                     <p className="text-[10px] uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1.5">Answered, but guessing</p>
                     <p className="text-xs text-foreground">{weak.map(s => s.model).join(', ')}</p>
                   </div>

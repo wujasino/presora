@@ -88,7 +88,7 @@ export const HallucinationAlerts = ({ result }: HallucinationAlertsProps) => {
 
       <div className="space-y-2.5">
         {accuracyFlag && (
-          <div className="rounded-xl border border-amber-500/20 bg-amber-500/[0.06] p-4 flex items-start gap-3">
+          <div className="rounded-xl border border-amber-500/20 bg-amber-500/6 p-4 flex items-start gap-3">
             <div className="shrink-0 w-8 h-8 rounded-lg bg-amber-500/15 border border-amber-500/25 flex items-center justify-center mt-0.5">
               <AlertOctagon className="w-4 h-4 text-amber-600 dark:text-amber-400" />
             </div>

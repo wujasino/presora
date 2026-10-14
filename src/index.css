@@ -1,6 +1,509 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --animate-shimmer: shimmer 3s linear infinite;
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.5s ease-out forwards;
+  --animate-scale-in: scale-in 0.3s ease-out forwards;
+  --animate-pulse-violet: pulse-violet 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-sidebar: hsl(var(--sidebar-background));
+  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
+  --color-sidebar-primary: hsl(var(--sidebar-primary));
+  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
+  --color-sidebar-accent: hsl(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
+  --color-sidebar-border: hsl(var(--sidebar-border));
+  --color-sidebar-ring: hsl(var(--sidebar-ring));
+
+  --color-violet: hsl(var(--violet));
+  --color-violet-muted: hsl(var(--violet-muted));
+
+  --color-surface: hsl(var(--surface));
+  --color-surface-hover: hsl(var(--surface-hover));
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  @keyframes shimmer {
+    0% {
+      background-position: 0%;
+    }
+    100% {
+      background-position: 200%;
+    }
+  }
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes scale-in {
+    0% {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  @keyframes pulse-violet {
+    0%,
+    100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility glass-card {
+  /* ── Glass card ─────────────────────────────────────────────── */
+  @apply bg-card/60 backdrop-blur-xl border border-[hsl(var(--glass-border))] rounded-2xl;
+  box-shadow: 0 8px 30px -8px rgba(30, 27, 75, 0.14);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(139, 121, 246, 0.03),
+    transparent
+  );
+
+  .dark & {
+    @apply bg-card/40;
+    box-shadow: 0 20px 40px -15px rgba(15, 13, 40, 0.55);
+  }
+}
+
+@utility dark {
+  & .glass-card {
+    @apply bg-card/40;
+    box-shadow: 0 20px 40px -15px rgba(15, 13, 40, 0.55);
+  }
+
+  & .glass-card-hover:hover {
+    box-shadow: 0 25px 50px -15px rgba(15, 13, 40, 0.65);
+  }
+  & .hero {
+    background: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
+  }
+  & .badge {
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    color: #cbd5e1;
+  }
+  & .cta-box {
+    background: linear-gradient(135deg, #111827, #0b0f19);
+  }
+
+  & .text-gradient-violet {
+    @apply from-violet-400 to-violet-600;
+  }
+
+  & .card {
+    background: linear-gradient(135deg, #1c1c26, #15152e);
+  }
+  & .ai-presence-accent-text {
+    color: #f8fafc;
+  }
+  & .ai-presence-accent::before {
+    mix-blend-mode: screen;
+  }
+  & .ai-presence-accent::after {
+    mix-blend-mode: screen;
+  }
+  & .ai-presence-accent::before {
+    color: #818cf8;
+    opacity: 0.7;
+  }
+  & .ai-presence-accent::after {
+    color: #22d3ee;
+    opacity: 0.5;
+  }
+}
+
+@utility glass-card-hover {
+  @apply glass-card transition-all duration-300;
+
+  &:hover {
+    @apply border-[hsl(var(--glass-border-hover))];
+    transform: translateY(-2px);
+    box-shadow: 0 16px 40px -10px rgba(30, 27, 75, 0.18);
+  }
+
+  .dark &:hover {
+    box-shadow: 0 25px 50px -15px rgba(15, 13, 40, 0.65);
+  }
+}
+
+@utility hero {
+  /* ── Hero section — neutral graphite wash, not violet-tinted:
+     these are background chrome that repeats on every section, not the
+     "vivid brand moment" (that stays on buttons/links/step numbers via
+     --primary, and on .ai-presence-accent below). ── */
+  background: linear-gradient(180deg, #ffffff 0%, #f4f4f6 100%);
+  .dark & {
+    background: linear-gradient(180deg, #111827 0%, #0b0f19 100%);
+  }
+}
+
+@utility badge {
+  /* ── Badge — same reasoning: this repeats ~10x per page as a section
+     eyebrow label, so it's graphite, not indigo. ── */
+  background: rgba(100, 116, 139, 0.1);
+  border: 1px solid rgba(100, 116, 139, 0.24);
+  color: #475569;
+  .dark & {
+    background: rgba(148, 163, 184, 0.1);
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    color: #cbd5e1;
+  }
+}
+
+@utility cta-box {
+  /* ── CTA box ────────────────────────────────────────────────── */
+  background: linear-gradient(135deg, #ffffff, #f4f4f6);
+  .dark & {
+    background: linear-gradient(135deg, #111827, #0b0f19);
+  }
+}
+
+@utility btn-primary {
+  /* ── Buttons ────────────────────────────────────────────────── */
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+@utility btn-secondary {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+@utility text-gradient-violet {
+  /* ── Typography ─────────────────────────────────────────────── */
+  @apply bg-clip-text text-transparent bg-linear-to-r from-violet-500 to-violet-700;
+
+  .dark & {
+    @apply from-violet-400 to-violet-600;
+  }
+}
+
+@utility animate-shimmer {
+  animation: animate-shimmer 3s linear infinite;
+}
+
+@utility step-num {
+  background: rgba(139, 121, 246, 0.12);
+  border: 2px solid hsl(var(--primary));
+  color: hsl(var(--primary));
+}
+
+@utility card {
+  background: linear-gradient(135deg, #ffffff, #f5f3ff);
+  border-color: rgba(139, 121, 246, 0.15);
+
+  .dark & {
+    background: linear-gradient(135deg, #1c1c26, #15152e);
+  }
+}
+
+@utility font-display {
+  @apply tracking-tight font-medium;
+  font-family:
+    'Space Grotesk',
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+@utility font-data {
+  font-variant-numeric: tabular-nums;
+  font-family: 'Courier New', monospace;
+}
+
+@utility font-wordmark {
+  /* ── Wordmark ───────────────────────────────────────────────── */
+  font-family:
+    'Space Grotesk',
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+@utility font-landing {
+  /* ── Landing page ───────────────────────────────────────────── */
+  /* Body/paragraph text stays Plus Jakarta Sans (friendlier, humanist).
+     Headings (.font-display) deliberately fall through to the app-wide
+     .font-display rule (Space Grotesk) instead of being overridden here,
+     so the hero headline reads as the same family as the wordmark next
+     to the new logo mark — see Wordmark.tsx. */
+  font-family:
+    'Plus Jakarta Sans',
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+@utility hero-headline {
+  font-family:
+    'Plus Jakarta Sans',
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-weight: 700;
+}
+
+@utility landing-product-mockup-light {
+  /* The landing preview contains a compact, app-like demo with its own
+     palette. Keep its existing hierarchy in dark mode while translating the
+     shared surfaces and typography when the page switches to light mode. */
+  & [class~='bg-[#101725]'] {
+    background-color: hsl(var(--card)) !important;
+  }
+  & [class~='bg-[#0b101b]'] {
+    background-color: hsl(var(--card)) !important;
+  }
+  & [class~='bg-[#151d2b]'] {
+    background-color: hsl(var(--card)) !important;
+  }
+  & [class~='bg-background'] {
+    background-color: transparent !important;
+  }
+  & [class~='bg-[#0c121e]'] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  & [class~='bg-[#101722]'] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  & [class~='border-slate-700'] {
+    border-color: hsl(var(--border)) !important;
+  }
+  & [class~='border-slate-700/80'] {
+    border-color: hsl(var(--border)) !important;
+  }
+  & [class~='border-slate-800'] {
+    border-color: hsl(var(--border)) !important;
+  }
+  & [class~='text-slate-100'] {
+    color: hsl(var(--foreground)) !important;
+  }
+  & [class~='text-slate-200'] {
+    color: hsl(var(--foreground)) !important;
+  }
+  & [class~='text-slate-300'] {
+    color: hsl(var(--foreground)) !important;
+  }
+  & [class~='text-slate-400'] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  & [class~='text-slate-500'] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  & [class~='text-slate-600'] {
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  & [class*='bg-slate-700'] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  & [class*='bg-slate-800'] {
+    background-color: hsl(var(--muted)) !important;
+  }
+  & [class*='bg-slate-600'] {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  & [class*='border-slate-700'] {
+    border-color: hsl(var(--border)) !important;
+  }
+  & [class*='border-slate-800'] {
+    border-color: hsl(var(--border)) !important;
+  }
+  & [class*='text-white'] {
+    color: hsl(var(--foreground)) !important;
+  }
+  & button[class*='bg-slate-700'] {
+    background-color: hsl(var(--accent)) !important;
+    color: hsl(var(--accent-foreground)) !important;
+  }
+  & button[class*='bg-slate-200'] {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  & button:disabled {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--secondary-foreground)) !important;
+    border: 1px solid hsl(var(--border)) !important;
+  }
+  & input {
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+    background-color: hsl(var(--background)) !important;
+  }
+  & textarea {
+    color: hsl(var(--foreground)) !important;
+    border-color: hsl(var(--border)) !important;
+    background-color: hsl(var(--background)) !important;
+  }
+  & [class*='divide-slate-800'] > :not([hidden]) ~ :not([hidden]) {
+    border-color: hsl(var(--border)) !important;
+  }
+}
+
+@utility landing-product-mockup {
+  /* Real app screens rendered inside the fixed-height preview carry their
+     own full-page min-height. Remove it only in the preview so Brand Scan
+     cannot create an unbounded nested scroll area. */
+  & [class~='min-h-screen'] {
+    min-height: 0 !important;
+  }
+}
+
+@utility ai-presence-accent {
+  /* ── Hero "AI presence" accent — chromatic-split ghosting: two
+     colour-offset duplicates of the text behind the real glyphs, screen-
+     blended so they read as a soft digital fringe rather than a shadow. ── */
+  position: relative;
+  display: inline-block;
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  &::before {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    font-family: inherit;
+    font-style: inherit;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+  &::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    font-family: inherit;
+    font-style: inherit;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+  &::before {
+    color: #6366f1;
+    transform: translate(-3px, 0);
+    opacity: 0.45;
+  }
+  &::after {
+    color: #0891b2;
+    transform: translate(3px, 1px);
+    opacity: 0.35;
+  }
+  .dark &::before {
+    mix-blend-mode: screen;
+  }
+
+  .dark &::after {
+    mix-blend-mode: screen;
+  }
+  .dark &::before {
+    color: #818cf8;
+    opacity: 0.7;
+  }
+  .dark &::after {
+    color: #22d3ee;
+    opacity: 0.5;
+  }
+}
+
+@utility ai-presence-accent-text {
+  position: relative;
+  z-index: 2;
+  color: #4f46e5;
+  .dark & {
+    color: #f8fafc;
+  }
+}
 
 @layer base {
   /* ── Light theme (default) — Presora: ink / violet / lavender ── */
@@ -141,84 +644,6 @@
 }
 
 @layer components {
-  /* ── Glass card ─────────────────────────────────────────────── */
-  .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-[hsl(var(--glass-border))] rounded-2xl;
-    box-shadow: 0 8px 30px -8px rgba(30,27,75,0.14);
-    background-image: linear-gradient(to bottom, rgba(139,121,246,0.03), transparent);
-  }
-
-  .dark .glass-card {
-    @apply bg-card/40;
-    box-shadow: 0 20px 40px -15px rgba(15,13,40,0.55);
-  }
-
-  .glass-card-hover {
-    @apply glass-card transition-all duration-300;
-  }
-
-  .glass-card-hover:hover {
-    @apply border-[hsl(var(--glass-border-hover))];
-    transform: translateY(-2px);
-    box-shadow: 0 16px 40px -10px rgba(30,27,75,0.18);
-  }
-
-  .dark .glass-card-hover:hover {
-    box-shadow: 0 25px 50px -15px rgba(15,13,40,0.65);
-  }
-
-  /* ── Hero section — neutral graphite wash, not violet-tinted:
-     these are background chrome that repeats on every section, not the
-     "vivid brand moment" (that stays on buttons/links/step numbers via
-     --primary, and on .ai-presence-accent below). ── */
-  .hero {
-    background: linear-gradient(180deg, #ffffff 0%, #F4F4F6 100%);
-  }
-  .dark .hero {
-    background: linear-gradient(180deg, #111827 0%, #0B0F19 100%);
-  }
-
-  /* ── Badge — same reasoning: this repeats ~10x per page as a section
-     eyebrow label, so it's graphite, not indigo. ── */
-  .badge {
-    background: rgba(100, 116, 139, 0.10);
-    border: 1px solid rgba(100, 116, 139, 0.24);
-    color: #475569;
-  }
-  .dark .badge {
-    background: rgba(148, 163, 184, 0.10);
-    border: 1px solid rgba(148, 163, 184, 0.24);
-    color: #CBD5E1;
-  }
-
-  /* ── CTA box ────────────────────────────────────────────────── */
-  .cta-box {
-    background: linear-gradient(135deg, #ffffff, #F4F4F6);
-  }
-  .dark .cta-box {
-    background: linear-gradient(135deg, #111827, #0B0F19);
-  }
-
-  /* ── Buttons ────────────────────────────────────────────────── */
-  .btn-primary {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-  }
-
-  .btn-secondary {
-    background: hsl(var(--primary));
-    color: hsl(var(--primary-foreground));
-  }
-
-  /* ── Typography ─────────────────────────────────────────────── */
-  .text-gradient-violet {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-violet-500 to-violet-700;
-  }
-
-  .dark .text-gradient-violet {
-    @apply from-violet-400 to-violet-600;
-  }
-
   @keyframes shimmer {
     0%   { background-position: 0% }
     100% { background-position: 200% }
@@ -227,182 +652,6 @@
   @keyframes animate-shimmer {
     0%   { background-position: 0% }
     100% { background-position: 200% }
-  }
-
-  .animate-shimmer {
-    animation: animate-shimmer 3s linear infinite;
-  }
-
-  .step-num {
-    background: rgba(139, 121, 246, 0.12);
-    border: 2px solid hsl(var(--primary));
-    color: hsl(var(--primary));
-  }
-
-  .card {
-    background: linear-gradient(135deg, #ffffff, #F5F3FF);
-    border-color: rgba(139, 121, 246, 0.15);
-  }
-
-  .dark .card {
-    background: linear-gradient(135deg, #1c1c26, #15152E);
-  }
-
-  .font-display {
-    @apply tracking-tight font-medium;
-    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
-  }
-
-  .font-data {
-    font-variant-numeric: tabular-nums;
-    font-family: 'Courier New', monospace;
-  }
-
-  /* ── Wordmark ───────────────────────────────────────────────── */
-  .font-wordmark {
-    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif;
-  }
-
-  /* ── Landing page ───────────────────────────────────────────── */
-  /* Body/paragraph text stays Plus Jakarta Sans (friendlier, humanist).
-     Headings (.font-display) deliberately fall through to the app-wide
-     .font-display rule (Space Grotesk) instead of being overridden here,
-     so the hero headline reads as the same family as the wordmark next
-     to the new logo mark — see Wordmark.tsx. */
-  .font-landing {
-    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-  }
-
-  .hero-headline {
-    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
-    font-weight: 700;
-  }
-
-  /* The landing preview contains a compact, app-like demo with its own
-     palette. Keep its existing hierarchy in dark mode while translating the
-     shared surfaces and typography when the page switches to light mode. */
-  .landing-product-mockup-light [class~="bg-[#101725]"],
-  .landing-product-mockup-light [class~="bg-[#0b101b]"],
-  .landing-product-mockup-light [class~="bg-[#151d2b]"] {
-    background-color: hsl(var(--card)) !important;
-  }
-  .landing-product-mockup-light [class~="bg-background"] {
-    background-color: transparent !important;
-  }
-  .landing-product-mockup-light [class~="bg-[#0c121e]"],
-  .landing-product-mockup-light [class~="bg-[#101722]"] {
-    background-color: hsl(var(--muted)) !important;
-  }
-  .landing-product-mockup-light [class~="border-slate-700"],
-  .landing-product-mockup-light [class~="border-slate-700/80"],
-  .landing-product-mockup-light [class~="border-slate-800"] {
-    border-color: hsl(var(--border)) !important;
-  }
-  .landing-product-mockup-light [class~="text-slate-100"],
-  .landing-product-mockup-light [class~="text-slate-200"],
-  .landing-product-mockup-light [class~="text-slate-300"] {
-    color: hsl(var(--foreground)) !important;
-  }
-  .landing-product-mockup-light [class~="text-slate-400"],
-  .landing-product-mockup-light [class~="text-slate-500"],
-  .landing-product-mockup-light [class~="text-slate-600"] {
-    color: hsl(var(--muted-foreground)) !important;
-  }
-  .landing-product-mockup-light [class*="bg-slate-700"],
-  .landing-product-mockup-light [class*="bg-slate-800"] {
-    background-color: hsl(var(--muted)) !important;
-  }
-  .landing-product-mockup-light [class*="bg-slate-600"] {
-    background-color: hsl(var(--secondary)) !important;
-    color: hsl(var(--foreground)) !important;
-  }
-  .landing-product-mockup-light [class*="border-slate-700"],
-  .landing-product-mockup-light [class*="border-slate-800"] {
-    border-color: hsl(var(--border)) !important;
-  }
-  .landing-product-mockup-light [class*="text-white"] {
-    color: hsl(var(--foreground)) !important;
-  }
-  .landing-product-mockup-light button[class*="bg-slate-700"] {
-    background-color: hsl(var(--accent)) !important;
-    color: hsl(var(--accent-foreground)) !important;
-  }
-  .landing-product-mockup-light button[class*="bg-slate-200"] {
-    background-color: hsl(var(--primary)) !important;
-    color: hsl(var(--primary-foreground)) !important;
-  }
-  .landing-product-mockup-light button:disabled {
-    background-color: hsl(var(--secondary)) !important;
-    color: hsl(var(--secondary-foreground)) !important;
-    border: 1px solid hsl(var(--border)) !important;
-  }
-  .landing-product-mockup-light input,
-  .landing-product-mockup-light textarea {
-    color: hsl(var(--foreground)) !important;
-    border-color: hsl(var(--border)) !important;
-    background-color: hsl(var(--background)) !important;
-  }
-  .landing-product-mockup-light [class*="divide-slate-800"] > :not([hidden]) ~ :not([hidden]) {
-    border-color: hsl(var(--border)) !important;
-  }
-  /* Real app screens rendered inside the fixed-height preview carry their
-     own full-page min-height. Remove it only in the preview so Brand Scan
-     cannot create an unbounded nested scroll area. */
-  .landing-product-mockup [class~="min-h-screen"] {
-    min-height: 0 !important;
-  }
-
-  /* ── Hero "AI presence" accent — chromatic-split ghosting: two
-     colour-offset duplicates of the text behind the real glyphs, screen-
-     blended so they read as a soft digital fringe rather than a shadow. ── */
-  .ai-presence-accent {
-    position: relative;
-    display: inline-block;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    font-style: normal;
-    font-weight: 700;
-  }
-  .ai-presence-accent-text {
-    position: relative;
-    z-index: 2;
-    color: #4F46E5;
-  }
-  .dark .ai-presence-accent-text {
-    color: #F8FAFC;
-  }
-  .ai-presence-accent::before,
-  .ai-presence-accent::after {
-    content: attr(data-text);
-    position: absolute;
-    left: 0;
-    top: 0;
-    z-index: 1;
-    font-family: inherit;
-    font-style: inherit;
-    pointer-events: none;
-    mix-blend-mode: multiply;
-  }
-  .ai-presence-accent::before {
-    color: #6366F1;
-    transform: translate(-3px, 0);
-    opacity: 0.45;
-  }
-  .ai-presence-accent::after {
-    color: #0891B2;
-    transform: translate(3px, 1px);
-    opacity: 0.35;
-  }
-  .dark .ai-presence-accent::before,
-  .dark .ai-presence-accent::after {
-    mix-blend-mode: screen;
-  }
-  .dark .ai-presence-accent::before {
-    color: #818CF8;
-    opacity: 0.7;
-  }
-  .dark .ai-presence-accent::after {
-    color: #22D3EE;
-    opacity: 0.5;
   }
 }
 

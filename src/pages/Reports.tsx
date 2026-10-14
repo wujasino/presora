@@ -172,7 +172,7 @@ const Reports = () => {
                 className={cn(
                   'px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                   timeKey === f.key
-                    ? 'bg-background text-foreground shadow-sm border border-input'
+                    ? 'bg-background text-foreground shadow-xs border border-input'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
@@ -188,7 +188,7 @@ const Reports = () => {
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                 sortDir === 'desc'
-                  ? 'bg-background text-foreground shadow-sm border border-input'
+                  ? 'bg-background text-foreground shadow-xs border border-input'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
@@ -199,7 +199,7 @@ const Reports = () => {
               className={cn(
                 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors',
                 sortDir === 'asc'
-                  ? 'bg-background text-foreground shadow-sm border border-input'
+                  ? 'bg-background text-foreground shadow-xs border border-input'
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >

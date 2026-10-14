@@ -154,7 +154,7 @@ export const SeoTagGenerator = ({
             onChange={(e) => set({ description: e.target.value })}
             rows={compact ? 3 : 3}
             placeholder="A one-sentence summary of the page, written for someone who has never heard of you."
-            className={cn('mt-1 w-full bg-background/60 border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:border-primary/40 transition-colors', compact ? 'h-12 rounded-md px-2 py-1 text-[10px]' : 'rounded-xl text-sm px-3 py-2')}
+            className={cn('mt-1 w-full bg-background/60 border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-hidden focus:border-primary/40 transition-colors', compact ? 'h-12 rounded-md px-2 py-1 text-[10px]' : 'rounded-xl text-sm px-3 py-2')}
           />
         </div>
         <div>
@@ -177,7 +177,7 @@ export const SeoTagGenerator = ({
             onChange={(e) => set({ sameAs: e.target.value })}
             rows={compact ? 3 : 3}
             placeholder={'https://x.com/acme\nhttps://linkedin.com/company/acme'}
-            className={cn('mt-1 w-full bg-background/60 border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-none focus:border-primary/40 transition-colors font-data', compact ? 'h-12 rounded-md px-2 py-1 text-[10px]' : 'rounded-xl text-sm px-3 py-2')}
+            className={cn('mt-1 w-full bg-background/60 border border-[hsl(var(--glass-border))] text-foreground placeholder:text-muted-foreground/50 resize-none focus:outline-hidden focus:border-primary/40 transition-colors font-data', compact ? 'h-12 rounded-md px-2 py-1 text-[10px]' : 'rounded-xl text-sm px-3 py-2')}
           />
         </div>
       </div>
@@ -195,7 +195,7 @@ export const SeoTagGenerator = ({
             {copied ? 'Copied' : 'Copy'}
           </Button>
         </div>
-        <pre className={cn('flex-1 overflow-auto font-data bg-background/60 border border-[hsl(var(--glass-border))] whitespace-pre-wrap break-words text-foreground/80', compact ? 'h-[180px] min-h-0 flex-none rounded-lg p-2.5 text-[9px] leading-relaxed' : 'text-xs rounded-xl p-4 min-h-[280px]')}>
+        <pre className={cn('flex-1 overflow-auto font-data bg-background/60 border border-[hsl(var(--glass-border))] whitespace-pre-wrap wrap-break-word text-foreground/80', compact ? 'h-[180px] min-h-0 flex-none rounded-lg p-2.5 text-[9px] leading-relaxed' : 'text-xs rounded-xl p-4 min-h-[280px]')}>
           {hasAnything ? snippet : 'Fill in the fields on the left — the tags to paste into your page\'s <head> will show up here.'}
         </pre>
         <p className={cn('text-muted-foreground leading-relaxed', compact ? 'mt-2 text-[9px]' : 'text-[11px] mt-3')}>

@@ -100,7 +100,7 @@ export function ContactForm({ defaultSubject = '', compact = false }: ContactFor
       )}
 
       {/* Right — form */}
-      <div className="rounded-2xl border border-[hsl(var(--glass-border))] bg-card/60 backdrop-blur-sm shadow-lg shadow-primary/5 p-6">
+      <div className="rounded-2xl border border-[hsl(var(--glass-border))] bg-card/60 backdrop-blur-xs shadow-lg shadow-primary/5 p-6">
         <AnimatePresence mode="wait">
           {status === 'success' ? (
             <motion.div
@@ -201,7 +201,7 @@ export function ContactForm({ defaultSubject = '', compact = false }: ContactFor
                   minLength={10}
                   maxLength={4000}
                   rows={5}
-                  className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
+                  className="w-full rounded-xl border border-input bg-background px-3 py-2.5 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
                 />
                 <p className="text-[10px] text-muted-foreground/50 text-right">{message.length}/4000</p>
               </div>

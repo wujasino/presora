@@ -55,7 +55,7 @@ const OtpInput = ({ value, onChange }: { value: string; onChange: (v: string) =>
           onChange={e => handleChange(i, e)}
           onKeyDown={e => handleKey(i, e)}
           onPaste={handlePaste}
-          className="w-11 h-14 text-center text-xl font-bold rounded-xl border border-[hsl(var(--glass-border))] bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-colors"
+          className="w-11 h-14 text-center text-xl font-bold rounded-xl border border-[hsl(var(--glass-border))] bg-background text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-hidden transition-colors"
         />
       ))}
     </div>

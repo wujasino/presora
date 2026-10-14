@@ -369,7 +369,7 @@ const Automations = () => {
             className={cn(
               'relative flex items-center gap-1.5 px-4 py-1.5 rounded-md text-sm font-medium transition-colors',
               view === v
-                ? 'bg-background text-foreground shadow-sm border border-input'
+                ? 'bg-background text-foreground shadow-xs border border-input'
                 : 'text-muted-foreground hover:text-foreground'
             )}
           >
@@ -442,14 +442,14 @@ const Automations = () => {
           </div>
 
           {/* Input */}
-          <div className="sticky bottom-0 pt-4 bg-gradient-to-t from-background via-background to-transparent">
-            <div className="flex items-center gap-2 rounded-xl border border-border bg-background p-1.5 shadow-sm">
+          <div className="sticky bottom-0 pt-4 bg-linear-to-t from-background via-background to-transparent">
+            <div className="flex items-center gap-2 rounded-xl border border-border bg-background p-1.5 shadow-xs">
               <FrequencyDropdown value={config?.frequency ?? 'weekly'} onChange={setFrequency} disabled={savingFrequency} />
               <input
                 id="automations-chat-input"
                 name="message"
                 aria-label="Automation instruction"
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground px-3 py-2 focus:outline-none disabled:opacity-50"
+                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground px-3 py-2 focus:outline-hidden disabled:opacity-50"
                 placeholder="e.g. track Tesla and Rivian daily"
                 value={input}
                 disabled={loading}

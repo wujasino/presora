@@ -145,7 +145,7 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
     <>
       <Dialog open={open} onOpenChange={onClose}>
         <DialogContent className="max-w-5xl w-full max-h-[90vh] overflow-y-auto p-0">
-          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-[hsl(var(--glass-border))] px-6 py-4 flex items-center justify-between">
+          <div className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-[hsl(var(--glass-border))] px-6 py-4 flex items-center justify-between">
             <div>
               <DialogTitle className="text-lg font-display font-semibold">Pricing</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
@@ -159,7 +159,7 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
                 onClick={() => setTab('plans')}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                  tab === 'plans' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                  tab === 'plans' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 <RefreshCw className="w-3.5 h-3.5" /> Plans
@@ -168,7 +168,7 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
                 onClick={() => setTab('credits')}
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors',
-                  tab === 'credits' ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'
+                  tab === 'credits' ? 'bg-background text-foreground shadow-xs' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 <CreditCard className="w-3.5 h-3.5" /> Credits
@@ -225,7 +225,7 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
                       </p>
                       <Button
                         className="w-full mt-auto"
-                        variant={pack.popular ? 'default' : 'outline'}
+                        variant={pack.popular ? 'default' : 'outline-solid'}
                         onClick={() => handleCreditsBuy(pack.id)}
                         disabled={!!loadingCredits}
                       >

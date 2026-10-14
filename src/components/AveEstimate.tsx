@@ -97,7 +97,7 @@ export const AveEstimate = ({ sources }: AveEstimateProps) => {
                     max={100000}
                     value={rate}
                     onChange={(e) => updateRate(Number(e.target.value))}
-                    className="w-20 bg-background/60 border border-[hsl(var(--glass-border))] rounded-lg px-2 py-1 text-xs font-data focus:outline-none focus:border-primary/40 transition-colors"
+                    className="w-20 bg-background/60 border border-[hsl(var(--glass-border))] rounded-lg px-2 py-1 text-xs font-data focus:outline-hidden focus:border-primary/40 transition-colors"
                   />
                 </span>
                 <span className="text-muted-foreground/60">— your own assumption, saved on this device</span>
