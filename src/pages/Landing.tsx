@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Eye, Shield, HelpCircle, Mail, ArrowRight, Globe, ShieldCheck, Clock, PenLine, Sparkles, MessageSquare, Tag, Wallet, Repeat, UserRound, UsersRound } from 'lucide-react';
+import { Zap, Eye, Shield, HelpCircle, Mail, ArrowRight, ShieldCheck, Clock, PenLine, Tag, Wallet, Repeat, UserRound, UsersRound } from 'lucide-react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -18,10 +18,10 @@ import { PricingCards } from '@/components/ui/pricing-cards';
 import { PLANS } from '@/lib/plans';
 
 const GROWTH_LOOP = [
-  { Icon: Eye, step: 'Measure', desc: 'See which brands AI recommends across 6 leading models.' },
-  { Icon: HelpCircle, step: 'Explain', desc: 'Understand the signals that put competitors ahead.' },
-  { Icon: PenLine, step: 'Act', desc: 'Get a ranked plan of pages, proof and mentions to create.' },
-  { Icon: Repeat, step: 'Measure again', desc: 'Re-scan to prove what changed and where you gained ground.' },
+  { Icon: Eye, step: 'Monitor', desc: 'Scheduled scans track how 6 leading AI models describe and recommend your brand.' },
+  { Icon: ShieldCheck, step: 'Detect', desc: 'Evidence-backed incidents surface score drops, weak accuracy and uncertain answers.' },
+  { Icon: HelpCircle, step: 'Explain', desc: 'See the exact signals behind each risk instead of another unexplained alert.' },
+  { Icon: PenLine, step: 'Recover', desc: 'Follow a prioritized action plan, then re-scan to verify that the risk is gone.' },
 ];
 
 /* ── Trust points ─────────────────────────────────────────────────── */
@@ -54,6 +54,7 @@ const TRUST_POINTS = [
 const NAV_SECTIONS = [
   { id: 'manifest', label: 'The problem' },
   { id: 'sample-report', label: 'Sample report' },
+  { id: 'reputation-guard', label: 'Reputation Guard' },
   { id: 'monetize', label: 'Make money' },
   { id: 'pricing', label: 'Pricing' },
   { id: 'faq', label: 'FAQ' },
@@ -102,17 +103,20 @@ const Landing = () => {
                   This is the "new category, pay attention" moment, same
                   spirit as .ai-presence-accent below. */}
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs rounded-full mb-5 font-medium border border-primary/20 bg-primary/5 text-primary">
-                <Sparkles className="w-3 h-3" /> AI competitive intelligence for agencies
+                <ShieldCheck className="w-3 h-3" /> Autonomous AI visibility &amp; reputation management
               </span>
-              <h1 className="hero-headline max-w-4xl mx-auto text-[1.875rem] sm:text-4xl lg:text-5xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.2] tracking-tight text-balance">
-                Find out why{' '}
-                <span className="ai-presence-accent" data-text="competitors">
-                  <span className="ai-presence-accent-text">competitors</span>
-                </span>{' '}get recommended by AI — and what to do to outrank them.
+              <h1
+                aria-label="Your autonomous reputation guard for the AI era."
+                className="hero-headline max-w-4xl mx-auto text-[1.875rem] sm:text-4xl lg:text-5xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.2] tracking-tight text-balance"
+              >
+                Your autonomous{' '}
+                <span className="ai-presence-accent" data-text="reputation guard">
+                  <span className="ai-presence-accent-text">reputation guard</span>
+                </span>{' '}for the AI era.
               </h1>
               <p className="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl mx-auto mb-4">
-                Presora compares your brand with the competitors AI recommends, explains the gaps
-                behind those answers, and turns them into a prioritized action plan.
+                Built for SEO teams and digital agencies. Presora continuously monitors how leading AI models
+                describe and recommend your brand, detects evidence-backed risks, and turns every issue into a prioritized action plan.
               </p>
             </motion.div>
 
@@ -130,9 +134,9 @@ const Landing = () => {
                 transition={{ delay: 0.35 }}
                 className="mx-auto mt-8 max-w-4xl text-center"
               >
-                <h3 className="text-lg font-display text-foreground mb-1">A repeatable path from gap to growth</h3>
+                <h3 className="text-lg font-display text-foreground mb-1">Protection that keeps working after the first scan</h3>
                 <p className="text-sm text-muted-foreground mb-5">
-                  Presora does more than measure visibility. It tells you why competitors win and what to change next.
+                  Monitor → detect → explain → recover. You stay in control while Presora keeps watch.
                 </p>
                 <div className="grid grid-cols-1 gap-3 text-left sm:grid-cols-2 lg:grid-cols-4">
                   {GROWTH_LOOP.map(({ Icon, step, desc }, index) => (
@@ -164,7 +168,7 @@ const Landing = () => {
                 onClick={() => document.getElementById('sample-report')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm text-primary hover:underline inline-flex items-center gap-1.5"
               >
-                See how Presora explains the gap <ArrowRight className="w-3.5 h-3.5" />
+                See your first evidence-backed report <ArrowRight className="w-3.5 h-3.5" />
               </button>
 
               {/* Risk reversal, at the point of decision. These three used to
@@ -240,8 +244,8 @@ const Landing = () => {
         </section>
 
 
-      {/* ── Action, not just a report ─────────────────────────────── */}
-      <section className="py-24 px-4 border-t border-[hsl(var(--glass-border))]">
+      {/* ── Reputation Guard: from a report to continuous protection ─ */}
+      <section id="reputation-guard" className="py-24 px-4 border-t border-[hsl(var(--glass-border))] scroll-mt-28">
         <div className="max-w-6xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -250,73 +254,69 @@ const Landing = () => {
             className="text-center mb-14"
           >
             <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs badge rounded-lg mb-4 font-data uppercase tracking-wider">
-              <Sparkles className="w-3 h-3" /> Action, not just a report
+              <ShieldCheck className="w-3 h-3" /> Reputation Guard
             </span>
             <h2 className="text-3xl sm:text-4xl font-display text-foreground mb-3">
-              Don't just see the gap.<br />
-              <span className="text-primary">Know exactly how to close it.</span>
+              From one-off reports to<br />
+              <span className="text-primary">continuous reputation protection.</span>
             </h2>
-            <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-              Every scan ends with a ranked, plain-English action plan: the specific pages, comparisons and mentions that move AI models to recommend you.
+            <p className="text-sm text-muted-foreground max-w-2xl mx-auto">
+              Set the monitoring schedule once. Presora watches for meaningful changes, shows the evidence behind every incident,
+              and gives your team a recovery plan to approve and verify.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-            {/* Left: the problem framed simply */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="glass-card p-8 flex flex-col justify-center gap-5"
-            >
-              <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
-                <MessageSquare className="w-4 h-4 text-primary" />
-                A customer asks AI:
-              </div>
-              <p className="text-xl font-display text-foreground leading-snug">
-                “What are the best {' '}
-                <span className="text-primary">project management tools</span>{' '}
-                for small teams?”
-              </p>
-              <div className="rounded-xl border border-[hsl(var(--glass-border))] bg-muted/20 p-4 text-sm text-muted-foreground leading-relaxed">
-                AI names 5 competitors. Your brand isn't one of them.
-                <span className="block mt-2 text-foreground/80">Presora finds out <span className="text-primary font-medium">why</span>, and hands you the fix.</span>
-              </div>
-            </motion.div>
-
-            {/* Right: the auto-generated action plan */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="glass-card p-8 flex flex-col gap-4 relative overflow-hidden"
-            >
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-data uppercase tracking-wider text-muted-foreground">Your action plan</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/15 text-primary border border-primary/20">Auto-generated</span>
-              </div>
-              {[
-                { icon: PenLine, impact: 'High impact', title: 'Publish a comparison page', desc: 'Create a “vs. alternatives” page — AI models cite these when recommending tools.' },
-                { icon: Globe, impact: 'High impact', title: 'Get listed in 3 category roundups', desc: 'You’re missing from the “best-of” articles AI reads. We name which ones.' },
-                { icon: MessageSquare, impact: 'Medium', title: 'Seed 2 review mentions', desc: 'Reddit & G2 threads shape how AI describes your reliability.' },
-              ].map((a, i) => (
-                <div key={i} className="flex items-start gap-3 rounded-xl border border-[hsl(var(--glass-border))] bg-card/40 p-4">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <a.icon className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-sm font-semibold text-foreground">{a.title}</span>
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase tracking-wide bg-primary/10 text-primary/80 shrink-0">{a.impact}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground leading-relaxed">{a.desc}</p>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                Icon: Repeat,
+                label: 'Autonomous monitoring',
+                title: 'Keep watch without another manual audit',
+                desc: 'Scheduled scans track visibility, accuracy and sentiment across the AI models that shape buying decisions.',
+              },
+              {
+                Icon: ShieldCheck,
+                label: 'Evidence-backed incidents',
+                title: 'Know what changed — and why it matters',
+                desc: 'Presora surfaces score drops, weak accuracy and uncertain model answers with the exact signals behind each alert.',
+              },
+              {
+                Icon: PenLine,
+                label: 'Human-approved recovery',
+                title: 'Fix the highest-impact gap first',
+                desc: 'Get a ranked action plan, resolve or ignore each incident, and re-scan to prove whether your changes worked.',
+              },
+            ].map(({ Icon, label, title, desc }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="glass-card p-7"
+              >
+                <div className="mb-5 inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary">
+                  <Icon className="h-5 w-5" />
                 </div>
-              ))}
-              <div className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full bg-primary/10 blur-2xl pointer-events-none" />
-            </motion.div>
+                <p className="mb-2 font-data text-[10px] uppercase tracking-wider text-primary">{label}</p>
+                <h3 className="mb-2 text-base font-semibold text-foreground">{title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
+              </motion.div>
+            ))}
           </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 text-xs text-muted-foreground">
+            {['Monitor', 'Detect', 'Explain', 'Act', 'Verify'].map((step, index, steps) => (
+              <span key={step} className="inline-flex items-center gap-2">
+                <span className="rounded-full border border-[hsl(var(--glass-border))] bg-card/60 px-3 py-1.5 font-medium text-foreground">{step}</span>
+                {index < steps.length - 1 && <ArrowRight className="h-3.5 w-3.5 text-primary" />}
+              </span>
+            ))}
+          </div>
+
+          <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-relaxed text-muted-foreground">
+            Presora only creates incidents from real model results. Competitor risk appears when your own score is weak and the measured gap is meaningful — not as manufactured urgency.
+          </p>
         </div>
       </section>
 

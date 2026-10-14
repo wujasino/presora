@@ -3,6 +3,7 @@ import ws from 'ws';
 import { OPENROUTER_MODELS, runBrandScan } from './_lib/runScan.js';
 import { fireWebhooksForEvent } from './_lib/webhookDelivery.js';
 import { getScanSettings } from './_lib/appSettings.js';
+import { syncReputationIncidents } from './_lib/reputationIncidents.js';
 
 if (!globalThis.WebSocket) {
   globalThis.WebSocket = ws;
@@ -64,8 +65,7 @@ export const handler = async () => {
     .from('brand_monitors')
     .select('id, user_id, brand, models, frequency, alert_metric, alert_threshold, last_checked_at')
     .eq('enabled', true)
-    .not('brand', 'is', null)
-    .not('alert_metric', 'is', null);
+    .not('brand', 'is', null);
 
   if (monitorsError) {
     console.error('check-score-alerts: failed to load brand_monitors:', monitorsError.message);
@@ -85,6 +85,7 @@ export const handler = async () => {
 
   let scanned = 0;
   let notified = 0;
+  let incidentsDetected = 0;
 
   for (const monitor of due) {
     try {
@@ -122,17 +123,39 @@ export const handler = async () => {
       }
       scanned += 1;
 
-      await admin.from('analyses').insert({
-        user_id: monitor.user_id,
-        brand_name: monitor.brand,
-        trust_score: result.trustScore,
-        authority: result.authority,
-        sentiment: result.sentiment,
-        recency: result.recency,
-        mentions: result.mentions,
-        accuracy: result.accuracy,
-        sources: result.sources,
-      });
+      const { data: savedAnalysis, error: analysisError } = await admin
+        .from('analyses')
+        .insert({
+          user_id: monitor.user_id,
+          brand_name: monitor.brand,
+          trust_score: result.trustScore,
+          authority: result.authority,
+          sentiment: result.sentiment,
+          recency: result.recency,
+          mentions: result.mentions,
+          accuracy: result.accuracy,
+          sources: result.sources,
+        })
+        .select('id')
+        .single();
+      if (analysisError || !savedAnalysis?.id) {
+        throw new Error(`Could not save scheduled analysis: ${analysisError?.message || 'missing analysis id'}`);
+      }
+
+      try {
+        const incidents = await syncReputationIncidents({
+          admin,
+          monitor,
+          analysisId: savedAnalysis.id,
+          previous,
+          result,
+        });
+        incidentsDetected += incidents.length;
+      } catch (incidentError) {
+        // Reputation Guard is additive. A migration/configuration issue here
+        // must not make the core scheduled scan retry and save duplicates.
+        console.error(`check-score-alerts: reputation guard failed for monitor ${monitor.id}:`, incidentError.message);
+      }
 
       fireWebhooksForEvent(admin, {
         userId: monitor.user_id,
@@ -151,33 +174,35 @@ export const handler = async () => {
       }
 
       const column = METRIC_COLUMN[monitor.alert_metric];
-      const currentValue = column === 'trust_score' ? result.trustScore : result[column];
-      const previousValue = previous ? previous[column] : null;
-      const threshold = monitor.alert_threshold ?? 60;
+      if (column) {
+        const currentValue = column === 'trust_score' ? result.trustScore : result[column];
+        const previousValue = previous ? previous[column] : null;
+        const threshold = monitor.alert_threshold ?? 60;
 
-      // Edge-triggered: fire once when it *crosses* below the threshold, not
-      // on every check while it stays below — otherwise a monitor left below
-      // threshold would notify on every single re-check forever.
-      const justCrossed = currentValue < threshold && (previousValue === null || previousValue >= threshold);
+        // Edge-triggered: fire once when it *crosses* below the threshold, not
+        // on every check while it stays below — otherwise a monitor left below
+        // threshold would notify on every single re-check forever.
+        const justCrossed = currentValue < threshold && (previousValue === null || previousValue >= threshold);
 
-      if (justCrossed) {
-        await admin.from('notifications').insert({
-          user_id: monitor.user_id,
-          type: 'score_alert',
-          title: `${METRIC_LABEL[monitor.alert_metric]} dropped below ${threshold}`,
-          body: `${monitor.brand}'s ${METRIC_LABEL[monitor.alert_metric].toLowerCase()} is now ${currentValue} (your alert threshold is ${threshold}).`,
-          brand_name: monitor.brand,
-          metric: monitor.alert_metric,
-          data: { currentValue, previousValue, threshold },
-        });
-        notified += 1;
+        if (justCrossed) {
+          await admin.from('notifications').insert({
+            user_id: monitor.user_id,
+            type: 'score_alert',
+            title: `${METRIC_LABEL[monitor.alert_metric]} dropped below ${threshold}`,
+            body: `${monitor.brand}'s ${METRIC_LABEL[monitor.alert_metric].toLowerCase()} is now ${currentValue} (your alert threshold is ${threshold}).`,
+            brand_name: monitor.brand,
+            metric: monitor.alert_metric,
+            data: { currentValue, previousValue, threshold },
+          });
+          notified += 1;
 
-        if (monitor.alert_metric === 'sentiment') {
-          fireWebhooksForEvent(admin, {
-            userId: monitor.user_id,
-            event: 'sentiment.dropped',
-            payload: { brandName: monitor.brand, currentValue, previousValue, threshold },
-          }).catch((err) => console.error('check-score-alerts: webhook firing failed:', err.message));
+          if (monitor.alert_metric === 'sentiment') {
+            fireWebhooksForEvent(admin, {
+              userId: monitor.user_id,
+              event: 'sentiment.dropped',
+              payload: { brandName: monitor.brand, currentValue, previousValue, threshold },
+            }).catch((err) => console.error('check-score-alerts: webhook firing failed:', err.message));
+          }
         }
       }
 
@@ -191,6 +216,6 @@ export const handler = async () => {
   return {
     statusCode: 200,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ dueCount: due.length, scanned, notified }),
+    body: JSON.stringify({ dueCount: due.length, scanned, notified, incidentsDetected }),
   };
 };

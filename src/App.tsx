@@ -39,6 +39,7 @@ const Reports        = lazy(() => import("./pages/Reports"));
 const AuditBranding  = lazy(() => import("./pages/AuditBranding"));
 const ActionPlanHub  = lazy(() => import("./pages/ActionPlanHub"));
 const CompetitorTracker = lazy(() => import("./pages/CompetitorTracker"));
+const ReputationGuard = lazy(() => import("./pages/ReputationGuard"));
 const AdminAnnouncements = lazy(() => import("./pages/AdminAnnouncements"));
 const AdminPricing   = lazy(() => import("./pages/AdminPricing"));
 const AdminCreditCodes = lazy(() => import("./pages/AdminCreditCodes"));
@@ -174,6 +175,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <AppShell><CompetitorTracker /></AppShell>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/reputation-guard"
+              element={
+                <ProtectedRoute>
+                  <AppShell><ReputationGuard /></AppShell>
                 </ProtectedRoute>
               }
             />

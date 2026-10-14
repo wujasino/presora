@@ -28,7 +28,6 @@ import BrandKnowledgeForm from '@/components/BrandKnowledgeForm';
 import { useBrewing } from '@/hooks/useBrewing';
 import { useTTS, loadVoicePrefs } from '@/hooks/useTTS';
 import { usePlan, tierOf, useSessionUser, isAgencyPlan } from '@/hooks/useAccountInfo';
-import { ResultChatWidget } from '@/components/ui/result-chat-widget';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabase';
 import { AnalysisResult } from '@/types/analysis';
@@ -1132,7 +1131,6 @@ const Dashboard = ({ demoScan = false }: { demoScan?: boolean }) => {
         )}
       </div>
 
-      {status === 'completed' && result && isLoggedIn && <ResultChatWidget result={result} />}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Code2, Zap, FileText, Bot, Search, Megaphone, Palette, SlidersHorizontal, Tag, Globe2, ClipboardList, Trophy, Ticket } from 'lucide-react';
+import { Home, Code2, Zap, FileText, Bot, Search, Megaphone, Palette, SlidersHorizontal, Tag, Globe2, ClipboardList, Trophy, Ticket, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { usePlan, PLAN_LABELS, useIsAdmin, isAgencyPlan } from '@/hooks/useAccountInfo';
@@ -125,6 +125,7 @@ export const Sidebar = ({ collapsed = false, mobileOpen = false, onMobileClose }
 
           <NavItem to="/brand-visibility" icon={Search} label="Brand Scan" active={pathname === '/brand-visibility'} collapsed={effectiveCollapsed} onNavigate={handleNavigate} />
           <NavItem to="/automations" icon={Bot} label="Automations" active={pathname === '/automations'} collapsed={effectiveCollapsed} onNavigate={handleNavigate} />
+          <NavItem to="/reputation-guard" icon={ShieldCheck} label="Reputation Guard" badge="Beta" active={pathname === '/reputation-guard'} collapsed={effectiveCollapsed} onNavigate={handleNavigate} />
           <NavItem to="/google-visibility" icon={Globe2} label="Google Visibility" active={pathname === '/google-visibility'} collapsed={effectiveCollapsed} onNavigate={handleNavigate} />
           <NavItem to="/reports" icon={FileText} label="Reports" active={pathname === '/reports'} collapsed={effectiveCollapsed} onNavigate={handleNavigate} />
           <NavItem to="/action-plan" icon={ClipboardList} label="Action Plan" active={pathname === '/action-plan'} collapsed={effectiveCollapsed} onNavigate={handleNavigate} />

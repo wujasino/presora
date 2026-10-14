@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   CommandDialog, CommandInput, CommandList, CommandEmpty, CommandGroup, CommandItem,
 } from '@/components/ui/command';
-import { Search, Bot, FileText, CreditCard, Home, Megaphone, Code2, Settings, User } from 'lucide-react';
+import { Search, Bot, FileText, CreditCard, Home, Megaphone, Code2, Settings, User, ShieldCheck } from 'lucide-react';
 
 /** Global ⌘K / Ctrl-K command palette for fast navigation and actions. */
 export const CommandPalette = () => {
@@ -43,6 +43,7 @@ export const CommandPalette = () => {
           <CommandItem onSelect={() => go('/dashboard')}><Home className={iconCls} /> Home</CommandItem>
           <CommandItem onSelect={() => go('/brand-visibility')}><Search className={iconCls} /> Brand Scan</CommandItem>
           <CommandItem onSelect={() => go('/automations')}><Bot className={iconCls} /> Automations</CommandItem>
+          <CommandItem onSelect={() => go('/reputation-guard')}><ShieldCheck className={iconCls} /> Reputation Guard</CommandItem>
           <CommandItem onSelect={() => go('/reports')}><FileText className={iconCls} /> Reports</CommandItem>
           <CommandItem onSelect={() => go('/changelog')}><Megaphone className={iconCls} /> What's new</CommandItem>
           <CommandItem onSelect={() => go('/pricing')}><CreditCard className={iconCls} /> Subscription</CommandItem>

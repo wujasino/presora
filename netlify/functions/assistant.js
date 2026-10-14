@@ -60,6 +60,7 @@ const clampStr = (s, n = 4000) => String(s ?? '').trim().slice(0, n);
 const PAGES = [
   { path: '/dashboard', label: 'Dashboard', description: 'Run a new AI-visibility scan for a brand and view the latest result (score, radar chart, source breakdown, recommendations).' },
   { path: '/automations', label: 'Automations', description: 'Configure scheduled monitoring for a brand: which competitors to track, scan frequency (daily/weekly/monthly), which AI models to use, and score-drop alert thresholds. Has its own setup chat assistant.' },
+  { path: '/reputation-guard', label: 'Reputation Guard', description: 'Review evidence-backed reputation incidents detected by scheduled scans, open the related report, and mark incidents resolved or ignored.' },
   { path: '/reports', label: 'Reports', description: 'Browse and export past scan results and history.' },
   { path: '/developers', label: 'Developers', description: 'REST API keys and webhook configuration for programmatic access.' },
   { path: '/settings', label: 'Settings', description: 'Account settings: profile, billing/subscription plan, password, notification preferences, data export, account deletion.' },
@@ -71,7 +72,7 @@ const PAGES = [
 const SYSTEM_PROMPT = `You are Presora's in-app AI Assistant, opened from a button in the dashboard header. You help a logged-in user use the product — answer "how do I..." / "where is..." questions, explain what a page or a score dimension means, and take them to the right page when that's what they're asking for.
 
 ## What Presora does
-Presora scans a brand across foundation AI models (GPT-4o, Claude, Gemini, Perplexity, Mistral, Llama) and scores its AI visibility across 5 dimensions: authority, sentiment, accuracy, mentions, recency. Users can also set up scheduled monitoring with score-drop alerts (Automations page).
+Presora scans a brand across foundation AI models (GPT-4o, Claude, Gemini, Perplexity, Mistral, Llama) and scores its AI visibility across 5 dimensions: authority, sentiment, accuracy, mentions, recency. Users can set up scheduled monitoring on Automations. Reputation Guard turns real monitored changes into evidence-backed incidents and never creates incidents from deterministic fallback scan data.
 
 ## Pages in this app
 ${PAGES.map(p => `- **${p.label}** (${p.path}): ${p.description}`).join('\n')}

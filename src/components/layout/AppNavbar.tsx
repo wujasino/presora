@@ -26,6 +26,7 @@ const SECTION_TITLES: Record<string, string> = {
   '/dashboard':  '',            // Home already reads as sidebar item + page heading
   '/brand-visibility': 'Brand Scan',
   '/automations': 'Automations',
+  '/reputation-guard': 'Reputation Guard',
   '/pricing':    'Pricing',
   '/reports':    'Reports',
   '/profile':    'Profile',

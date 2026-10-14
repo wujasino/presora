@@ -780,6 +780,24 @@ recommends X over Y" statistic:
    next to any brand with at least one already-scanned rival; falls back
    to the plain score otherwise.
 
+## Reputation Guard (`/reputation-guard`, `reputation_incidents` table)
+
+Scheduled scans in `check-score-alerts.js` now pass every genuine result to
+`_lib/reputationIncidents.js`. The detector creates evidence-backed incidents
+for low visibility, a real score drop of at least five points, weak accuracy,
+literal uncertainty language in model associations, and a measured competitor
+gap. Competitor urgency is deliberately gated: the brand score must be below
+60 and a tracked competitor must lead by at least 10 real points. Deterministic
+fallback scan data never creates an incident.
+
+Incidents are upserted by `(user_id, dedupe_key)` so recurring checks refresh
+one case instead of spamming duplicates. Missing signals auto-resolve on the
+next successful monitor run; ignored cases stay ignored until the user reopens
+them. Authenticated users get read-only, owner-scoped RLS access. Status changes
+go through `reputation-incident-status.js`, which validates the session and
+ownership with the service-role client. The page is an incident inbox and audit
+trail; it links to the real stored analysis and does not auto-publish content.
+
 ## Client Branding (formerly "Audit Branding")
 
 `/audit-branding`'s sidebar label and page heading were renamed to
