@@ -29,14 +29,19 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
   const period_month = '/mo';
   const period_year  = '/yr';
 
-  const handlePlanSelect = async (planId: string) => {
+  const handlePlanSelect = async (planId: string, creditCode = '') => {
     if (planId === currentPlan) return;
     if (planId === 'free') { setShowDowngrade(true); return; }
     setLoading(planId);
     setMessage('');
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { window.location.href = '/register?plan=' + planId; return; }
+      if (!session) {
+        const params = new URLSearchParams({ plan: planId });
+        if (creditCode) params.set('credit_code', creditCode);
+        window.location.href = `/register?${params.toString()}`;
+        return;
+      }
       const priceMap: Record<string, { monthly?: string; yearly?: string }> = {
         starter: {
           monthly: import.meta.env.VITE_STRIPE_STARTER_PRICE_ID,
@@ -60,9 +65,13 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
       const res = await fetch('/.netlify/functions/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId, ...(creditCode ? { creditCode } : {}) }),
       });
-      if (!res.ok) { setMessage('Could not start payment. Please try again later.'); return; }
+      if (!res.ok) {
+        const errorBody = await res.json().catch(() => ({}));
+        setMessage(errorBody?.error || 'Could not start payment. Please try again later.');
+        return;
+      }
       const data = await res.json();
       if (!data?.url) { setMessage(data?.error || 'Could not create payment session.'); return; }
       window.location.href = data.url;
@@ -189,7 +198,7 @@ export function PricingModal({ open, onClose, currentPlan = 'free' }: Props) {
                   plans={plans}
                   billingCycle={billingCycle}
                   onCycleChange={setBillingCycle}
-                  onPlanSelect={(planId) => handlePlanSelect(planId)}
+                  onPlanSelect={(planId, _cycle, creditCode) => handlePlanSelect(planId, creditCode)}
                   loadingPlan={loading}
                 />
               </motion.div>

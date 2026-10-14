@@ -75,6 +75,36 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Credit codes are only available for Business and Agency subscriptions' }) };
   }
 
+  if (creditCode) {
+    const { data: codeRecord, error: codeError } = await supabase
+      .from('credit_codes')
+      .select('id, is_active, redemption_count, max_redemptions')
+      .eq('code', creditCode)
+      .maybeSingle();
+    if (codeError) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'Could not verify the credit code' }) };
+    }
+    if (!codeRecord?.is_active) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'This credit code is invalid or inactive' }) };
+    }
+    if (codeRecord.redemption_count >= codeRecord.max_redemptions) {
+      return { statusCode: 409, body: JSON.stringify({ error: 'This credit code has reached its usage limit' }) };
+    }
+
+    const { data: existingRedemption, error: redemptionError } = await supabase
+      .from('credit_code_redemptions')
+      .select('id')
+      .eq('code_id', codeRecord.id)
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (redemptionError) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'Could not verify previous code usage' }) };
+    }
+    if (existingRedemption) {
+      return { statusCode: 409, body: JSON.stringify({ error: 'This credit code has already been used on your account' }) };
+    }
+  }
+
   const allowedOrigins = ['https://presora.app', 'https://www.presora.app'];
   let origin = process.env.URL || 'https://presora.app';
   try {

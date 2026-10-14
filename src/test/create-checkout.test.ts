@@ -12,10 +12,13 @@ vi.mock('stripe', () => ({
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: () => {
-    const profileQuery = {
-      select: () => profileQuery,
-      eq: () => profileQuery,
-      maybeSingle: async () => ({ data: { stripe_customer_id: 'cus_test' }, error: null }),
+    const query = (result: unknown) => {
+      const chain = {
+        select: () => chain,
+        eq: () => chain,
+        maybeSingle: async () => ({ data: result, error: null }),
+      };
+      return chain;
     };
     return {
       auth: {
@@ -24,7 +27,13 @@ vi.mock('@supabase/supabase-js', () => ({
           error: null,
         }),
       },
-      from: () => profileQuery,
+      from: (table: string) => {
+        if (table === 'credit_codes') {
+          return query({ id: 'code-id', is_active: true, redemption_count: 0, max_redemptions: 10 });
+        }
+        if (table === 'credit_code_redemptions') return query(null);
+        return query({ stripe_customer_id: 'cus_test' });
+      },
     };
   },
 }));
@@ -79,5 +88,18 @@ describe('create-checkout', () => {
     const [checkout] = createSession.mock.calls[0];
     expect(checkout.custom_fields).toBeUndefined();
     expect(checkout.metadata.plan).toBe('starter');
+  });
+
+  it('prefills a verified Business credit code in Stripe Checkout', async () => {
+    const { handler } = await import('../../netlify/functions/create-checkout.js');
+    const response = await handler({
+      httpMethod: 'POST',
+      headers: { authorization: 'Bearer valid-token', origin: 'https://presora.app' },
+      body: JSON.stringify({ priceId: 'price_business_monthly', creditCode: 'BUSINESS25' }),
+    });
+
+    expect(response.statusCode).toBe(200);
+    const [checkout] = createSession.mock.calls[0];
+    expect(checkout.custom_fields?.[0]?.text?.default_value).toBe('BUSINESS25');
   });
 });

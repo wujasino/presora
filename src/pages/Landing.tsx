@@ -493,7 +493,11 @@ const Landing = () => {
                 : PLANS.filter((plan) => ['starter', 'growth', 'enterprise'].includes(plan.id))}
               billingCycle={billingCycle}
               onCycleChange={setBillingCycle}
-              onPlanSelect={() => navigate('/register')}
+              onPlanSelect={(planId, _cycle, creditCode) => {
+                const params = new URLSearchParams({ plan: planId });
+                if (creditCode) params.set('credit_code', creditCode);
+                navigate(`/register?${params.toString()}`);
+              }}
               showBillingToggle
               className="[&_.rounded-2xl]:border-border [&_.rounded-2xl]:bg-card [&_.rounded-2xl]:shadow-none [&_.rounded-2xl:hover]:shadow-none [&_.pricing-card-muted]:bg-card/70"
             />

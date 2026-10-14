@@ -59,7 +59,7 @@ const Pricing = () => {
     }
   };
 
-  const handlePlanSelect = async (planId: string) => {
+  const handlePlanSelect = async (planId: string, selectedCreditCode = '') => {
     if (planId === 'free') {
       if (isLoggedIn) { setShowDowngradeDialog(true); return; }
       window.location.href = '/register';
@@ -70,7 +70,7 @@ const Pricing = () => {
 
     try {
       const params = new URLSearchParams(window.location.search);
-      const creditCode = params.get('credit_code')?.trim() || '';
+      const creditCode = selectedCreditCode.trim() || params.get('credit_code')?.trim() || '';
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         const signupParams = new URLSearchParams({ plan: planId });
@@ -323,7 +323,7 @@ const Pricing = () => {
           plans={plans}
           billingCycle={billingCycle}
           onCycleChange={setBillingCycle}
-          onPlanSelect={(planId) => handlePlanSelect(planId)}
+          onPlanSelect={(planId, _cycle, creditCode) => handlePlanSelect(planId, creditCode)}
           loadingPlan={loading}
           showBillingToggle={false}
         />
