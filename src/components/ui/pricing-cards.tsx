@@ -186,8 +186,12 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                 <Button
                   onClick={() => onPlanSelect(plan.id, billingCycle)}
                   disabled={isLoading || plan.isCurrent}
-                  variant={plan.isCurrent ? 'secondary' : plan.isPopular ? 'default' : 'outline-solid'}
-                  className={cn("w-full mt-4 rounded-xl", !plan.isPopular && !plan.isCurrent && "text-primary hover:text-primary")}
+                  variant={plan.isCurrent ? 'secondary' : 'default'}
+                  className={cn(
+                    "w-full mt-4 rounded-xl font-semibold",
+                    !plan.isCurrent && "shadow-md shadow-primary/20 hover:-translate-y-0.5 hover:shadow-lg",
+                    plan.isPopular && "ring-2 ring-primary/20 ring-offset-2 ring-offset-card"
+                  )}
                   size="lg"
                 >
                   {isLoading ? 'Loading…' : (
