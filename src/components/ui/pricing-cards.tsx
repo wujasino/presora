@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card } from "@/components/ui/card";
-import { Check, X, Plus, ChevronDown, Gauge, Building2 } from "lucide-react";
+import { Check, X, Plus, ChevronDown, Gauge, Building2, Ticket } from "lucide-react";
 import { useTranslation } from "@/lib/locale";
 
 type BillingCycle = 'monthly' | 'yearly';
@@ -26,6 +26,8 @@ export interface PricingTierCard {
   isPopular: boolean;
   /** Plan the user is already subscribed to — renders the CTA as inert instead of clickable. */
   isCurrent?: boolean;
+  /** A Presora credit code can be entered in Stripe Checkout for this plan. */
+  acceptsCreditCode?: boolean;
   buttonLabel: string;
   features: PricingFeature[];
 }
@@ -201,6 +203,12 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                     </span>
                   )}
                 </Button>
+                {plan.acceptsCreditCode && !plan.isCurrent && (
+                  <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
+                    <Ticket className="h-3.5 w-3.5" aria-hidden="true" />
+                    Credit code available at secure checkout
+                  </p>
+                )}
               </div>
 
               {/* Bottom: included features + inheritance note */}

@@ -103,6 +103,7 @@ export const PLANS: PricingTierCard[] = [
     periodYearly: PERIOD_YEAR,
     maxBrands: 5,
     isPopular: true,
+    acceptsCreditCode: true,
     buttonLabel: 'Choose plan',
     features: [
       { name: '50 brand analyses per month', isIncluded: true },
@@ -124,6 +125,7 @@ export const PLANS: PricingTierCard[] = [
     periodYearly: PERIOD_YEAR,
     maxBrands: 25,
     isPopular: false,
+    acceptsCreditCode: true,
     buttonLabel: 'Choose plan',
     features: [
       { name: 'Unlimited analyses', isIncluded: true },

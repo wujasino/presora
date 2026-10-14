@@ -1,7 +1,8 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-import { PLAN_BY_PRICE_ID, planForPriceId } from './_lib/stripePlans.js';
+import { PLAN_BY_PRICE_ID, billingCycleForPriceId, planForPriceId } from './_lib/stripePlans.js';
+import { planAcceptsCreditCode } from './_lib/creditCodePlans.js';
 
 const ALLOWED_PRICE_IDS = new Set(Object.keys(PLAN_BY_PRICE_ID));
 
@@ -14,7 +15,9 @@ export const handler = async (event) => {
     return { statusCode: 413, body: JSON.stringify({ error: 'Payload too large' }) };
   }
 
-  if (!process.env.STRIPE_SECRET_KEY) {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!process.env.STRIPE_SECRET_KEY || !supabaseUrl || !supabaseServiceKey || ALLOWED_PRICE_IDS.size === 0) {
     return { statusCode: 500, body: JSON.stringify({ error: 'Server misconfiguration' }) };
   }
 
@@ -24,8 +27,8 @@ export const handler = async (event) => {
   }
 
   const supabase = createClient(
-    process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY,
+    supabaseUrl,
+    supabaseServiceKey,
     { auth: { autoRefreshToken: false, persistSession: false } }
   );
 
@@ -46,7 +49,7 @@ export const handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Missing priceId' }) };
   }
 
-  if (ALLOWED_PRICE_IDS.size > 0 && !ALLOWED_PRICE_IDS.has(priceId)) {
+  if (!ALLOWED_PRICE_IDS.has(priceId)) {
     // Price ids aren't secret — they're already embedded in the client
     // bundle (Pricing.tsx reads them via import.meta.env) and visible in
     // this very request. Echoing the rejected value + how many the
@@ -65,8 +68,11 @@ export const handler = async (event) => {
   if (creditCode && !/^[A-Z0-9][A-Z0-9_-]{2,31}$/.test(creditCode)) {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid credit code format' }) };
   }
-  if (creditCode && planForPriceId(priceId) !== 'enterprise') {
-    return { statusCode: 400, body: JSON.stringify({ error: 'Credit codes are only available for Agency subscriptions' }) };
+  const selectedPlan = planForPriceId(priceId);
+  const billingCycle = billingCycleForPriceId(priceId);
+  const acceptsCreditCode = planAcceptsCreditCode(selectedPlan);
+  if (creditCode && !acceptsCreditCode) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Credit codes are only available for Business and Agency subscriptions' }) };
   }
 
   const allowedOrigins = ['https://presora.app', 'https://www.presora.app'];
@@ -89,15 +95,23 @@ export const handler = async (event) => {
     // Reuse the existing Stripe Customer if this user already has one —
     // otherwise `customer_email` makes Stripe mint a new Customer object on
     // every checkout, fragmenting one person's history across duplicates.
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('stripe_customer_id')
       .eq('id', user.id)
       .maybeSingle();
+    if (profileError) {
+      return { statusCode: 500, body: JSON.stringify({ error: 'Could not load billing profile' }) };
+    }
 
     const customerParams = profile?.stripe_customer_id
-      ? { customer: profile.stripe_customer_id }
-      : { customer_email: user.email };
+      ? {
+          customer: profile.stripe_customer_id,
+          customer_update: { address: 'auto', name: 'auto' },
+        }
+      : user.email
+        ? { customer_email: user.email }
+        : {};
 
     // Idempotency key derived from the business operation (who, what price,
     // coarse time window) rather than a fresh random value per call — a
@@ -111,12 +125,14 @@ export const handler = async (event) => {
         mode: 'subscription',
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
+        billing_address_collection: 'required',
+        tax_id_collection: { enabled: true },
         ...customerParams,
-        ...(planForPriceId(priceId) === 'enterprise'
+        ...(acceptsCreditCode
           ? {
               custom_fields: [{
                 key: 'credit_code',
-                label: { type: 'custom', custom: 'Credit code — credits after payment' },
+                label: { type: 'custom', custom: 'Presora credit code — applied after payment' },
                 type: 'text',
                 optional: true,
                 text: {
@@ -131,9 +147,18 @@ export const handler = async (event) => {
         metadata: {
           userId: user.id,
           priceId,
+          plan: selectedPlan,
+          billingCycle,
+          source: 'presora_checkout',
         },
         subscription_data: {
-          metadata: { userId: user.id, priceId },
+          metadata: {
+            userId: user.id,
+            priceId,
+            plan: selectedPlan,
+            billingCycle,
+            source: 'presora_checkout',
+          },
         },
         success_url: `${origin}/pricing?success=true&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/pricing?canceled=true`,

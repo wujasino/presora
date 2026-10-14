@@ -26,3 +26,16 @@ export const PLAN_BY_PRICE_ID = {
 };
 
 export const planForPriceId = (priceId) => PLAN_BY_PRICE_ID[priceId] || null;
+
+export const BILLING_CYCLE_BY_PRICE_ID = {
+  ...(process.env.VITE_STRIPE_STARTER_PRICE_ID        ? { [process.env.VITE_STRIPE_STARTER_PRICE_ID]:        'monthly' } : {}),
+  ...(process.env.VITE_STRIPE_STARTER_YEARLY_PRICE_ID ? { [process.env.VITE_STRIPE_STARTER_YEARLY_PRICE_ID]: 'yearly'  } : {}),
+  ...(process.env.VITE_STRIPE_SOLO_PRICE_ID           ? { [process.env.VITE_STRIPE_SOLO_PRICE_ID]:           'monthly' } : {}),
+  ...(process.env.VITE_STRIPE_SOLO_YEARLY_PRICE_ID    ? { [process.env.VITE_STRIPE_SOLO_YEARLY_PRICE_ID]:    'yearly'  } : {}),
+  ...(process.env.VITE_STRIPE_BUSINESS_PRICE_ID       ? { [process.env.VITE_STRIPE_BUSINESS_PRICE_ID]:       'monthly' } : {}),
+  ...(process.env.VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID? { [process.env.VITE_STRIPE_BUSINESS_YEARLY_PRICE_ID]:'yearly'  } : {}),
+  ...(process.env.VITE_STRIPE_AGENCY_PRICE_ID         ? { [process.env.VITE_STRIPE_AGENCY_PRICE_ID]:         'monthly' } : {}),
+  ...(process.env.VITE_STRIPE_AGENCY_YEARLY_PRICE_ID  ? { [process.env.VITE_STRIPE_AGENCY_YEARLY_PRICE_ID]:  'yearly'  } : {}),
+};
+
+export const billingCycleForPriceId = (priceId) => BILLING_CYCLE_BY_PRICE_ID[priceId] || null;

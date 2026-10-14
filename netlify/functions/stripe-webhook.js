@@ -1,6 +1,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { planForPriceId } from './_lib/stripePlans.js';
+import { planAcceptsCreditCode } from './_lib/creditCodePlans.js';
 import { captureCriticalError } from './_lib/sentry.js';
 import { getLifecycleRecipient, lifecycleLinks, safeSendLifecycleEvent } from './_lib/resendLifecycle.js';
 
@@ -159,7 +160,7 @@ export const handler = async (event) => {
             ?.text?.value
             ?.trim()
             ?.toUpperCase();
-          if (creditCode && session.payment_status === 'paid' && plan === 'enterprise') {
+          if (creditCode && session.payment_status === 'paid' && planAcceptsCreditCode(plan)) {
             const checkoutEmail = (session.customer_details?.email || session.customer_email || '').trim().toLowerCase();
             const { data: profile, error: profileError } = await supabase
               .from('profiles')
