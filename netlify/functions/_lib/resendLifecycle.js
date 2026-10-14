@@ -56,6 +56,44 @@ export async function safeSendLifecycleEvent(input) {
   }
 }
 
+/**
+ * Hands post-scan email work to a Netlify Background Function. A completed
+ * AI scan must not wait for profile lookups, frequency caps or Resend before
+ * its report reaches the browser.
+ */
+export async function queueAnalysisLifecycle(payload) {
+  const secret = process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!secret || !payload?.userId) return { skipped: true };
+
+  const body = JSON.stringify({ ...payload, issuedAt: Date.now() });
+  const signature = crypto.createHmac('sha256', secret).update(body).digest('hex');
+  const siteUrl = (process.env.URL || process.env.DEPLOY_PRIME_URL || 'https://presora.app').replace(/\/$/, '');
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 1500);
+
+  try {
+    const response = await fetch(`${siteUrl}/.netlify/functions/analysis-lifecycle-background`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Presora-Signature': signature,
+      },
+      body,
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      console.error(`resend-lifecycle queue: background function returned ${response.status}`);
+      return { error: true };
+    }
+    return { queued: true };
+  } catch (error) {
+    console.error('resend-lifecycle queue:', error?.name === 'AbortError' ? 'queue request timed out' : error?.message || error);
+    return { error: true };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export const personalizeFirstName = (fullName) => {
   const first = String(fullName || '').trim().split(/\s+/)[0] || '';
   return first && !first.includes('@') && /^[\p{L}\p{M}'’-]{1,40}$/u.test(first) ? first : 'there';
