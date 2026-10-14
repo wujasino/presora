@@ -25,6 +25,29 @@ const json = (statusCode, headers, body) => ({
 });
 
 const hashToken = (token) => createHash('sha256').update(token).digest('hex');
+const brandKey = (raw) => String(raw || '')
+  .trim()
+  .toLowerCase()
+  .replace(/^https?:\/\//, '')
+  .replace(/^www\./, '')
+  .replace(/\/.*$/, '')
+  .replace(/\.(com|net|org|io|app|co|ai|dev|xyz|pl|eu|de|fr|es|it|uk)$/, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+const cleanText = (value, max) => {
+  const text = typeof value === 'string' ? value.trim() : '';
+  return text ? text.slice(0, max) : null;
+};
+const safeHttpUrl = (value, max) => {
+  const raw = cleanText(value, max);
+  if (!raw) return null;
+  try {
+    const parsed = new URL(raw);
+    return ['http:', 'https:'].includes(parsed.protocol) ? raw : null;
+  } catch {
+    return null;
+  }
+};
 const PUBLIC_REPORT_FIELDS = 'id, brand_name, trust_score, authority, sentiment, recency, mentions, accuracy, created_at, sources, audit_summary';
 
 export const handler = async (event) => {
@@ -47,7 +70,7 @@ export const handler = async (event) => {
 
       const { data: share, error: shareError } = await supabase
         .from('report_shares')
-        .select('analysis_id')
+        .select('analysis_id, owner_id')
         .eq('token_hash', hashToken(token))
         .maybeSingle();
       if (shareError) return json(500, headers, { error: 'Could not load shared report' });
@@ -60,7 +83,37 @@ export const handler = async (event) => {
         .maybeSingle();
       if (reportError) return json(500, headers, { error: 'Could not load shared report' });
       if (!report) return json(404, headers, { error: 'Report not found' });
-      return json(200, headers, { report });
+
+      // Competitors are scoped to the share owner and this report's brand.
+      // A missing/older migration must not make an otherwise valid share fail.
+      const { data: competitorRows, error: competitorError } = await supabase
+        .from('tracked_competitors')
+        .select('competitor_name, last_score, last_scanned_at')
+        .eq('user_id', share.owner_id)
+        .eq('brand_key', brandKey(report.brand_name));
+      const competitors = competitorError ? [] : (competitorRows || [])
+        .sort((a, b) => {
+          if (a.last_score == null && b.last_score == null) return a.competitor_name.localeCompare(b.competitor_name);
+          if (a.last_score == null) return 1;
+          if (b.last_score == null) return -1;
+          return b.last_score - a.last_score;
+        })
+        .slice(0, 3);
+
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('agency_name, agency_logo_url, agency_contact_email, agency_website')
+        .eq('id', share.owner_id)
+        .maybeSingle();
+      const agencyName = cleanText(profile?.agency_name, 60);
+      const branding = {
+        name: agencyName,
+        logoUrl: safeHttpUrl(profile?.agency_logo_url, 500),
+        contactEmail: cleanText(profile?.agency_contact_email, 160) || 'contact.presora@gmail.com',
+        website: safeHttpUrl(profile?.agency_website, 200),
+        isWhiteLabeled: Boolean(agencyName),
+      };
+      return json(200, headers, { report: { ...report, competitors, branding } });
     }
 
     const authHeader = event.headers.authorization || event.headers.Authorization || '';

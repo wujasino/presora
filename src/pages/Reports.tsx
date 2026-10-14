@@ -5,7 +5,7 @@ import { FileText, Download, Trash2, Calendar, ArrowUp, ArrowDown, ChevronRight,
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { usePlan, isAgencyPlan, useSessionUser } from '@/hooks/useAccountInfo';
-import { dedupeAnalyses } from '@/lib/analyses';
+import { brandKey, dedupeAnalyses } from '@/lib/analyses';
 
 interface Report {
   id: string;
@@ -77,7 +77,19 @@ const Reports = () => {
     );
   }, [reports, timeKey, sortDir]);
 
-  const downloadReport = (r: Report) => {
+  const downloadReport = async (r: Report) => {
+    const { data: competitorData } = await supabase
+      .from('tracked_competitors')
+      .select('competitor_name, last_score, last_scanned_at')
+      .eq('brand_key', brandKey(r.brand_name));
+    const competitors = (competitorData ?? [])
+      .sort((a, b) => {
+        if (a.last_score === null && b.last_score === null) return a.competitor_name.localeCompare(b.competitor_name);
+        if (a.last_score === null) return 1;
+        if (b.last_score === null) return -1;
+        return b.last_score - a.last_score;
+      })
+      .slice(0, 3);
     const payload = {
       source: 'Presora',
       brand: r.brand_name,
@@ -89,6 +101,7 @@ const Reports = () => {
         mentions: r.mentions,
         recency: r.recency,
       },
+      competitors,
       generatedAt: r.created_at,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });

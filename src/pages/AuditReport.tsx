@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ShieldCheck, Smile, Target, AtSign, Clock, Printer, ArrowLeft, Loader2, AlertTriangle, Sparkles, Mail, Lock, Quote, Globe } from 'lucide-react';
+import { ShieldCheck, Smile, Target, AtSign, Clock, Printer, ArrowLeft, Loader2, AlertTriangle, Sparkles, Mail, Lock, Quote, Globe, Trophy } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { Wordmark } from '@/components/Wordmark';
 import { Button } from '@/components/ui/button';
 import { usePlan, isAgencyPlan } from '@/hooks/useAccountInfo';
 import { useAuditBranding } from '@/hooks/useAuditBranding';
 import { bandOf as dimBandOf } from '@/lib/dimensionBands';
+import { brandKey } from '@/lib/analyses';
 
 interface AnalysisRow {
   id: string;
@@ -28,6 +29,13 @@ interface AuditSummary {
   narrative: string;
   competitivePosition: string;
   recommendations: { title: string; description: string; priority: 'high' | 'medium' | 'low' }[];
+}
+
+interface ReportCompetitor {
+  id: string;
+  competitor_name: string;
+  last_score: number | null;
+  last_scanned_at: string | null;
 }
 
 // `what` is printed in the methodology section. An agency forwarding this to
@@ -101,6 +109,7 @@ const NO_SPLIT = 'break-inside-avoid [page-break-inside:avoid]';
 const AuditReport = () => {
   const { id } = useParams<{ id: string }>();
   const [analysis, setAnalysis] = useState<AnalysisRow | null>(null);
+  const [competitors, setCompetitors] = useState<ReportCompetitor[]>([]);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState('');
@@ -127,6 +136,23 @@ const AuditReport = () => {
         return;
       }
       setAnalysis(data as AnalysisRow);
+
+      // A client report contains at most three competitors explicitly tracked
+      // for this brand. A missing scan stays visibly unmeasured; it never gets
+      // a synthetic score merely to make the comparison look complete.
+      const { data: competitorData } = await supabase
+        .from('tracked_competitors')
+        .select('id, competitor_name, last_score, last_scanned_at')
+        .eq('brand_key', brandKey(data.brand_name));
+      const rankedCompetitors = ((competitorData as ReportCompetitor[]) ?? [])
+        .sort((a, b) => {
+          if (a.last_score === null && b.last_score === null) return a.competitor_name.localeCompare(b.competitor_name);
+          if (a.last_score === null) return 1;
+          if (b.last_score === null) return -1;
+          return b.last_score - a.last_score;
+        })
+        .slice(0, 3);
+      setCompetitors(rankedCompetitors);
       setLoading(false);
 
       if (!data.audit_summary) {
@@ -361,6 +387,49 @@ const AuditReport = () => {
             </section>
           </div>
         )}
+
+        {/* Measured market context. Only user-selected competitors belonging
+            to this brand are shown; a report never guesses rival names. */}
+        <section className={`mb-10 ${NO_SPLIT}`}>
+          <div className="mb-3 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-xs uppercase tracking-wider text-muted-foreground print:text-black/60">Competitive benchmark</h2>
+              <p className="mt-1 text-xs text-muted-foreground print:text-black/50">Up to three competitors tracked for {analysis.brand_name}.</p>
+            </div>
+            <span className="text-xs text-muted-foreground print:text-black/50">Your score: {analysis.trust_score}</span>
+          </div>
+          {competitors.length > 0 ? (
+            <div className="grid gap-3 sm:grid-cols-3">
+              {competitors.map((competitor, index) => {
+                const delta = competitor.last_score === null ? null : competitor.last_score - analysis.trust_score;
+                return (
+                  <div key={competitor.id} className="rounded-xl border border-border bg-card/40 p-4 print:border-black/15 print:bg-transparent">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground print:text-black/50">Competitor {index + 1}</span>
+                      <Trophy className="h-3.5 w-3.5 text-muted-foreground print:text-black/40" />
+                    </div>
+                    <p className="mt-2 truncate text-sm font-semibold text-foreground print:text-black">{competitor.competitor_name}</p>
+                    {competitor.last_score === null ? (
+                      <p className="mt-3 text-xs text-muted-foreground print:text-black/60">Not measured</p>
+                    ) : (
+                      <div className="mt-3 flex items-end justify-between gap-2">
+                        <p className="text-2xl font-display font-semibold tabular-nums text-foreground print:text-black">{competitor.last_score}</p>
+                        <p className={`text-xs font-medium tabular-nums ${delta !== null && delta > 0 ? 'text-red-500' : delta !== null && delta < 0 ? 'text-emerald-500' : 'text-muted-foreground'} print:text-black/60`}>
+                          {delta === 0 ? 'Same score' : `${delta! > 0 ? '+' : ''}${delta} vs you`}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="rounded-xl border border-dashed border-border px-4 py-5 text-center print:border-black/15">
+              <p className="text-sm text-muted-foreground print:text-black/60">No competitors are tracked for this brand yet.</p>
+              <Link to="/competitor-tracker" className="print:hidden mt-2 inline-block text-sm font-medium text-primary hover:underline">Add up to three competitors</Link>
+            </div>
+          )}
+        </section>
 
         {/* Dimension breakdown */}
         <section className={`mb-10 ${NO_SPLIT}`}>
