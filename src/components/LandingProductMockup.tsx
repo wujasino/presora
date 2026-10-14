@@ -1,11 +1,10 @@
-import { BarChart3, Bell, Bot, ChevronRight, CircleHelp, FileText, Gauge, Home, LockKeyhole, Menu, Palette, RefreshCw, Search, Sparkles, Zap } from 'lucide-react';
+import { BarChart3, Bell, Bot, ChevronRight, CircleHelp, FileText, Gauge, Globe2, Home, LockKeyhole, Menu, Palette, RefreshCw, Search, Sparkles, Zap } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { lazy, Suspense, useState } from 'react';
 import { useTheme } from 'next-themes';
+import { SeoTagGenerator } from '@/components/seo/SeoTagGenerator';
 
 const RealDashboard = lazy(() => import('@/pages/Dashboard'));
-const RealAutomations = lazy(() => import('@/pages/Automations'));
-const RealGoogleVisibility = lazy(() => import('@/pages/GoogleVisibility'));
 const RealCompetitorTracker = lazy(() => import('@/pages/CompetitorTracker'));
 const RealPricing = lazy(() => import('@/pages/Pricing'));
 
@@ -13,8 +12,6 @@ const RealBrandScan = () => <RealDashboard demoScan />;
 
 const REAL_SCREENS = {
   'Brand Scan': RealBrandScan,
-  Automations: RealAutomations,
-  'Google Visibility': RealGoogleVisibility,
   'Competitor Tracker': RealCompetitorTracker,
   Subscription: RealPricing,
 } as const;
@@ -50,16 +47,7 @@ const LandingProductMockupContent = () => {
   const [automationPrompt, setAutomationPrompt] = useState('');
   const [automationTab, setAutomationTab] = useState<'Chat' | 'Preview'>('Chat');
   const [googleTab, setGoogleTab] = useState<'Audit a page' | 'Generate tags'>('Audit a page');
-  const [googleUrl, setGoogleUrl] = useState('');
-  const [tagFields, setTagFields] = useState({
-    brand: 'Acme Inc.',
-    title: 'Acme Inc. — Cloud accounting for small teams',
-    description: '',
-    canonical: 'https://acme.com/',
-    image: 'https://acme.com/og-image.png',
-    logo: 'https://acme.com/logo.png',
-    socials: 'https://x.com/acme\nhttps://linkedin.com/company/acme',
-  });
+  const [googleUrl, setGoogleUrl] = useState('https://acme.com/');
   const [selectedCompetitor, setSelectedCompetitor] = useState('Semcore');
   const [selectedReport, setSelectedReport] = useState('');
   const [clientBranding, setClientBranding] = useState({
@@ -69,14 +57,7 @@ const LandingProductMockupContent = () => {
   });
 
   const goTo = (label: string) => {
-    const pageScrollY = window.scrollY;
     setActiveNav(label);
-    const restorePageScroll = () => {
-      window.scrollTo(0, pageScrollY);
-    };
-    window.requestAnimationFrame(restorePageScroll);
-    window.setTimeout(restorePageScroll, 0);
-    window.setTimeout(restorePageScroll, 100);
   };
 
   const showNotice = (message: string) => {
@@ -188,39 +169,48 @@ const LandingProductMockupContent = () => {
     }
 
     if (activeNav === 'Google Visibility') {
-      return <div className="space-y-4">
+      return <div className="flex h-full min-h-0 flex-col gap-3">
         <div className="flex items-start gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-600 bg-slate-800/70 text-slate-300">◉</div>
-          <div><h3 className="text-sm font-semibold text-slate-100">Google visibility</h3><p className="max-w-xl text-[9px] leading-relaxed text-slate-400">Check whether a page is set up to be found and understood by Google, and generate the meta tags and structured data to fix what's missing. This looks at the page itself — no Google account or Search Console access needed.</p></div>
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/60"><Globe2 className="h-4 w-4 text-slate-300" /></div>
+          <div className="min-w-0">
+            <h3 className="text-sm font-semibold text-slate-100">Google visibility</h3>
+            <p className="mt-1 max-w-xl text-[10px] leading-relaxed text-slate-400">Check your page's search signals and prepare tags to improve how it appears in Google and social previews.</p>
+          </div>
         </div>
         <div className="inline-flex rounded-lg border border-slate-800 bg-[#101725] p-1">
-          {(['Audit a page', 'Generate tags'] as const).map((tab) => <button key={tab} onClick={() => setGoogleTab(tab)} className={`rounded px-3 py-1.5 text-[9px] ${googleTab === tab ? 'bg-[#0b101b] font-medium text-slate-100' : 'text-slate-400 hover:text-white'}`}>{tab}</button>)}
+          {(['Audit a page', 'Generate tags'] as const).map((tab) => <button key={tab} onClick={() => setGoogleTab(tab)} className={`rounded px-3 py-1.5 text-[10px] ${googleTab === tab ? 'bg-[#0b101b] font-medium text-slate-100' : 'text-slate-400 hover:text-white'}`}>{tab}</button>)}
         </div>
-        {googleTab === 'Audit a page' ? <form onSubmit={(event) => { event.preventDefault(); showNotice(`Demo audit started for ${googleUrl || 'the example page'}`); }} className="flex gap-2">
-          <input aria-label="Page URL" value={googleUrl} onChange={(event) => setGoogleUrl(event.target.value)} placeholder="example.com or https://example.com/page" className="min-w-0 flex-1 rounded-lg border border-slate-700 bg-[#101725] px-3 py-2 text-[10px] text-slate-200 outline-none placeholder:text-slate-500" />
-          <button className="rounded-lg bg-slate-300 px-3 py-2 text-[10px] font-medium text-slate-900">⌕ Run audit</button>
-        </form> : <div className="grid gap-3 sm:grid-cols-[1fr_1fr]">
-          <div className="space-y-3 rounded-xl border border-slate-700 bg-[#101725] p-3">
-            {[
-              ['brand', 'Brand / organisation name', 'input'],
-              ['title', 'Page title', 'input'],
-              ['description', 'Meta description', 'textarea'],
-              ['canonical', 'Page URL (canonical)', 'input'],
-              ['image', 'Social preview image URL', 'input'],
-              ['logo', 'Logo URL (for structured data)', 'input'],
-              ['socials', 'Social profile URLs (one per line, optional)', 'textarea'],
-            ].map(([key, label, type]) => {
-              const value = tagFields[key as keyof typeof tagFields];
-              const setValue = (nextValue: string) => setTagFields((current) => ({ ...current, [key]: nextValue }));
-              return <label key={key} className="block text-[8px] font-medium text-slate-400">{label}{(key === 'title' || key === 'description') && <span className="float-right font-normal text-slate-500">{key === 'title' ? value.length : value.length} chars</span>}{type === 'textarea' ? <textarea value={value} onChange={(event) => setValue(event.target.value)} placeholder={key === 'description' ? 'A one-sentence summary of the page, written for someone who has never heard of you.' : 'https://x.com/acme'} className="mt-1 min-h-14 w-full resize-none rounded-lg border border-slate-700 bg-[#0b101b] px-2.5 py-2 text-[10px] text-slate-200 outline-none placeholder:text-slate-500 focus:border-slate-500" /> : <input value={value} onChange={(event) => setValue(event.target.value)} className="mt-1 w-full rounded-lg border border-slate-700 bg-[#0b101b] px-2.5 py-2 text-[10px] text-slate-200 outline-none placeholder:text-slate-500 focus:border-slate-500" />}</label>;
-            })}
-          </div>
+        {googleTab === 'Audit a page' ? <div className="space-y-3">
+          <form onSubmit={(event) => { event.preventDefault(); showNotice(`Demo audit started for ${googleUrl || 'the example page'}`); }} className="flex gap-2">
+            <input aria-label="Page URL" value={googleUrl} onChange={(event) => setGoogleUrl(event.target.value)} placeholder="example.com or https://example.com/page" className="h-10 min-w-0 flex-1 rounded-lg border border-slate-700 bg-[#101725] px-3 text-xs text-slate-200 outline-none placeholder:text-slate-500" />
+            <button className="shrink-0 rounded-lg bg-slate-200 px-3 py-2 text-[10px] font-semibold text-slate-900 transition hover:bg-white">⌕ Audit page</button>
+          </form>
           <div className="rounded-xl border border-slate-700 bg-[#101725] p-3">
-            <div className="flex items-center justify-between text-xs font-semibold text-slate-200"><span>Generated tags</span><button onClick={() => { void navigator.clipboard?.writeText(`<title>${tagFields.title}</title>\n<meta name="description" content="${tagFields.description}">\n<link rel="canonical" href="${tagFields.canonical}">`); showNotice('Tags copied'); }} className="rounded-lg border border-slate-700 px-2 py-1 text-[9px] text-slate-400 hover:text-white">▣ Copy</button></div>
-            <pre className="mt-3 min-h-[250px] whitespace-pre-wrap rounded-xl border border-slate-700 bg-[#0b101b] p-3 font-mono text-[9px] leading-relaxed text-slate-300">{`Fill in the fields on the left — the tags to paste into your page's <head> will show up here.\n\n${tagFields.brand ? `<meta property="og:site_name" content="${tagFields.brand}">` : ''}${tagFields.title ? `\n<title>${tagFields.title}</title>` : ''}${tagFields.description ? `\n<meta name="description" content="${tagFields.description}">` : ''}\n<link rel="canonical" href="${tagFields.canonical}">`}</pre>
-            <p className="mt-3 text-[8px] leading-relaxed text-slate-500">Paste this inside your page's &lt;head&gt;. This doesn't touch your Google account or Search Console — it only prepares the tags; you (or your CMS) still publish them.</p>
+            <p className="text-[11px] font-semibold text-slate-200">What the audit checks</p>
+            <p className="mt-1 text-[9px] leading-relaxed text-slate-400">A quick review of the page itself — no Google account or Search Console connection needed.</p>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {[
+                ['Page basics', 'Title, description and headings'],
+                ['Search access', 'Indexing and canonical URL'],
+                ['Rich results', 'Structured data and social preview'],
+                ['Mobile signals', 'Viewport and image descriptions'],
+              ].map(([title, detail]) => (
+                <div key={title} className="min-w-0 rounded-lg border border-slate-800 bg-[#0b101b] p-2">
+                  <p className="text-[9px] font-medium text-slate-200">{title}</p>
+                  <p className="mt-0.5 text-[8px] leading-relaxed text-slate-400">{detail}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>}
+        </div> : <SeoTagGenerator compact initialValues={{
+          brandName: 'Acme Inc.',
+          pageTitle: 'Acme Inc. — Cloud accounting for small teams',
+          description: 'Simple cloud accounting that helps small teams stay on top of their finances.',
+          pageUrl: 'https://acme.com/',
+          imageUrl: 'https://acme.com/og-image.png',
+          logoUrl: 'https://acme.com/logo.png',
+          sameAs: 'https://x.com/acme\nhttps://linkedin.com/company/acme',
+        }} />}
       </div>;
     }
 
@@ -374,18 +364,18 @@ const LandingProductMockupContent = () => {
         <div className={`ml-3 h-4 flex-1 rounded ${isDark ? 'bg-white/[0.04]' : 'bg-slate-200'}`} />
       </div>
 
-      <div className="grid h-[590px] grid-cols-[132px_1fr] sm:grid-cols-[176px_1fr]">
+      <div className="grid h-[590px] grid-cols-[60px_1fr] sm:grid-cols-[176px_1fr]">
         <aside className={`border-r p-2.5 sm:p-3 ${isDark ? 'border-slate-800 bg-[#0c121e]' : 'border-slate-200 bg-slate-50'}`}>
-          <div className={`mb-5 flex items-center gap-1.5 px-1 text-[10px] font-bold tracking-tight sm:text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
+          <div className={`mb-5 flex items-center justify-center gap-1.5 px-0 text-[10px] font-bold tracking-tight sm:justify-start sm:px-1 sm:text-xs ${isDark ? 'text-slate-100' : 'text-slate-900'}`}>
             <img src="/presora-mark-new-dark.png" alt="" aria-hidden="true" className="h-5 w-5 object-contain" />
-            PRESORA
+            <span className="hidden sm:inline">PRESORA</span>
           </div>
-          <div className="mb-3 rounded-md border border-slate-700 bg-slate-800/70 px-2 py-1.5 text-[8px] text-slate-300 sm:text-[9px]">
+          <div className="mb-3 hidden rounded-md border border-slate-700 bg-slate-800/70 px-2 py-1.5 text-[8px] text-slate-300 sm:block sm:text-[9px]">
             <span className="block text-[7px] text-slate-500">WORKSPACE</span> Presora <span className="float-right rounded bg-slate-600 px-1">Agency</span>
           </div>
-          <div className="space-y-0.5 text-[9px] text-slate-400 sm:text-[10px]">
-            <button onMouseDown={(event) => event.preventDefault()} onClick={() => goTo('Home')} className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left transition ${activeNav === 'Home' ? 'bg-slate-700/70 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}><Home className="h-3 w-3" /> Home</button>
-            <p className="px-2 pt-3 text-[7px] uppercase tracking-widest text-slate-600">Tools</p>
+          <div className="space-y-0.5 text-[9px] text-slate-400 sm:text-[10px]" role="navigation" aria-label="Dashboard preview sections">
+            <button title="Home" aria-label="Home" onMouseDown={(event) => event.preventDefault()} onClick={() => goTo('Home')} className={`flex w-full items-center justify-center gap-2 rounded px-1 py-2 text-left transition sm:justify-start sm:px-2 sm:py-1.5 ${activeNav === 'Home' ? 'bg-slate-700/70 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}><Home className="h-3 w-3 shrink-0" /><span className="hidden sm:inline">Home</span></button>
+            <p className="hidden px-2 pt-3 text-[7px] uppercase tracking-widest text-slate-600 sm:block">Tools</p>
             {[
               ['Brand Scan', Search],
               ['Automations', Zap],
@@ -395,7 +385,7 @@ const LandingProductMockupContent = () => {
               ['Competitor Tracker', CircleHelp],
               ['Client Branding', Palette],
             ].map(([label, Icon]) => (
-              <button key={label as string} onMouseDown={(event) => event.preventDefault()} onClick={() => goTo(label as string)} className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left transition ${activeNav === label ? 'bg-slate-700/70 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}><Icon className="h-3 w-3" /> {label as string}</button>
+              <button key={label as string} title={label as string} aria-label={label as string} onMouseDown={(event) => event.preventDefault()} onClick={() => goTo(label as string)} className={`flex w-full items-center justify-center gap-2 rounded px-1 py-2 text-left transition sm:justify-start sm:px-2 sm:py-1.5 ${activeNav === label ? 'bg-slate-700/70 text-white' : 'text-slate-400 hover:bg-slate-800 hover:text-white'}`}><Icon className="h-3 w-3 shrink-0" /><span className="hidden sm:inline">{label as string}</span></button>
             ))}
           </div>
           <div className="mt-10 space-y-2 border-t border-slate-800 pt-3 text-[9px] text-slate-500">
@@ -403,16 +393,18 @@ const LandingProductMockupContent = () => {
               type="button"
               disabled
               aria-disabled="true"
+              title="Subscription"
+              aria-label="Subscription"
               className="flex w-full cursor-not-allowed items-center justify-center gap-1 rounded bg-slate-200 py-1 text-slate-900"
             >
-              <LockKeyhole className="h-3 w-3" /> Subscription
+              <LockKeyhole className="h-3 w-3 shrink-0" /><span className="hidden sm:inline">Subscription</span>
             </button>
           </div>
         </aside>
 
-        <main className={`min-w-0 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden p-4 sm:p-7 ${isDark ? 'bg-[#0b101b]' : 'bg-white'}`}>
-          <div className="mx-auto min-h-full max-w-3xl">
-            <div className="mb-5 flex items-start justify-between">
+        <main className={`min-w-0 overflow-hidden p-3 sm:p-5 ${isDark ? 'bg-[#0b101b]' : 'bg-white'}`}>
+          <div className="mx-auto h-full max-w-3xl overflow-hidden">
+            <div className={`flex items-start justify-between ${activeNav === 'Google Visibility' ? 'mb-3' : 'mb-5'}`}>
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-semibold text-slate-100 sm:text-xl">{activeNav}</h2>

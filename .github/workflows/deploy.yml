@@ -73,4 +73,6 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify-cli deploy --prod --no-build --dir=dist
+        # --no-build skips Netlify's build step, so the functions directory
+        # must be passed explicitly or newly added endpoints deploy as 404s.
+        run: npx netlify-cli deploy --prod --no-build --dir=dist --functions=netlify/functions

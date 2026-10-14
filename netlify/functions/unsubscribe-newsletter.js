@@ -1,5 +1,5 @@
 /**
- * GET /.netlify/functions/unsubscribe-newsletter?email=...&sig=...
+ * GET or POST /.netlify/functions/unsubscribe-newsletter?email=...&sig=...
  * Link target from the newsletter welcome email — verifies the signature
  * (so a stranger can't unsubscribe someone else just by knowing their email)
  * and marks the subscriber as unsubscribed. Renders a small HTML page since
@@ -44,8 +44,8 @@ const page = (title, body) => ({
 });
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'GET') {
-    return { statusCode: 405, body: 'Method not allowed' };
+  if (!['GET', 'POST'].includes(event.httpMethod)) {
+    return { statusCode: 405, headers: { Allow: 'GET, POST' }, body: 'Method not allowed' };
   }
 
   const { email, sig } = event.queryStringParameters || {};
@@ -74,6 +74,12 @@ exports.handler = async (event) => {
   if (error) {
     console.error('Unsubscribe DB error');
     return page('Coś poszło nie tak', 'Spróbuj ponownie później albo napisz do nas.');
+  }
+
+  // RFC 8058 mailbox providers expect an empty success response after their
+  // one-click POST. Human visitors using the footer link still receive a page.
+  if (event.httpMethod === 'POST') {
+    return { statusCode: 204, headers: { 'Cache-Control': 'no-store' }, body: '' };
   }
 
   return page('Wypisano', `Adres <strong style="color:#F8FAFC;">${escapeHtml(normalizedEmail)}</strong> został wypisany z newslettera Presora.`);

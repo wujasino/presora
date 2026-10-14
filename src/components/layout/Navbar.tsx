@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useTheme } from 'next-themes';
+import { motion, useReducedMotion } from 'framer-motion';
 import { LogOut, User, Settings, Code2, Sun, Moon, KeyRound, Mail, ArrowRight } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,6 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from '@/components/ui/navigation-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Wordmark } from '@/components/Wordmark';
@@ -32,6 +32,7 @@ export const Navbar = ({ showThemeToggle = false, landingCta = false }: NavbarPr
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [avatarOpen, setAvatarOpen] = useState(false);
+  const reduceMotion = useReducedMotion();
   const { resolvedTheme, setTheme } = useTheme();
   const { data: sessionUser, isLoading: authLoading } = useSessionUser();
   const userEmail = sessionUser?.email ?? null;
@@ -221,7 +222,7 @@ export const Navbar = ({ showThemeToggle = false, landingCta = false }: NavbarPr
             <NavigationMenu>
               <NavigationMenuList>
                 {/* Home with dropdown */}
-                <NavigationMenuItem>
+                <NavigationMenuItem className="relative">
                   <NavigationMenuTrigger
                     onClick={() => navigate('/')}
                     className={`px-3 py-1.5 rounded-lg text-sm transition-colors ${
@@ -232,33 +233,47 @@ export const Navbar = ({ showThemeToggle = false, landingCta = false }: NavbarPr
                   >
                     Home
                   </NavigationMenuTrigger>
-                  <NavigationMenuContent>
-                    <ul className="w-40 p-2 space-y-1">
-                      <li>
-                        <a
-                          href="/#faq"
-                          className="block px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                        >
-                          FAQ
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="/contact"
-                          className="block px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                        >
-                          Contact
-                        </a>
-                      </li>
-                      <li>
-                        <Link
-                          to="/about"
-                          className="block px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                        >
-                          About
-                        </Link>
-                      </li>
-                    </ul>
+                  <NavigationMenuContent className="md:left-0 md:top-[calc(100%+0.5rem)]">
+                    <motion.div
+                      initial={reduceMotion ? false : { opacity: 0, scale: 0.94, y: 8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={reduceMotion ? { duration: 0 } : {
+                        type: 'spring',
+                        mass: 0.5,
+                        damping: 11.5,
+                        stiffness: 100,
+                        restDelta: 0.001,
+                        restSpeed: 0.001,
+                      }}
+                      className="origin-top rounded-2xl border border-[hsl(var(--glass-border))] bg-background/95 p-1 shadow-xl backdrop-blur-xl"
+                    >
+                      <ul className="w-44 p-2 space-y-1">
+                        <li>
+                          <a
+                            href="/#faq"
+                            className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                          >
+                            FAQ
+                          </a>
+                        </li>
+                        <li>
+                          <a
+                            href="/contact"
+                            className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                          >
+                            Contact
+                          </a>
+                        </li>
+                        <li>
+                          <Link
+                            to="/about"
+                            className="block px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                          >
+                            About
+                          </Link>
+                        </li>
+                      </ul>
+                    </motion.div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
@@ -306,7 +321,6 @@ export const Navbar = ({ showThemeToggle = false, landingCta = false }: NavbarPr
                   </Link>
                 </NavigationMenuItem>
               </NavigationMenuList>
-              <NavigationMenuViewport />
             </NavigationMenu>
           </div>
 

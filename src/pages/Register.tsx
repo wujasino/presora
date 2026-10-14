@@ -14,6 +14,7 @@ import { FloatingPathsBackground } from '@/components/ui/floating-paths';
 import { cn } from '@/lib/utils';
 import { Wordmark } from '@/components/Wordmark';
 import { GoogleIcon } from '@/components/ui/google-icon';
+import { Checkbox } from '@/components/ui/checkbox';
 
 // 6 individual digit inputs — paste-aware, auto-advancing
 const OtpInput = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => {
@@ -100,8 +101,14 @@ const SuccessScreen = ({ email }: { email: string }) => {
     setError('');
     try {
       // Confirms the account AND signs the user in (session is set)
-      const { error: vErr } = await supabase.auth.verifyOtp({ email, token, type: 'signup' });
+      const { data: verified, error: vErr } = await supabase.auth.verifyOtp({ email, token, type: 'signup' });
       if (vErr) throw vErr;
+      if (verified.session?.access_token) {
+        await fetch('/.netlify/functions/activate-lifecycle', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${verified.session.access_token}` },
+        }).catch(() => undefined);
+      }
       // Carries the brand name through from GuestScanWidget's "Create free
       // account" CTA (?brand=...) so Onboarding's own brand-name step
       // doesn't ask the visitor to retype what they already typed once.
@@ -212,6 +219,7 @@ const Register = () => {
   const [loading, setLoading]   = useState(false);
   const [success, setSuccess]   = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
 
   const strength = useMemo(() => getStrength(password), [password]);
 
@@ -231,7 +239,7 @@ const Register = () => {
     if (password !== confirm) { setError(t('passwords_no_match')); return; }
     setLoading(true);
     try {
-      await registerUser(email, password, referralCode || undefined);
+      await registerUser(email, password, referralCode || undefined, marketingConsent);
       setSuccess(true);
     } catch (err: any) {
       if (err.status === 429 || /rate limit|failed to fetch|network/i.test(err.message || '')) {
@@ -467,6 +475,18 @@ const Register = () => {
                   </motion.p>
                 )}
               </AnimatePresence>
+            </div>
+
+            <div className="flex items-start gap-3 rounded-xl border border-[hsl(var(--glass-border))] bg-card/30 p-3.5">
+              <Checkbox
+                id="register-marketing-consent"
+                checked={marketingConsent}
+                onCheckedChange={(checked) => setMarketingConsent(checked === true)}
+                className="mt-0.5"
+              />
+              <Label htmlFor="register-marketing-consent" className="cursor-pointer text-xs font-normal leading-relaxed text-muted-foreground">
+                Send me practical AI visibility tips and occasional Presora offers. Optional — unsubscribe anytime.
+              </Label>
             </div>
 
             <Button

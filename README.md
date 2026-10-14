@@ -19,6 +19,32 @@ full breakdown and real numbers.
 **App stack:** React · TypeScript · Supabase · Netlify Functions · Stripe
 **Test stack:** Playwright · TypeScript · GitHub Actions
 
+## Quick Start
+
+Install dependencies, configure the required frontend variables in `.env.local`
+as listed under [Environment variables](#environment-variables), then start the
+app:
+
+```bash
+npm install --legacy-peer-deps
+npm run dev
+```
+
+`npm run dev` starts the Vite frontend. To run the Netlify Functions locally as
+well, use `npx netlify dev`.
+
+To run the browser tests headlessly, install Playwright's Chromium browser once
+and run the suite:
+
+```bash
+npx playwright install chromium
+npm run e2e
+```
+
+Use `npm run e2e -- --ui` to open Playwright's interactive runner. The E2E
+configuration supplies placeholder Supabase settings and mocks the UI network
+calls, so the test suite does not need production credentials.
+
 ---
 
 ## What it does
@@ -28,10 +54,10 @@ full breakdown and real numbers.
 - **AI assistant with tool calling** — a chat interface that configures monitoring (brand, competitors, cadence, alert thresholds) by writing to the database through structured tools, no forms required
 - **Automations & monitoring** — recurring brand monitors with alert metrics and thresholds, one config per user
 - **Embeddable score badge** — a public SVG endpoint (`/.netlify/functions/badge?brand=…`) that any site can drop in
-- **Reports & PDF viewer** — audits rendered as shareable reports
+- **Reports & PDF viewer** — audits rendered as reports with tokenized public share links
 - **Voice playback** — report narration via ElevenLabs multilingual TTS
 - **Full account layer** — email + Google OAuth sign-in, OTP password reset, recovery codes, avatars, newsletter preferences
-- **Billing** — Stripe checkout for monthly/yearly plans and credit packs, with webhook-driven plan sync
+- **Billing** — Stripe checkout for monthly/yearly plans and credit packs, with webhook-driven plan sync and admin-managed Agency credit codes with redemption limits
 - **6 UI languages** — EN, PL, DE, ES, FR, IT
 - **Public status page** — live health check of the app and Supabase Auth/DB reachability, no fabricated uptime numbers
 - **Contact page** — a real form (name, email, subject, message) backed by its own rate-limited serverless endpoint
@@ -70,8 +96,8 @@ A production-grade cloud ecosystem focused on automated data processing, secure 
 
 - **Relational Database & Security Management**: Fully designed and maintained database architectures using **PostgreSQL** and **Supabase**. Implemented granular access control via complex **Row-Level Security (RLS)** rules to ensure data privacy and strict governance.
 - **AI-Powered Data Pipelines**: Architected and deployed a production-grade Retrieval-Augmented Generation (**RAG**) pipeline utilizing **Voyage AI**, **pgvector** (vector embeddings), and the **Claude API** for semantic data processing and autonomous tool-calling.
-- **Data Integrity & Pipeline Optimization**: Engineered a custom server synchronization wrapper (`functionServer.ts`) to handle asynchronous network states and database connections in distributed environments. Successfully eliminated data flow interruptions, achieving **0% flakiness over 112 consecutive production pipeline cycles** in GitHub Actions.
-- **High-Performance Processing**: Reduced data regression and validation pipeline latency by **65% (down to just 2 minutes)** using advanced test sharding and parallel data processing execution.
+- **E2E test stability**: Repeated a selected subset of 47 UI/API test cases 10 times — **470 test executions with zero failures**. These were test runs, not full CI pipeline runs.
+- **CI execution**: The E2E workflow uses two parallel shards. Its latest verified GitHub Actions run completed in **2 minutes 13 seconds**, including dependency/browser setup and artifact upload; no comparable pre-sharding baseline is recorded, so no percentage reduction is claimed.
 
 ## 🛠️ Technical Stack & Tooling
 
@@ -102,11 +128,17 @@ supabase/migrations/ schema, RLS policies, triggers, storage buckets
 git clone https://github.com/wujasino/presora.git
 cd presora
 npm install --legacy-peer-deps
-cp .env.example .env      # fill in the keys below
+```
+
+Create `.env.local` with the required values from the table below, then start
+the app and its serverless functions:
+
+```bash
 npx netlify dev           # app on :8888, functions included
 ```
 
-Frontend-only (`npm run dev`, port 4000) works, but any route hitting `/.netlify/functions/*` needs `netlify dev`.
+Frontend-only (`npm run dev`, port 4000) works, but any route hitting
+`/.netlify/functions/*` needs `netlify dev`.
 
 ### Environment variables
 
@@ -116,9 +148,52 @@ Frontend-only (`npm run dev`, port 4000) works, but any route hitting `/.netlify
 | AI | `ANTHROPIC_API_KEY`, `VOYAGE_API_KEY`, `ELEVENLABS_API_KEY` |
 | Payments | `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `VITE_STRIPE_*_PRICE_ID` |
 | Auth | `VITE_GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
-| Email | `RESEND_API_KEY`, `RESEND_FROM`, `MAILCHIMP_API_KEY`, `MAILCHIMP_LIST_ID` |
+| Email | `RESEND_API_KEY`, `RESEND_FROM`, `RESEND_MARKETING_FROM`, `RESEND_REPLY_TO`, `NEWSLETTER_UNSUBSCRIBE_SECRET`, `RESEND_LOW_SCORE_THRESHOLD`, `MAILCHIMP_API_KEY`, `MAILCHIMP_LIST_ID` |
 | Limits | `RATE_LIMIT_WINDOW_MS`, `MAX_REQUESTS_PER_WINDOW`, `MAX_REQUESTS_PER_DAY` |
 | Observability *(optional)* | `VITE_SENTRY_DSN` (error monitoring, off until set), `VITE_PLAUSIBLE_DOMAIN` (cookieless analytics, off until set) |
+
+### Resend lifecycle automations
+
+Presora emits lifecycle events after account activation, successful scans,
+subscription checkout, and failed payments. Marketing sequences start only for
+users who selected the optional email consent during registration; transactional
+account, result, and billing messages do not depend on that consent.
+
+Create the event schemas, published templates, and seven disabled automations in
+Resend with:
+
+```bash
+npm run resend:setup
+```
+
+Review them in Resend, then either enable them there or create and enable them in
+one command with `npm run resend:setup -- --enable`. The command is idempotent by
+event, template, and automation name. Production also needs
+`NEWSLETTER_UNSUBSCRIBE_SECRET` so every sales email gets a one-click signed
+unsubscribe URL. Apply `20240145_lifecycle_email_events.sql` before deploying
+the Functions so the server-side frequency caps are active from the first send.
+
+Every message uses the recipient's first name when available and falls back to
+a neutral greeting when it is not. The emails deliberately use a simple,
+personal letter layout, a real reply address through `RESEND_REPLY_TO`, and one
+clear action instead of a promotional card full of buttons. Set
+`RESEND_MARKETING_FROM` to a separate marketing sender while keeping
+`RESEND_FROM` for account, result, and billing messages. The signed unsubscribe
+endpoint supports both the human-facing GET link and an RFC 8058-compatible POST
+request; the production sender still needs `List-Unsubscribe` and
+`List-Unsubscribe-Post` enabled in Resend for mailbox-native one-click UI.
+
+Low-score messaging is emitted only for opted-in users whose scan score is
+below `RESEND_LOW_SCORE_THRESHOLD` (defaults to `60`). It includes the weakest
+measured dimension and one matching action. Competitive-risk copy is used only
+when a saved competitor has a real `last_score` above the user's result; the
+email shows both scores and the measured gap. Without that evidence, Presora
+sends the quick win without naming or implying a competitor. Both flows wait
+three days and exit without sending if a subscription starts first. Scan-result
+messages are capped to one per brand per day, personalized diagnostic messages
+to one matching result per 14 days, and generic nurture messages to one start
+per 14 days. This prevents repeated scans from creating a burst of near-identical
+mail.
 
 ### Tests
 
@@ -131,9 +206,13 @@ npm run e2e # Playwright E2E — see "Testing" below for what's covered and how 
 
 Presora is a production SaaS handling authentication, LLM-driven analysis pipelines and Stripe subscriptions, so the suite is built around the paths where a regression costs real money: sign-in/sign-up, the dashboard's real data, subscription state in Settings, and the request contracts of the serverless functions everything else is built on.
 
-**72 tests, ~96–101s per CI shard** (measured on a real GitHub Actions run, 2-way sharded — [see the check runs](https://github.com/wujasino/presora/pull/121/checks)). Flake check: `npx playwright test --project=chromium --project=api --repeat-each=10` — **470 repeated runs (24 UI + 23 API tests × 10), 0 failures.**
+**Current test inventory:** 55 UI/API test cases: 32 UI cases run in both Chromium and mobile Chrome, plus 23 API contract cases. `npx playwright test --list` also includes one authentication setup test, for 88 project-specific entries in total (32 + 32 + 23 + 1).
 
-**Unit test coverage — the honest number:** `npm run test:coverage` measures **1.3% of `src/` by statement**. That's not a typo or a mistake to fix — Vitest here only has 2 files to run (`src/test/`), and they exercise one thing on purpose: `src/lib/locale.tsx`'s i18n logic (74% statement coverage on that file, 100% on the `en`/`pl`/`de` dictionaries). Everything a unit test would normally check on a page or component — does it render, does clicking a button do the right thing, does a bad API response degrade gracefully — is checked by the 72-test Playwright suite above instead, against real rendered output and real (or precisely mocked) network responses, which is a stronger guarantee for that kind of behavior than a component test with everything mocked out would be. A 1.3% unit-coverage number next to a 72-test integration/API suite is what that division of labor looks like measured honestly, not a gap to close.
+**Stability check:** A previously verified subset of 47 cases (24 Chromium UI + 23 API) was run 10 times with `--repeat-each=10`: **470 test executions, 0 failures**. These are repeated individual tests, not 470 pipeline runs.
+
+**CI runtime:** The [latest verified GitHub Actions run](https://github.com/wujasino/presora/actions/runs/37319168886) completed in **2m 13s** wall-clock across two parallel shards. That elapsed time includes checkout, dependency and browser installation, test execution, and artifact upload; it is not the duration of the test step alone. The workflow runs on manual dispatch or a nightly schedule and does not gate merges or production deploys.
+
+**Unit test coverage — the honest number:** `npm run test:coverage` measures **1.3% of `src/` by statement**. That's not a typo or a mistake to fix — Vitest here only has 2 files to run (`src/test/`), and they exercise one thing on purpose: `src/lib/locale.tsx`'s i18n logic (74% statement coverage on that file, 100% on the `en`/`pl`/`de` dictionaries). Everything a unit test would normally check on a page or component — does it render, does clicking a button do the right thing, does a bad API response degrade gracefully — is checked by the Playwright suite above, against real rendered output and real (or precisely mocked) network responses, which is a stronger guarantee for that kind of behavior than a component test with everything mocked out would be. A 1.3% unit-coverage number next to a 55-case UI/API suite is what that division of labor looks like measured honestly, not a gap to close.
 
 | Layer | Tool |
 |-------|------|
@@ -142,7 +221,7 @@ Presora is a production SaaS handling authentication, LLM-driven analysis pipeli
 | Unit | Vitest + Testing Library |
 | CI | GitHub Actions, 2-way sharded, manual dispatch + nightly schedule — never gates a merge or deploy |
 
-**What is covered** (72 tests: 49 UI × chromium + mobile-chrome, 23 API contract — `e2e/`)
+**What is covered** (55 UI/API cases: 32 UI cases × Chromium + mobile-chrome, 23 API contract — `e2e/`)
 
 - **Authentication** — successful login, rejection of bad credentials, required-field validation, the forgot-password → OTP-code flow, signup (success, password-mismatch validation, "already registered" failure), and unauthenticated visitors getting redirected off protected routes.
 - **Dashboard** — the real per-model AI confidence data (`analyses.sources`) rendering correctly, a `–` placeholder instead of a fabricated number when that data is missing, and the account menu/sign-out flow.

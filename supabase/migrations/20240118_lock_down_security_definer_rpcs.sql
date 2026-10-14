@@ -30,7 +30,13 @@ revoke execute on function public.rls_auto_enable() from public, anon, authentic
 -- NEW/OLD/TG_OP, which only exist in real trigger context), but still had
 -- PUBLIC execute by default.
 revoke execute on function public.handle_new_user() from public, anon, authenticated;
-revoke execute on function public.enforce_analysis_limit() from public, anon, authenticated;
+do $$
+begin
+  if to_regprocedure('public.enforce_analysis_limit()') is not null then
+    execute 'revoke execute on function public.enforce_analysis_limit() from public, anon, authenticated';
+  end if;
+end;
+$$;
 revoke execute on function public.protect_plan_changes() from public, anon, authenticated;
 
 grant execute on function public.increment_credits(uuid, integer) to service_role;

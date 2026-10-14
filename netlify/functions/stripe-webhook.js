@@ -2,6 +2,7 @@ import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { planForPriceId } from './_lib/stripePlans.js';
 import { captureCriticalError } from './_lib/sentry.js';
+import { getLifecycleRecipient, lifecycleLinks, safeSendLifecycleEvent } from './_lib/resendLifecycle.js';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -66,6 +67,21 @@ function profileFieldsFromSubscription(sub) {
     cancel_at_period_end: Boolean(sub.cancel_at_period_end),
     current_period_end: sub.current_period_end ? new Date(sub.current_period_end * 1000).toISOString() : null,
   };
+}
+
+async function sendBillingLifecycle(userId, eventName, extraPayload = {}) {
+  if (!userId) return;
+  try {
+    const recipient = await getLifecycleRecipient(supabase, userId);
+    if (!recipient) return;
+    await safeSendLifecycleEvent({
+      event: eventName,
+      email: recipient.email,
+      payload: { first_name: recipient.firstName, plan: recipient.plan, ...lifecycleLinks(recipient.email), ...extraPayload },
+    });
+  } catch (error) {
+    console.error('stripe lifecycle event failed:', error?.message || error);
+  }
 }
 
 export const handler = async (event) => {
@@ -173,6 +189,9 @@ export const handler = async (event) => {
             .from('profiles')
             .update(profileFieldsFromSubscription(sub))
             .eq('id', userId);
+          await sendBillingLifecycle(userId, 'presora.subscription.started', {
+            plan: planForPriceId(sub.items?.data?.[0]?.price?.id) || 'paid',
+          });
         }
         break;
       }
@@ -244,6 +263,14 @@ export const handler = async (event) => {
             .from('profiles')
             .update({ subscription_status: 'past_due' })
             .eq('stripe_subscription_id', subId);
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('id, plan')
+            .eq('stripe_subscription_id', subId)
+            .maybeSingle();
+          await sendBillingLifecycle(profile?.id, 'presora.payment.failed', {
+            plan: String(profile?.plan || 'paid'),
+          });
         }
         break;
       }

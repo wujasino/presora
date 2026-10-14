@@ -1,4 +1,4 @@
-CREATE TABLE public.credit_codes (
+CREATE TABLE IF NOT EXISTS public.credit_codes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code TEXT NOT NULL UNIQUE
     CHECK (code = upper(code) AND code ~ '^[A-Z0-9][A-Z0-9_-]{2,31}$'),
@@ -11,7 +11,7 @@ CREATE TABLE public.credit_codes (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-CREATE TABLE public.credit_code_redemptions (
+CREATE TABLE IF NOT EXISTS public.credit_code_redemptions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   code_id UUID NOT NULL REFERENCES public.credit_codes(id) ON DELETE RESTRICT,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
@@ -21,16 +21,37 @@ CREATE TABLE public.credit_code_redemptions (
   UNIQUE (code_id, user_id)
 );
 
-CREATE INDEX credit_code_redemptions_code_id_idx
+CREATE INDEX IF NOT EXISTS credit_code_redemptions_code_id_idx
   ON public.credit_code_redemptions (code_id);
+
+CREATE INDEX IF NOT EXISTS credit_code_redemptions_user_id_idx
+  ON public.credit_code_redemptions (user_id);
+
+CREATE INDEX IF NOT EXISTS credit_codes_created_by_idx
+  ON public.credit_codes (created_by);
 
 ALTER TABLE public.credit_codes ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.credit_code_redemptions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Service role full access on credit_codes" ON public.credit_codes;
+DROP POLICY IF EXISTS "Service role full access on credit_code_redemptions" ON public.credit_code_redemptions;
 
 REVOKE ALL ON TABLE public.credit_codes FROM anon, authenticated;
 REVOKE ALL ON TABLE public.credit_code_redemptions FROM anon, authenticated;
 GRANT ALL ON TABLE public.credit_codes TO service_role;
 GRANT ALL ON TABLE public.credit_code_redemptions TO service_role;
+
+CREATE POLICY "Service role full access on credit_codes"
+  ON public.credit_codes FOR ALL TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+CREATE POLICY "Service role full access on credit_code_redemptions"
+  ON public.credit_code_redemptions FOR ALL TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+DROP FUNCTION IF EXISTS public.redeem_credit_code(TEXT, UUID, TEXT);
 
 CREATE OR REPLACE FUNCTION public.redeem_credit_code(
   p_code TEXT,
@@ -40,31 +61,31 @@ CREATE OR REPLACE FUNCTION public.redeem_credit_code(
 RETURNS JSONB
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path TO 'public', 'pg_temp'
+SET search_path TO ''
 AS $function$
 DECLARE
   v_code public.credit_codes%ROWTYPE;
-  v_existing_id UUID;
+  v_status TEXT;
 BEGIN
   IF COALESCE(auth.jwt() ->> 'role', '') <> 'service_role' THEN
     RAISE EXCEPTION 'Service role required';
   END IF;
 
-  IF p_user_id IS NULL OR p_checkout_session_id IS NULL OR length(p_checkout_session_id) > 255 THEN
+  IF p_user_id IS NULL OR p_checkout_session_id IS NULL OR btrim(p_checkout_session_id) = '' OR length(p_checkout_session_id) > 255 THEN
     RETURN jsonb_build_object('status', 'invalid');
   END IF;
 
-  SELECT id INTO v_existing_id
-  FROM public.profiles
-  WHERE id = p_user_id;
-
-  IF v_existing_id IS NULL THEN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM public.profiles
+    WHERE id = p_user_id
+  ) THEN
     RETURN jsonb_build_object('status', 'account_not_found');
   END IF;
 
   SELECT * INTO v_code
   FROM public.credit_codes
-  WHERE code = upper(trim(p_code))
+  WHERE code = upper(btrim(p_code))
   FOR UPDATE;
 
   IF NOT FOUND OR NOT v_code.is_active THEN
@@ -76,19 +97,19 @@ BEGIN
     FROM public.credit_code_redemptions
     WHERE checkout_session_id = p_checkout_session_id
   ) THEN
-    RETURN jsonb_build_object('status', 'already_processed');
-  END IF;
-
-  IF EXISTS (
+    v_status := 'already_processed';
+  ELSIF EXISTS (
     SELECT 1
     FROM public.credit_code_redemptions
     WHERE code_id = v_code.id AND user_id = p_user_id
   ) THEN
-    RETURN jsonb_build_object('status', 'already_used');
+    v_status := 'already_used';
+  ELSIF v_code.redemption_count >= v_code.max_redemptions THEN
+    v_status := 'limit_reached';
   END IF;
 
-  IF v_code.redemption_count >= v_code.max_redemptions THEN
-    RETURN jsonb_build_object('status', 'limit_reached');
+  IF v_status IS NOT NULL THEN
+    RETURN jsonb_build_object('status', v_status);
   END IF;
 
   INSERT INTO public.credit_code_redemptions (
@@ -123,7 +144,7 @@ $function$;
 REVOKE ALL ON FUNCTION public.redeem_credit_code(TEXT, UUID, TEXT) FROM PUBLIC, anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.redeem_credit_code(TEXT, UUID, TEXT) TO service_role;
 
-CREATE TABLE public.report_shares (
+CREATE TABLE IF NOT EXISTS public.report_shares (
   analysis_id UUID PRIMARY KEY REFERENCES public.analyses(id) ON DELETE CASCADE,
   owner_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   token_hash TEXT NOT NULL UNIQUE,
@@ -131,5 +152,23 @@ CREATE TABLE public.report_shares (
 );
 
 ALTER TABLE public.report_shares ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Service role full access on report_shares" ON public.report_shares;
+DROP POLICY IF EXISTS "Users can view own report shares" ON public.report_shares;
+DROP POLICY IF EXISTS "Users can insert own report shares" ON public.report_shares;
+DROP POLICY IF EXISTS "Users can update own report shares" ON public.report_shares;
+DROP POLICY IF EXISTS "Users can delete own report shares" ON public.report_shares;
+
 REVOKE ALL ON TABLE public.report_shares FROM anon, authenticated;
 GRANT ALL ON TABLE public.report_shares TO service_role;
+
+CREATE POLICY "Service role full access on report_shares"
+  ON public.report_shares FOR ALL TO service_role
+  USING (true)
+  WITH CHECK (true);
+
+CREATE INDEX IF NOT EXISTS report_shares_owner_id_idx
+  ON public.report_shares (owner_id);
+
+CREATE INDEX IF NOT EXISTS report_shares_created_at_idx
+  ON public.report_shares (created_at DESC);

@@ -16,6 +16,7 @@ import { OPENROUTER_MODELS, runBrandScan, summariseFailures } from './_lib/runSc
 import { verifyApiKey, checkRateLimitAndLog } from './_lib/apiKeyAuth.js';
 import { fireWebhooksForEvent } from './_lib/webhookDelivery.js';
 import { getScanSettings } from './_lib/appSettings.js';
+import { sendAnalysisLifecycle } from './_lib/resendLifecycle.js';
 
 if (!globalThis.WebSocket) globalThis.WebSocket = ws;
 
@@ -116,6 +117,14 @@ export const handler = async (event) => {
 
     fireWebhooksForEvent(supabaseAdmin, { userId: auth.userId, event: 'analysis.completed', payload: responseBody })
       .catch((err) => console.error('api-analyze: webhook firing failed:', err.message));
+
+    await sendAnalysisLifecycle({
+      supabaseAdmin,
+      userId: auth.userId,
+      brandName,
+      trustScore: result.trustScore,
+      dimensions: result,
+    });
 
     return { statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(responseBody) };
   } catch (err) {

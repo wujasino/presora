@@ -20,7 +20,7 @@ const isTransientAuthError = (error: unknown): boolean => {
   return /rate limit|failed to fetch|network/i.test(message);
 };
 
-export async function registerUser(email: string, password: string, referralCode?: string) {
+export async function registerUser(email: string, password: string, referralCode?: string, marketingConsent = false) {
   // signUp() below goes straight from the browser to Supabase — no backend
   // function of ours sits in front of it to hook a reCAPTCHA check into, so
   // this pre-flight call to verify-recaptcha.js gates registration as a
@@ -40,7 +40,12 @@ export async function registerUser(email: string, password: string, referralCode
   // referral_code lands in raw_user_meta_data, which handle_new_user() reads
   // to record the referral atomically at account-creation time — see
   // supabase/migrations/20240117_referrals.sql.
-  const options = referralCode ? { data: { referral_code: referralCode } } : undefined;
+  const options = {
+    data: {
+      ...(referralCode ? { referral_code: referralCode } : {}),
+      marketing_consent: marketingConsent,
+    },
+  };
   const attemptSignUp = () => supabase.auth.signUp({ email, password, options });
   let { data, error } = await attemptSignUp();
   if (error && isTransientAuthError(error)) {

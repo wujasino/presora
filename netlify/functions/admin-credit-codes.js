@@ -22,6 +22,8 @@ const json = (statusCode, headers, body) => ({
   body: JSON.stringify(body),
 });
 
+const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,253}\.[a-zA-Z]{2,}$/;
+
 exports.handler = async (event) => {
   const headers = headersFor(event.headers.origin || '');
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers };
@@ -69,6 +71,49 @@ exports.handler = async (event) => {
     }
 
     if (event.httpMethod === 'POST') {
+      if (payload.action === 'grant_credits') {
+        const email = typeof payload.email === 'string' ? payload.email.trim().toLowerCase() : '';
+        const credits = payload.credits;
+
+        if (!email || !EMAIL_RE.test(email)) {
+          return json(400, headers, { error: 'Enter a valid email address' });
+        }
+        if (!Number.isInteger(credits) || credits < 1 || credits > 100000) {
+          return json(400, headers, { error: 'Credits must be an integer between 1 and 100000' });
+        }
+
+        const { data: target, error: findError } = await supabase
+          .from('profiles')
+          .select('id, email, credits')
+          .eq('email', email)
+          .maybeSingle();
+        if (findError) return json(500, headers, { error: 'Could not find the account' });
+        if (!target) return json(404, headers, { error: 'No account found for that email' });
+
+        const { error: grantError } = await supabase.rpc('increment_credits', {
+          p_user_id: target.id,
+          p_amount: credits,
+        });
+        if (grantError) return json(500, headers, { error: 'Could not add credits' });
+
+        const { data: updated, error: refreshError } = await supabase
+          .from('profiles')
+          .select('email, credits')
+          .eq('id', target.id)
+          .single();
+        if (refreshError) return json(500, headers, { error: 'Credits were added, but the new balance could not be loaded' });
+
+        console.log(
+          `admin-credit-codes: ${user.id} granted ${credits} credits to ${target.id} ` +
+          `(balance ${target.credits}->${updated.credits})`,
+        );
+        return json(200, headers, { ok: true, added: credits, account: updated });
+      }
+
+      if (payload.action !== undefined && payload.action !== 'create_code') {
+        return json(400, headers, { error: 'Unsupported action' });
+      }
+
       const code = typeof payload.code === 'string' ? payload.code.trim().toUpperCase() : '';
       const credits = payload.credits;
       const maxRedemptions = payload.maxRedemptions;

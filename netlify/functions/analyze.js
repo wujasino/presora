@@ -5,6 +5,7 @@ import ws from 'ws';
 import { OPENROUTER_MODELS, runBrandScan, summariseFailures } from './_lib/runScan.js';
 import { fireWebhooksForEvent } from './_lib/webhookDelivery.js';
 import { getScanSettings, recordScanOutcome } from './_lib/appSettings.js';
+import { sendAnalysisLifecycle } from './_lib/resendLifecycle.js';
 
 // supabase-js reaches for a global WebSocket (realtime) that Node doesn't
 // provide — without this the client construction throws in the Netlify
@@ -460,6 +461,14 @@ export const handler = async (event) => {
       safeFireWebhook(supabaseAdmin, authedUser.id, 'analysis.completed', {
         brandName: target,
         ...result,
+      });
+      await sendAnalysisLifecycle({
+        supabaseAdmin,
+        userId: authedUser.id,
+        email: authedUser.email,
+        brandName: target,
+        trustScore: result.trustScore,
+        dimensions: result,
       });
     }
 

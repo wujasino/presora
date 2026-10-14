@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import { AlertCircle, CheckCircle2, Copy, Loader2, Tag, Ticket, XCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Coins, Copy, Loader2, Tag, Ticket, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useIsAdmin } from '@/hooks/useAccountInfo';
@@ -22,11 +22,16 @@ const AdminCreditCodes = () => {
   const [code, setCode] = useState('');
   const [credits, setCredits] = useState('');
   const [maxRedemptions, setMaxRedemptions] = useState('');
+  const [accountEmail, setAccountEmail] = useState('');
+  const [accountCredits, setAccountCredits] = useState('');
   const [loadingCodes, setLoadingCodes] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [granting, setGranting] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState('');
   const [error, setError] = useState(false);
+  const [grantMessage, setGrantMessage] = useState('');
+  const [grantError, setGrantError] = useState(false);
 
   const request = useCallback(async (method: 'GET' | 'POST' | 'PATCH', body?: Record<string, unknown>) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -85,6 +90,30 @@ const AdminCreditCodes = () => {
     }
   };
 
+  const grantCredits = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setGranting(true);
+    setGrantError(false);
+    setGrantMessage('');
+    try {
+      const result = await request('POST', {
+        action: 'grant_credits',
+        email: accountEmail.trim().toLowerCase(),
+        credits: Number(accountCredits),
+      });
+      setAccountEmail('');
+      setAccountCredits('');
+      setGrantMessage(
+        `Added ${result.added} credits to ${result.account.email}. New balance: ${result.account.credits}.`,
+      );
+    } catch (err) {
+      setGrantError(true);
+      setGrantMessage(err instanceof Error ? err.message : 'Could not add credits to the account.');
+    } finally {
+      setGranting(false);
+    }
+  };
+
   const deactivateCode = async (item: CreditCode) => {
     setBusyId(item.id);
     setError(false);
@@ -136,6 +165,60 @@ const AdminCreditCodes = () => {
           credits are added only after Stripe confirms payment. Each account can redeem a code once,
           and the usage limit applies across all customers.
         </p>
+
+        <form onSubmit={grantCredits} className="mb-6 space-y-5 rounded-2xl border border-border bg-card/60 p-6">
+          <div>
+            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Coins className="h-4 w-4 text-primary" /> Add credits to an account
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Enter the customer email and the number of credits to add to their current balance.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_180px]">
+            <div>
+              <label htmlFor="account-email" className="mb-1.5 block text-xs font-medium text-muted-foreground">Customer email</label>
+              <Input
+                id="account-email"
+                type="email"
+                autoComplete="off"
+                value={accountEmail}
+                onChange={event => setAccountEmail(event.target.value)}
+                placeholder="customer@company.com"
+                required
+                className="bg-background"
+              />
+            </div>
+            <div>
+              <label htmlFor="account-credits" className="mb-1.5 block text-xs font-medium text-muted-foreground">Credits to add</label>
+              <Input
+                id="account-credits"
+                type="number"
+                min="1"
+                max="100000"
+                step="1"
+                value={accountCredits}
+                onChange={event => setAccountCredits(event.target.value)}
+                placeholder="50"
+                required
+                className="bg-background"
+              />
+            </div>
+          </div>
+
+          {grantMessage && (
+            <div className={`flex items-center gap-2 text-sm ${grantError ? 'text-red-500' : 'text-emerald-500'}`} role="status">
+              {grantError ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
+              {grantMessage}
+            </div>
+          )}
+
+          <Button type="submit" disabled={granting} className="w-full gap-2">
+            {granting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Coins className="h-4 w-4" />}
+            Add credits
+          </Button>
+        </form>
 
         <form onSubmit={createCode} className="space-y-5 rounded-2xl border border-border bg-card/60 p-6">
           <div>
