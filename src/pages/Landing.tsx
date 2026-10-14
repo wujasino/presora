@@ -5,7 +5,7 @@ import { Zap, Eye, Shield, HelpCircle, Mail, ArrowRight, ShieldCheck, Clock, Pen
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
-import { LandingProductMockup } from '@/components/LandingProductMockup';
+import { HeroProofMockup } from '@/components/HeroProofMockup';
 import { SectionNav } from '@/components/SectionNav';
 import { ScanResultPreview } from '@/components/ScanResultPreview';
 import { CookiePanel } from '@/components/ui/cookie-banner-1';
@@ -106,13 +106,16 @@ const Landing = () => {
                 <ShieldCheck className="w-3 h-3" /> Autonomous AI visibility &amp; reputation management
               </span>
               <h1
-                aria-label="Your autonomous reputation guard for the AI era."
-                className="hero-headline max-w-4xl mx-auto text-[1.875rem] sm:text-4xl lg:text-5xl text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.2] tracking-tight text-balance"
+                aria-label="Are ChatGPT and Claude hiding your company from customers? Check your AI Visibility Score before your competitors do."
+                className="hero-headline max-w-5xl mx-auto text-[1.875rem] sm:text-4xl lg:text-[2.75rem] text-zinc-900 dark:text-zinc-50 mb-5 leading-[1.18] tracking-tight text-balance"
               >
-                Your autonomous{' '}
-                <span className="ai-presence-accent" data-text="reputation guard">
-                  <span className="ai-presence-accent-text">reputation guard</span>
-                </span>{' '}for the AI era.
+                Are ChatGPT and Claude hiding your company from customers?
+                <span className="mt-2 block">
+                  Check your{' '}
+                  <span className="ai-presence-accent" data-text="AI Visibility Score">
+                    <span className="ai-presence-accent-text">AI Visibility Score</span>
+                  </span>{' '}before your competitors do.
+                </span>
               </h1>
               <p className="text-base sm:text-lg leading-relaxed text-muted-foreground max-w-2xl mx-auto mb-4">
                 Built for SEO teams and digital agencies. Presora continuously monitors how leading AI models
@@ -127,7 +130,7 @@ const Landing = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="w-full max-w-6xl mx-auto"
             >
-              <LandingProductMockup />
+              <HeroProofMockup />
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
