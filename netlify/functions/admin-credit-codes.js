@@ -1,4 +1,4 @@
-const { createClient } = require('@supabase/supabase-js');
+import { createClient } from '@supabase/supabase-js';
 
 const ALLOWED_ORIGINS = new Set(['https://presora.app', 'https://www.presora.app']);
 const headersFor = (origin) => ({
@@ -24,7 +24,7 @@ const json = (statusCode, headers, body) => ({
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,253}\.[a-zA-Z]{2,}$/;
 
-exports.handler = async (event) => {
+export const handler = async (event) => {
   const headers = headersFor(event.headers.origin || '');
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers };
 
