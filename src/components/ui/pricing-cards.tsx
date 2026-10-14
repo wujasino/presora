@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Card } from "@/components/ui/card";
-import { Check, X, Plus, ChevronDown, Gauge, Building2, Ticket } from "lucide-react";
+import { Check, X, Plus, ChevronDown, Gauge, Building2 } from "lucide-react";
 import { useTranslation } from "@/lib/locale";
 
 type BillingCycle = 'monthly' | 'yearly';
@@ -60,7 +59,6 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-  const [creditCodes, setCreditCodes] = React.useState<Record<string, string>>({});
   const [showComparison, setShowComparison] = React.useState(false);
   const allFeatures = Array.from(new Set(plans.flatMap(p => p.features.map(f => f.name))));
 
@@ -187,37 +185,12 @@ export const PricingCards: React.FC<PricingCardsProps> = ({
                   )}
                 </div>
 
-                {plan.acceptsCreditCode && !plan.isCurrent && (
-                  <div className="mt-4 space-y-1.5">
-                    <label htmlFor={`credit-code-${plan.id}`} className="text-xs font-medium text-foreground">
-                      Credit code <span className="font-normal text-muted-foreground">(optional)</span>
-                    </label>
-                    <div className="relative">
-                      <Ticket className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-                      <Input
-                        id={`credit-code-${plan.id}`}
-                        value={creditCodes[plan.id] || ''}
-                        onChange={(event) => setCreditCodes((current) => ({
-                          ...current,
-                          [plan.id]: event.target.value.toUpperCase(),
-                        }))}
-                        placeholder="Enter your code"
-                        maxLength={32}
-                        pattern="[A-Za-z0-9](?:[A-Za-z0-9_]|-){2,31}"
-                        autoComplete="off"
-                        className="h-10 pl-9 uppercase"
-                      />
-                    </div>
-                  </div>
-                )}
-
                 <Button
-                  onClick={() => onPlanSelect(plan.id, billingCycle, creditCodes[plan.id]?.trim())}
+                  onClick={() => onPlanSelect(plan.id, billingCycle)}
                   disabled={isLoading || plan.isCurrent}
                   variant={plan.isCurrent ? 'secondary' : 'default'}
                   className={cn(
-                    "w-full rounded-xl font-semibold",
-                    plan.acceptsCreditCode && !plan.isCurrent ? "mt-3" : "mt-4",
+                    "mt-4 w-full rounded-xl font-semibold",
                     !plan.isCurrent && "shadow-md shadow-primary/20 hover:-translate-y-0.5 hover:shadow-lg",
                     plan.isPopular && "ring-2 ring-primary/20 ring-offset-2 ring-offset-card"
                   )}
