@@ -25,7 +25,7 @@ async function generateCodeChallenge(verifier: string): Promise<string> {
     .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
-export async function signInWithGoogle(): Promise<void> {
+export async function signInWithGoogle(returnTo?: string): Promise<void> {
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined;
 
   if (!clientId) {
@@ -55,7 +55,7 @@ export async function signInWithGoogle(): Promise<void> {
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
     prompt: 'select_account',
-    state: codeVerifier,
+    state: returnTo ? `${codeVerifier}:${encodeURIComponent(returnTo)}` : codeVerifier,
   });
 
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params}`;

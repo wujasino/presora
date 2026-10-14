@@ -69,8 +69,15 @@ const Pricing = () => {
     setMessage('');
 
     try {
+      const params = new URLSearchParams(window.location.search);
+      const creditCode = params.get('credit_code')?.trim() || '';
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { window.location.href = '/register?plan=' + planId; return; }
+      if (!session) {
+        const signupParams = new URLSearchParams({ plan: planId });
+        if (creditCode) signupParams.set('credit_code', creditCode);
+        window.location.href = `/register?${signupParams.toString()}`;
+        return;
+      }
 
       const priceMap: Record<string, { monthly?: string; yearly?: string }> = {
         starter: {
@@ -100,7 +107,7 @@ const Pricing = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId, ...(creditCode ? { creditCode } : {}) }),
       });
 
       if (!response.ok) {
@@ -133,7 +140,9 @@ const Pricing = () => {
     const params = new URLSearchParams(window.location.search);
     const pendingPlan = params.get('plan');
     if (!pendingPlan) return;
-    window.history.replaceState({}, '', window.location.pathname + window.location.search.replace(/[?&]plan=[^&]*/, '').replace(/^&/, '?'));
+    params.delete('plan');
+    const remainingQuery = params.toString();
+    window.history.replaceState({}, '', `${window.location.pathname}${remainingQuery ? `?${remainingQuery}` : ''}`);
     if (pendingPlan === 'free') return;
     handlePlanSelect(pendingPlan);
     // eslint-disable-next-line react-hooks/exhaustive-deps

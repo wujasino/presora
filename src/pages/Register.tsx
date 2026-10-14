@@ -113,9 +113,11 @@ const SuccessScreen = ({ email }: { email: string }) => {
       // while logged out silently dropped back to Free after signup.
       const brand = searchParams.get('brand');
       const plan = searchParams.get('plan');
+      const creditCode = searchParams.get('credit_code');
       const params = new URLSearchParams();
       if (brand) params.set('brand', brand);
       if (plan) params.set('plan', plan);
+      if (creditCode) params.set('credit_code', creditCode);
       const qs = params.toString();
       navigate(qs ? `/onboarding?${qs}` : '/onboarding', { replace: true });
     } catch (err: any) {
@@ -246,7 +248,15 @@ const Register = () => {
     setError('');
     setGoogleLoading(true);
     try {
-      await signInWithGoogle();
+      const params = new URLSearchParams();
+      const brand = searchParams.get('brand');
+      const plan = searchParams.get('plan');
+      const creditCode = searchParams.get('credit_code');
+      if (brand) params.set('brand', brand);
+      if (plan) params.set('plan', plan);
+      if (creditCode) params.set('credit_code', creditCode);
+      const returnTo = params.toString() ? `/onboarding?${params.toString()}` : undefined;
+      await signInWithGoogle(returnTo);
       // signInWithGoogle redirects the browser away — this only resolves on failure.
     } catch {
       setError(t('google_signin_failed'));

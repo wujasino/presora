@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 
-import { PLAN_BY_PRICE_ID } from './_lib/stripePlans.js';
+import { PLAN_BY_PRICE_ID, planForPriceId } from './_lib/stripePlans.js';
 
 const ALLOWED_PRICE_IDS = new Set(Object.keys(PLAN_BY_PRICE_ID));
 
@@ -61,6 +61,14 @@ export const handler = async (event) => {
     };
   }
 
+  const creditCode = typeof body.creditCode === 'string' ? body.creditCode.trim().toUpperCase() : '';
+  if (creditCode && !/^[A-Z0-9][A-Z0-9_-]{2,31}$/.test(creditCode)) {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Invalid credit code format' }) };
+  }
+  if (creditCode && planForPriceId(priceId) !== 'enterprise') {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Credit codes are only available for Agency subscriptions' }) };
+  }
+
   const allowedOrigins = ['https://presora.app', 'https://www.presora.app'];
   let origin = process.env.URL || 'https://presora.app';
   try {
@@ -96,7 +104,7 @@ export const handler = async (event) => {
     // double-click or network retry within the window resolves to the same
     // Checkout Session instead of creating a duplicate one.
     const idempotencyBucket = Math.floor(Date.now() / (2 * 60 * 1000));
-    const idempotencyKey = `checkout-${user.id}-${priceId}-${idempotencyBucket}`;
+    const idempotencyKey = `checkout-${user.id}-${priceId}-${creditCode || 'no-code'}-${idempotencyBucket}`;
 
     const session = await stripe.checkout.sessions.create(
       {
@@ -104,6 +112,21 @@ export const handler = async (event) => {
         payment_method_types: ['card'],
         line_items: [{ price: priceId, quantity: 1 }],
         ...customerParams,
+        ...(planForPriceId(priceId) === 'enterprise'
+          ? {
+              custom_fields: [{
+                key: 'credit_code',
+                label: { type: 'custom', custom: 'Credit code — credits after payment' },
+                type: 'text',
+                optional: true,
+                text: {
+                  maximum_length: 32,
+                  minimum_length: 3,
+                  ...(creditCode ? { default_value: creditCode } : {}),
+                },
+              }],
+            }
+          : {}),
         client_reference_id: user.id,
         metadata: {
           userId: user.id,

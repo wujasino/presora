@@ -37,7 +37,21 @@ export default function GoogleCallback() {
         // Round-tripped via `state` (see googleAuth.ts) rather than
         // sessionStorage, which broke whenever the callback landed on a
         // different origin (www vs apex) than the one that started the flow.
-        const codeVerifier = params.get('state');
+        const returnedState = params.get('state') || '';
+        const separator = returnedState.indexOf(':');
+        const codeVerifier = separator >= 0 ? returnedState.slice(0, separator) : returnedState;
+        let returnTo: string | null = null;
+        if (separator >= 0) {
+          try {
+            const candidate = decodeURIComponent(returnedState.slice(separator + 1));
+            if ((candidate === '/onboarding' || candidate.startsWith('/onboarding?')) &&
+              new URL(candidate, window.location.origin).origin === window.location.origin) {
+              returnTo = candidate;
+            }
+          } catch {
+            returnTo = null;
+          }
+        }
         const redirectUri = getGoogleRedirectUri();
 
         const res = await fetch('/.netlify/functions/google-token-exchange', {
@@ -67,13 +81,25 @@ export default function GoogleCallback() {
         // user's every login also gets re-checked here, so this must be
         // conditional, not unconditional like Register.tsx's redirect.
         let destination = '/dashboard';
+        let hasCompletedOnboarding = false;
         if (signInData.user) {
           const { data: profile } = await supabase
             .from('profiles')
             .select('onboarded')
             .eq('id', signInData.user.id)
             .maybeSingle();
-          if (!profile?.onboarded) destination = '/onboarding';
+          hasCompletedOnboarding = Boolean(profile?.onboarded);
+          if (!hasCompletedOnboarding) destination = returnTo || '/onboarding';
+        }
+        if (hasCompletedOnboarding && returnTo?.startsWith('/onboarding')) {
+          const params = new URL(returnTo, window.location.origin).searchParams;
+          const plan = params.get('plan');
+          if (plan) {
+            const checkoutParams = new URLSearchParams({ plan });
+            const creditCode = params.get('credit_code');
+            if (creditCode) checkoutParams.set('credit_code', creditCode);
+            destination = `/pricing?${checkoutParams.toString()}`;
+          }
         }
         setTimeout(() => navigate(destination), 1500);
       } catch (err) {

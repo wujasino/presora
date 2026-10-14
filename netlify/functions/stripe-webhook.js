@@ -136,6 +136,39 @@ export const handler = async (event) => {
         // need to manage it later (cancel/pause/resume, dunning, renewal).
         if (session.mode === 'subscription' && session.subscription && userId) {
           const sub = await stripe.subscriptions.retrieve(session.subscription);
+          const plan = planForPriceId(sub.items?.data?.[0]?.price?.id);
+
+          const creditCode = session.custom_fields
+            ?.find((field) => field.key === 'credit_code')
+            ?.text?.value
+            ?.trim()
+            ?.toUpperCase();
+          if (creditCode && session.payment_status === 'paid' && plan === 'enterprise') {
+            const checkoutEmail = (session.customer_details?.email || session.customer_email || '').trim().toLowerCase();
+            const { data: profile, error: profileError } = await supabase
+              .from('profiles')
+              .select('email')
+              .eq('id', userId)
+              .maybeSingle();
+            if (profileError) throw profileError;
+
+            if (profile?.email && checkoutEmail === profile.email.trim().toLowerCase()) {
+              const { data: redemption, error: redemptionError } = await supabase.rpc('redeem_credit_code', {
+                p_code: creditCode,
+                p_user_id: userId,
+                p_checkout_session_id: session.id,
+              });
+              if (redemptionError) throw redemptionError;
+              if (redemption?.status === 'redeemed') {
+                console.info(`Credit code redeemed for account ${userId}: ${redemption.credits} credits`);
+              } else {
+                console.info(`Credit code not applied (${redemption?.status || 'unknown status'}), event ${stripeEvent.id}`);
+              }
+            } else {
+              console.warn(`Credit code not applied due to checkout email mismatch, event ${stripeEvent.id}`);
+            }
+          }
+
           await supabase
             .from('profiles')
             .update(profileFieldsFromSubscription(sub))

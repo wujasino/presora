@@ -33,6 +33,13 @@ export default function Onboarding() {
   // instead of Dashboard once onboarding is done, rather than silently
   // dropping the choice back to Free.
   const pendingPlan = searchParams.get('plan');
+  const pendingCreditCode = searchParams.get('credit_code');
+  const pendingPlanUrl = pendingPlan
+    ? `/pricing?${new URLSearchParams({
+        plan: pendingPlan,
+        ...(pendingCreditCode ? { credit_code: pendingCreditCode } : {}),
+      }).toString()}`
+    : null;
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
   const [dir, setDir] = useState(1);
@@ -67,7 +74,7 @@ export default function Onboarding() {
     } catch {
       // non-fatal — still let them into the app
     } finally {
-      navigate(pendingPlan ? `/pricing?plan=${encodeURIComponent(pendingPlan)}` : '/dashboard', { replace: true });
+      navigate(pendingPlanUrl || '/dashboard', { replace: true });
     }
   };
 
@@ -88,8 +95,8 @@ export default function Onboarding() {
       // non-fatal
     } finally {
       setSaving(false);
-      const dest = pendingPlan
-        ? `/pricing?plan=${encodeURIComponent(pendingPlan)}`
+      const dest = pendingPlanUrl
+        ? pendingPlanUrl
         : brand.trim()
           ? `/brand-visibility?brand=${encodeURIComponent(brand.trim())}`
           : '/dashboard';

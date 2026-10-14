@@ -41,8 +41,10 @@ const ActionPlanHub  = lazy(() => import("./pages/ActionPlanHub"));
 const CompetitorTracker = lazy(() => import("./pages/CompetitorTracker"));
 const AdminAnnouncements = lazy(() => import("./pages/AdminAnnouncements"));
 const AdminPricing   = lazy(() => import("./pages/AdminPricing"));
+const AdminCreditCodes = lazy(() => import("./pages/AdminCreditCodes"));
 const AdminSettings  = lazy(() => import("./pages/AdminSettings"));
 const AuditReport    = lazy(() => import("./pages/AuditReport"));
+const SharedReport   = lazy(() => import("./pages/SharedReport"));
 const Developers     = lazy(() => import("./pages/Developers"));
 const ApiDocs        = lazy(() => import("./pages/ApiDocs"));
 const NotFound       = lazy(() => import("./pages/NotFound"));
@@ -204,6 +206,14 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/admin/credit-codes"
+              element={
+                <ProtectedRoute>
+                  <AppShell><AdminCreditCodes /></AppShell>
+                </ProtectedRoute>
+              }
+            />
             {/* Also gated inside the page itself (useIsAdmin). */}
             <Route
               path="/admin/settings"
@@ -224,6 +234,7 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/shared-report/:token" element={<SharedReport />} />
             <Route
               path="/developers"
               element={

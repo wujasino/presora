@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { FileText, Download, Trash2, Calendar, ArrowUp, ArrowDown, ChevronRight, Loader2, Presentation, Lock } from 'lucide-react';
+import { FileText, Download, Trash2, Calendar, ArrowUp, ArrowDown, ChevronRight, Loader2, Presentation, Lock, Share2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
 import { usePlan, isAgencyPlan, useSessionUser } from '@/hooks/useAccountInfo';
@@ -41,6 +41,9 @@ const Reports = () => {
   const [timeKey, setTimeKey] = useState<string>('30');
   const [sortDir, setSortDir] = useState<'desc' | 'asc'>('desc');
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [sharingId, setSharingId] = useState<string | null>(null);
+  const [shareMessage, setShareMessage] = useState('');
+  const [shareUrl, setShareUrl] = useState('');
   const { data: plan = 'Free' } = usePlan();
   const canCreateAudit = isAgencyPlan(plan);
   const { data: sessionUser, isLoading: userLoading } = useSessionUser();
@@ -104,6 +107,39 @@ const Reports = () => {
     setConfirmId(null);
   };
 
+  const shareReport = async (id: string) => {
+    setSharingId(id);
+    setShareMessage('');
+    setShareUrl('');
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('You must be signed in.');
+      const response = await fetch('/.netlify/functions/share-report', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ analysisId: id }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || typeof result.url !== 'string') {
+        throw new Error(result.error || 'Could not create a share link.');
+      }
+      setShareUrl(result.url);
+      try {
+        await navigator.clipboard.writeText(result.url);
+        setShareMessage('New public link copied. Anyone with it can view the report; creating a new link invalidates the previous one.');
+      } catch {
+        setShareMessage('New link created. It invalidates the previous link; copy it from below.');
+      }
+    } catch (err) {
+      setShareMessage(err instanceof Error ? err.message : 'Could not create a share link.');
+    } finally {
+      setSharingId(null);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-6 pb-16 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
@@ -117,6 +153,12 @@ const Reports = () => {
         <p className="text-sm text-muted-foreground mb-6 ml-12">
           Your brand analysis history — filter, download and delete.
         </p>
+        {shareMessage && (
+          <div className="mb-5 rounded-xl border border-border bg-card/60 px-4 py-3 text-sm text-muted-foreground">
+            <p>{shareMessage}</p>
+            {shareUrl && <a href={shareUrl} target="_blank" rel="noreferrer" className="mt-1 block break-all text-primary hover:underline">{shareUrl}</a>}
+          </div>
+        )}
 
         {/* Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
@@ -236,6 +278,15 @@ const Reports = () => {
                   </div>
                 ) : (
                   <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      onClick={() => void shareReport(r.id)}
+                      disabled={sharingId === r.id}
+                      title="Create public share link"
+                      aria-label="Create public share link"
+                      className="w-9 h-9 flex items-center justify-center rounded-lg border border-[hsl(var(--glass-border))] text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors disabled:opacity-50"
+                    >
+                      {sharingId === r.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Share2 className="w-4 h-4" />}
+                    </button>
                     {canCreateAudit ? (
                       <button
                         onClick={() => navigate(`/audit/${r.id}`)}
