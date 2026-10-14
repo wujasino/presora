@@ -158,82 +158,90 @@ const AdminCreditCodes = () => {
           <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
             <Ticket className="w-4.5 h-4.5 text-primary" />
           </div>
-          <h1 className="text-2xl font-display text-foreground">Agency credit codes</h1>
+          <h1 className="text-2xl font-display text-foreground">Credit management</h1>
         </div>
         <p className="text-sm text-muted-foreground mb-6 ml-12">
-          Codes are entered during Agency checkout in Stripe. They do not reduce the price;
-          credits are added only after Stripe confirms payment. Each account can redeem a code once,
-          and the usage limit applies across all customers.
+          Add credits directly to a customer account or create a code for Agency checkout.
         </p>
 
-        <form onSubmit={grantCredits} className="mb-6 space-y-5 rounded-2xl border border-border bg-card/60 p-6">
-          <div>
-            <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Coins className="h-4 w-4 text-primary" /> Add credits to an account
-            </h2>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Enter the customer email and the number of credits to add to their current balance.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_180px]">
+        <div className="rounded-2xl border border-border bg-card/60 p-6">
+          <form onSubmit={grantCredits} className="space-y-5">
             <div>
-              <label htmlFor="account-email" className="mb-1.5 block text-xs font-medium text-muted-foreground">Customer email</label>
+              <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Coins className="h-4 w-4 text-primary" /> Add credits to an account
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Enter the customer email and the number of credits to add to their current balance.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_180px]">
+              <div>
+                <label htmlFor="account-email" className="mb-1.5 block text-xs font-medium text-muted-foreground">Customer email</label>
+                <Input
+                  id="account-email"
+                  type="email"
+                  autoComplete="off"
+                  value={accountEmail}
+                  onChange={event => setAccountEmail(event.target.value)}
+                  placeholder="customer@company.com"
+                  required
+                  className="bg-background"
+                />
+              </div>
+              <div>
+                <label htmlFor="account-credits" className="mb-1.5 block text-xs font-medium text-muted-foreground">Credits to add</label>
+                <Input
+                  id="account-credits"
+                  type="number"
+                  min="1"
+                  max="100000"
+                  step="1"
+                  value={accountCredits}
+                  onChange={event => setAccountCredits(event.target.value)}
+                  placeholder="50"
+                  required
+                  className="bg-background"
+                />
+              </div>
+            </div>
+
+            {grantMessage && (
+              <div className={`flex items-center gap-2 text-sm ${grantError ? 'text-red-500' : 'text-emerald-500'}`} role="status">
+                {grantError ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
+                {grantMessage}
+              </div>
+            )}
+
+            <Button type="submit" disabled={granting} className="w-full gap-2">
+              {granting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Coins className="h-4 w-4" />}
+              Add credits
+            </Button>
+          </form>
+
+          <form onSubmit={createCode} className="mt-6 space-y-5 border-t border-border pt-6">
+            <div>
+              <h2 className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <Tag className="h-4 w-4 text-primary" /> Create a checkout code
+              </h2>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Credits are added only after Stripe confirms payment. Each account can redeem a code once.
+              </p>
+            </div>
+
+            <div>
+              <label htmlFor="credit-code" className="text-xs font-medium text-muted-foreground mb-1.5 block">Code</label>
               <Input
-                id="account-email"
-                type="email"
-                autoComplete="off"
-                value={accountEmail}
-                onChange={event => setAccountEmail(event.target.value)}
-                placeholder="customer@company.com"
+                id="credit-code"
+                value={code}
+                onChange={event => setCode(event.target.value.toUpperCase())}
+                placeholder="AGENCY-START"
+                maxLength={32}
+                pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,31}"
                 required
-                className="bg-background"
+                className="bg-background uppercase"
               />
             </div>
-            <div>
-              <label htmlFor="account-credits" className="mb-1.5 block text-xs font-medium text-muted-foreground">Credits to add</label>
-              <Input
-                id="account-credits"
-                type="number"
-                min="1"
-                max="100000"
-                step="1"
-                value={accountCredits}
-                onChange={event => setAccountCredits(event.target.value)}
-                placeholder="50"
-                required
-                className="bg-background"
-              />
-            </div>
-          </div>
-
-          {grantMessage && (
-            <div className={`flex items-center gap-2 text-sm ${grantError ? 'text-red-500' : 'text-emerald-500'}`} role="status">
-              {grantError ? <AlertCircle className="h-4 w-4 shrink-0" /> : <CheckCircle2 className="h-4 w-4 shrink-0" />}
-              {grantMessage}
-            </div>
-          )}
-
-          <Button type="submit" disabled={granting} className="w-full gap-2">
-            {granting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Coins className="h-4 w-4" />}
-            Add credits
-          </Button>
-        </form>
-
-        <form onSubmit={createCode} className="space-y-5 rounded-2xl border border-border bg-card/60 p-6">
-          <div>
-            <label htmlFor="credit-code" className="text-xs font-medium text-muted-foreground mb-1.5 block">Code</label>
-            <Input
-              id="credit-code"
-              value={code}
-              onChange={event => setCode(event.target.value.toUpperCase())}
-              placeholder="AGENCY-START"
-              maxLength={32}
-              pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,31}"
-              required
-              className="bg-background uppercase"
-            />
-          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
@@ -275,11 +283,12 @@ const AdminCreditCodes = () => {
             </div>
           )}
 
-          <Button type="submit" disabled={saving} className="w-full gap-2">
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tag className="w-4 h-4" />}
-            Create credit code
-          </Button>
-        </form>
+            <Button type="submit" disabled={saving} className="w-full gap-2">
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Tag className="w-4 h-4" />}
+              Create credit code
+            </Button>
+          </form>
+        </div>
 
         <section className="mt-8 space-y-3">
           <h2 className="text-sm font-semibold text-foreground">Existing codes</h2>
