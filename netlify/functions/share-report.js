@@ -1,5 +1,5 @@
-const { createHash, randomBytes } = require('node:crypto');
-const { createClient } = require('@supabase/supabase-js');
+import { createHash, randomBytes } from 'node:crypto';
+import { createClient } from '@supabase/supabase-js';
 
 const ALLOWED_ORIGINS = new Set(['https://presora.app', 'https://www.presora.app']);
 const headersFor = (origin) => ({
@@ -27,8 +27,8 @@ const json = (statusCode, headers, body) => ({
 const hashToken = (token) => createHash('sha256').update(token).digest('hex');
 const PUBLIC_REPORT_FIELDS = 'id, brand_name, trust_score, authority, sentiment, recency, mentions, accuracy, created_at, sources, audit_summary';
 
-exports.handler = async (event) => {
-  const headers = headersFor(event.headers.origin || '');
+export const handler = async (event) => {
+  const headers = headersFor(event.headers?.origin || '');
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers };
   if (!['GET', 'POST'].includes(event.httpMethod)) {
     return json(405, headers, { error: 'Method not allowed' });
@@ -97,7 +97,7 @@ exports.handler = async (event) => {
       );
     if (saveError) return json(500, headers, { error: 'Could not create share link' });
 
-    const origin = ALLOWED_ORIGINS.has(event.headers.origin) ? event.headers.origin : 'https://presora.app';
+    const origin = ALLOWED_ORIGINS.has(event.headers?.origin) ? event.headers.origin : 'https://presora.app';
     return json(200, headers, { url: `${origin}/shared-report/${token}` });
   } catch (error) {
     console.error('share-report handler error:', error.message);
