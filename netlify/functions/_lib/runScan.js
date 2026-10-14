@@ -138,6 +138,30 @@ export function summariseFailures(failures = []) {
     .join(' | ');
 }
 
+/**
+ * Providers occasionally wrap the requested JSON in a short preface or a
+ * markdown fence. Those are still valid scan answers, not a reason to turn
+ * the entire request into a 503.
+ */
+export function parseModelJson(raw) {
+  const cleaned = String(raw || '').trim().replace(/```json|```/gi, '').trim();
+  const candidates = [cleaned];
+  const firstBrace = cleaned.indexOf('{');
+  const lastBrace = cleaned.lastIndexOf('}');
+  if (firstBrace >= 0 && lastBrace > firstBrace) candidates.push(cleaned.slice(firstBrace, lastBrace + 1));
+
+  let lastError;
+  for (const candidate of candidates) {
+    try {
+      const parsed = JSON.parse(candidate);
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) return parsed;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw new Error(`invalid JSON response${lastError?.message ? ` — ${lastError.message}` : ''}`);
+}
+
 export async function runBrandScan({ supabaseAdmin, target, models, userId, openrouterEnabled = true }) {
   let parsed = null;
   /** Per-model rejection messages, surfaced to the caller for diagnosis. */
@@ -204,8 +228,7 @@ ${brandContext || '(no stored knowledge for this brand)'}
         `block types: ${blocks.map((b) => b?.type).join(', ') || 'none'})`
       );
     }
-    const cleaned = text.trim().replace(/```json|```/g, '').trim();
-    return { label, result: JSON.parse(cleaned) };
+    return { label, result: parseModelJson(text) };
   };
 
   /**
@@ -244,8 +267,7 @@ ${brandContext || '(no stored knowledge for this brand)'}
         `${label}: empty response (finish_reason: ${data?.candidates?.[0]?.finishReason ?? 'unknown'})`
       );
     }
-    const cleaned = text.trim().replace(/```json|```/g, '').trim();
-    return { label, result: JSON.parse(cleaned) };
+    return { label, result: parseModelJson(text) };
   };
 
   /** Averages whatever models did answer into a real (non-fallback) result. */
@@ -314,8 +336,7 @@ ${brandContext || '(no stored knowledge for this brand)'}
         }
         const text = data?.choices?.[0]?.message?.content;
         if (!text) throw new Error(`${label}: empty response (finish_reason: ${data?.choices?.[0]?.finish_reason ?? 'unknown'})`);
-        const cleaned = text.trim().replace(/```json|```/g, '').trim();
-        const result = JSON.parse(cleaned);
+        const result = parseModelJson(text);
         return { label, result };
       };
 
@@ -414,6 +435,13 @@ ${brandContext || '(no stored knowledge for this brand)'}
     // Empty when the key itself is absent — that distinction is what tells
     // "not configured" apart from "configured but every call was rejected".
     failures,
-    keyConfigured: Boolean(process.env.OPENROUTER_API_KEY),
+    keyConfigured: Boolean(
+      process.env.OPENROUTER_API_KEY || process.env.ANTHROPIC_API_KEY || process.env.GEMINI_API_KEY
+    ),
+    providerConfigured: {
+      openrouter: Boolean(process.env.OPENROUTER_API_KEY),
+      anthropic: Boolean(process.env.ANTHROPIC_API_KEY),
+      gemini: Boolean(process.env.GEMINI_API_KEY),
+    },
   };
 }

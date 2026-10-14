@@ -88,10 +88,10 @@ export const handler = async (event) => {
       // Mirrors analyze.js: name the actual cause instead of collapsing a
       // missing key, an empty balance and a retired model id into one string.
       throw new Error(
-        result.keyConfigured === false
-          ? 'OPENROUTER_API_KEY is not configured on this deploy'
-          : result.failures?.length
-            ? `All ${result.failures.length} model call(s) rejected — ${summariseFailures(result.failures)}`
+        result.failures?.length
+          ? `All ${result.failures.length} model call(s) rejected — ${summariseFailures(result.failures)}`
+          : result.keyConfigured === false
+            ? 'No AI provider key is configured on this deploy'
             : 'All model providers failed (no error detail returned)'
       );
     }

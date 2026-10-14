@@ -416,10 +416,10 @@ export const handler = async (event) => {
       // provider's own words per model. "All providers failed" alone sent
       // whoever read it hunting through Netlify logs to find out whether the
       // key was missing, the balance empty, or a model id retired.
-      const reason = result.keyConfigured === false
-        ? 'OPENROUTER_API_KEY is not configured on this deploy'
-        : result.failures?.length
-          ? `All ${result.failures.length} model call(s) rejected — ${summariseFailures(result.failures)}`
+      const reason = result.failures?.length
+        ? `All ${result.failures.length} model call(s) rejected — ${summariseFailures(result.failures)}`
+        : result.keyConfigured === false
+          ? 'No AI provider key is configured on this deploy'
           : 'All model providers failed (no error detail returned)';
       const { autoDisabled } = await recordScanOutcome(supabaseAdmin, {
         ok: false,
