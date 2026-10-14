@@ -39,8 +39,8 @@ export const ANTHROPIC_MODELS = [
 // opinion when OpenRouter is down. IDs must match what the deploy's
 // GEMINI_API_KEY account actually serves.
 export const GEMINI_MODELS = [
-  { id: 'gemini-3.5-pro', label: 'Gemini Pro' },
-  { id: 'gemini-3.5-flash', label: 'Gemini Flash' },
+  { id: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash' },
+  { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Flash-Lite' },
 ];
 
 // RAG: embedding via Voyage (input_type "query")

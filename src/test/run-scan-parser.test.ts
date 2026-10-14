@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseModelJson, summariseFailures } from '../../netlify/functions/_lib/runScan.js';
+import { GEMINI_MODELS, parseModelJson, summariseFailures } from '../../netlify/functions/_lib/runScan.js';
 
 describe('scan provider response parsing', () => {
   const result = {
@@ -30,5 +30,13 @@ describe('scan provider response parsing', () => {
       'Claude Opus: HTTP 401 — invalid x-api-key',
       'Claude Sonnet: HTTP 401 — invalid x-api-key',
     ])).toBe('2 models: HTTP 401 — invalid x-api-key');
+  });
+
+  it('uses currently supported Gemini fallback model ids', () => {
+    expect(GEMINI_MODELS.map(({ id }) => id)).toEqual([
+      'gemini-3.8-flash',
+      'gemini-3.5-flash-lite',
+    ]);
+    expect(GEMINI_MODELS.some(({ id }) => id === 'gemini-3.5-pro')).toBe(false);
   });
 });
