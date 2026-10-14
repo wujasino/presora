@@ -237,7 +237,7 @@ const AdminCreditCodes = () => {
                 onChange={event => setCode(event.target.value.toUpperCase())}
                 placeholder="AGENCY-START"
                 maxLength={32}
-                pattern="[A-Za-z0-9][A-Za-z0-9_-]{2,31}"
+                pattern="[A-Za-z0-9](?:[A-Za-z0-9_]|-){2,31}"
                 required
                 className="bg-background uppercase"
               />
