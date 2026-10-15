@@ -15,7 +15,7 @@ create index if not exists lifecycle_email_events_user_created_idx
 
 alter table public.lifecycle_email_events enable row level security;
 
-revoke all on table public.lifecycle_email_events from anon, authenticated;
+revoke all on table public.lifecycle_email_events from public, anon, authenticated;
 grant all on table public.lifecycle_email_events to service_role;
 grant usage, select on sequence public.lifecycle_email_events_id_seq to service_role;
 
