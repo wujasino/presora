@@ -1,4 +1,4 @@
-# Presora — E2E & API Test Suite for a Production SaaS I Built
+# Presora — Production SaaS & Quality Engineering
 
 [![E2E Tests](https://github.com/wujasino/presora/actions/workflows/e2e.yml/badge.svg)](https://github.com/wujasino/presora/actions/workflows/e2e.yml)
 ![Node](https://img.shields.io/badge/node-22.x-339933?logo=node.js&logoColor=white)
@@ -7,43 +7,37 @@
 
 [Live product →](https://presora.app) · [Test runs →](https://github.com/wujasino/presora/actions)
 
-[Presora](https://presora.app) is a production SaaS that tracks brand visibility in
-AI-generated answers — built end-to-end by me, frontend through backend through
-infrastructure (see [What it does](#what-it-does) and [Tech stack](#tech-stack) below).
-This repo's other half is the Playwright test suite covering it: E2E coverage of
-authentication, the dashboard's real data, subscription state in Settings and the
-command palette, plus API contract tests against the serverless functions themselves
-(payload validation, rate limiting, error codes) — see [Testing](#testing) for the
-full breakdown and real numbers.
+[Presora](https://presora.app) is a production SaaS for tracking brand visibility in
+AI-generated answers. This repository contains the React application, serverless
+backend, Supabase migrations, and automated tests for the product.
 
 **App stack:** React · TypeScript · Supabase · Netlify Functions · Stripe
 **Test stack:** Playwright · TypeScript · GitHub Actions
 
-## Quick Start
+## Reviewer quick start
 
-Install dependencies, configure the required frontend variables in `.env.local`
-as listed under [Environment variables](#environment-variables), then start the
-app:
+Requirements: Node.js 22.x and npm. From the repository root:
 
 ```bash
-npm install --legacy-peer-deps
-npm run dev
-```
-
-`npm run dev` starts the Vite frontend. To run the Netlify Functions locally as
-well, use `npx netlify dev`.
-
-To run the browser tests headlessly, install Playwright's Chromium browser once
-and run the suite:
-
-```bash
+npm ci --legacy-peer-deps
+npm run lint
+npm test
 npx playwright install chromium
 npm run e2e
 ```
 
-Use `npm run e2e -- --ui` to open Playwright's interactive runner. The E2E
-configuration supplies placeholder Supabase settings and mocks the UI network
-calls, so the test suite does not need production credentials.
+Playwright supplies placeholder Supabase settings and the tests mock external
+services, so these checks need no production credentials or test account. To start
+the frontend manually, create `.env.local` with placeholder values:
+
+```bash
+VITE_SUPABASE_URL=https://placeholder.supabase.co
+VITE_SUPABASE_ANON_KEY=placeholder
+```
+
+Then run `npm run dev`. The placeholders allow the app to start; real integrations
+require separately configured service credentials. See
+[Environment variables](#environment-variables) before running Netlify Functions.
 
 ---
 
@@ -68,7 +62,7 @@ calls, so the test suite does not need production credentials.
 |-------|--------------|
 | Frontend | React 18, TypeScript, Vite, Tailwind CSS, shadcn/ui (Radix), React Router, TanStack Query |
 | Visualisation | Recharts, three.js / react-force-graph-3d, Framer Motion |
-| Backend | Node.js on Netlify serverless functions (23 endpoints) |
+| Backend | Node.js on Netlify serverless functions |
 | Data & Auth | Supabase — PostgreSQL, pgvector, Auth, Row-Level Security, Storage |
 | AI | Anthropic Claude (analysis + tool-calling assistant), Voyage AI embeddings, ElevenLabs TTS |
 | Payments | Stripe — checkout, customer portal, webhook-driven plan upgrades |
@@ -85,37 +79,27 @@ calls, so the test suite does not need production credentials.
 - **Auth hardening** — OTP-based password reset with attempt lockout, one-time recovery codes, Google OAuth routed through a Netlify proxy so the Supabase project ref never leaks into the browser
 - **Production security headers** — strict CSP with an explicit allow-list, HSTS preload, frame denial, MIME sniff protection, scoped Permissions-Policy
 - **Cache strategy tuned per asset class** — immutable hashing for build output, revalidation for images, no-store for HTML
-- **11 versioned SQL migrations** covering schema, policies, triggers and storage buckets
+- **Versioned SQL migrations** covering schema, policies, triggers and storage buckets
 - **Shipped and debugged in production** across auth, serverless runtime limits, Stripe webhooks and third-party API failures
 - **Error monitoring & analytics ready, opt-in** — Sentry and Plausible are wired up but inert until `VITE_SENTRY_DSN` / `VITE_PLAUSIBLE_DOMAIN` are set, so nothing ships half-configured or points at a fake project
-## # Presora — Production SaaS Platform & Data Operations Ecosystem
+## Reviewer guide
 
-A production-grade cloud ecosystem focused on automated data processing, secure relational database management, and advanced AI-driven data evaluation workflows. This repository showcases production standards for managing data integrity, structural testing, and AI personalization pipelines.
-
-## Core Data Architecture & Operations
-
-- **Relational Database & Security Management**: Fully designed and maintained database architectures using **PostgreSQL** and **Supabase**. Implemented granular access control via complex **Row-Level Security (RLS)** rules to ensure data privacy and strict governance.
-- **AI-Powered Data Pipelines**: Architected and deployed a production-grade Retrieval-Augmented Generation (**RAG**) pipeline utilizing **Voyage AI**, **pgvector** (vector embeddings), and the **Claude API** for semantic data processing and autonomous tool-calling.
-- **E2E test stability**: Repeated a selected subset of 47 UI/API test cases 10 times — **470 test executions with zero failures**. These were test runs, not full CI pipeline runs.
-- **CI execution**: The E2E workflow uses two parallel shards. Its latest verified GitHub Actions run completed in **2 minutes 13 seconds**, including dependency/browser setup and artifact upload; no comparable pre-sharding baseline is recorded, so no percentage reduction is claimed.
-
-## 🛠️ Technical Stack & Tooling
-
-- **Databases & Environments**: PostgreSQL, Supabase Studio, pgvector, Serverless Architectures (Netlify Functions, AWS Lambda concepts).
-- **Data Engineering & AI**: Claude API, OpenAI API, Voyage AI, LLM Synthetic Data Generation, Vector Embeddings.
-- **System Analysis & Diagnostics**: REST APIs, Webhooks, Postman, Git/GitHub, GitHub Actions (CI/CD Optimization), Jira (Agile/Scrum).
-
-## 🔍 System Reliability & Troubleshooting
-
-The architecture is built with a heavy emphasis on proactive **Root Cause Analysis (RCA)**. Every data flow and integrated third-party API webhook is fully monitored with built-in fallback mechanisms and rate-limiting to protect underlying cloud infrastructure against data inconsistency and resource exploitation.
-
+- Start with `src/` for the frontend and `netlify/functions/` for serverless API
+  handlers; database schema, access policies, and triggers live in
+  `supabase/migrations/`.
+- `e2e/` contains browser and API contract tests. Browser tests mock external
+  services; API tests exercise the local function handlers without production
+  credentials.
+- The GitHub Actions E2E workflow is manually triggered or scheduled nightly. It
+  is not currently a merge or deployment gate.
+- For security reporting and scope, see [SECURITY.md](SECURITY.md).
 
 ## Project structure
 
 ```
-netlify/functions/   23 serverless endpoints (analyze, chat, ingest-knowledge,
+netlify/functions/   Serverless endpoints (analyze, chat, ingest-knowledge,
                      stripe-webhook, badge, tts, auth/OTP, newsletter, …)
-src/pages/           25 routes — Landing, Dashboard, Reports, Automations,
+src/pages/           Routes — Landing, Dashboard, Reports, Automations,
                      Pricing, Developers, ApiDocs, Settings, auth flows
 src/lib/             Supabase client, auth, brand scoring, i18n + 6 locales
 src/components/      shadcn/ui-based component layer
@@ -204,15 +188,7 @@ npm run e2e # Playwright E2E — see "Testing" below for what's covered and how 
 
 ## Testing
 
-Presora is a production SaaS handling authentication, LLM-driven analysis pipelines and Stripe subscriptions, so the suite is built around the paths where a regression costs real money: sign-in/sign-up, the dashboard's real data, subscription state in Settings, and the request contracts of the serverless functions everything else is built on.
-
-**Current test inventory:** 55 UI/API test cases: 32 UI cases run in both Chromium and mobile Chrome, plus 23 API contract cases. `npx playwright test --list` also includes one authentication setup test, for 88 project-specific entries in total (32 + 32 + 23 + 1).
-
-**Stability check:** A previously verified subset of 47 cases (24 Chromium UI + 23 API) was run 10 times with `--repeat-each=10`: **470 test executions, 0 failures**. These are repeated individual tests, not 470 pipeline runs.
-
-**CI runtime:** The [latest verified GitHub Actions run](https://github.com/wujasino/presora/actions/runs/37319168886) completed in **2m 13s** wall-clock across two parallel shards. That elapsed time includes checkout, dependency and browser installation, test execution, and artifact upload; it is not the duration of the test step alone. The workflow runs on manual dispatch or a nightly schedule and does not gate merges or production deploys.
-
-**Unit test coverage — the honest number:** `npm run test:coverage` measures **1.3% of `src/` by statement**. That's not a typo or a mistake to fix — Vitest here only has 2 files to run (`src/test/`), and they exercise one thing on purpose: `src/lib/locale.tsx`'s i18n logic (74% statement coverage on that file, 100% on the `en`/`pl`/`de` dictionaries). Everything a unit test would normally check on a page or component — does it render, does clicking a button do the right thing, does a bad API response degrade gracefully — is checked by the Playwright suite above, against real rendered output and real (or precisely mocked) network responses, which is a stronger guarantee for that kind of behavior than a component test with everything mocked out would be. A 1.3% unit-coverage number next to a 55-case UI/API suite is what that division of labor looks like measured honestly, not a gap to close.
+The test suite covers core UI flows, serverless API behavior, and shared frontend logic. Run the commands above to see the current test inventory and results for this checkout; `npm run test:coverage` reports current unit-test coverage.
 
 | Layer | Tool |
 |-------|------|
@@ -221,14 +197,14 @@ Presora is a production SaaS handling authentication, LLM-driven analysis pipeli
 | Unit | Vitest + Testing Library |
 | CI | GitHub Actions, 2-way sharded, manual dispatch + nightly schedule — never gates a merge or deploy |
 
-**What is covered** (55 UI/API cases: 32 UI cases × Chromium + mobile-chrome, 23 API contract — `e2e/`)
+**Coverage areas** (`e2e/`)
 
 - **Authentication** — successful login, rejection of bad credentials, required-field validation, the forgot-password → OTP-code flow, signup (success, password-mismatch validation, "already registered" failure), and unauthenticated visitors getting redirected off protected routes.
 - **Dashboard** — the real per-model AI confidence data (`analyses.sources`) rendering correctly, a `–` placeholder instead of a fabricated number when that data is missing, and the account menu/sign-out flow.
 - **Settings** — a canceled subscription showing its status and a working *Resume* button, an active subscription showing no cancellation banner, the referral panel (happy path and a failed lookup degrading to an inline error instead of a crash), and tab navigation.
 - **Command palette** — the ⌘K/Ctrl+K global search opens, filters, navigates, and closes on Escape, with an assertion that it never trips a Radix accessibility warning.
 - **Public pages** — Landing, Pricing, About, Contact, Status render with zero console errors.
-- **API contracts** (`e2e/api/`, against `contact.js`, `newsletter.js`, `newsletter-preference.js`) — method allow-lists (405), malformed-JSON and field validation (400), payload-size limits (413), auth requirements (401), rate limiting kicking in on the 6th request from one IP within the window (429), CORS never reflecting an untrusted `Origin`, and — the part that matters most — a real unreachable-Supabase-host failure degrading to a clean JSON error instead of crashing the handler.
+- **API contracts** (`e2e/api/`) — request validation, method and authentication requirements, rate limiting, CORS behavior, and graceful handling of backend failures.
 
 **Design decisions**
 

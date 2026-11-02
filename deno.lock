@@ -47,6 +47,7 @@
         "npm:@supabase/supabase-js@^2.105.4",
         "npm:@tailwindcss/typography@~0.5.16",
         "npm:@tanstack/react-query@^5.83.0",
+        "npm:@testing-library/dom@^10.4.2",
         "npm:@testing-library/jest-dom@^6.6.0",
         "npm:@testing-library/react@16",
         "npm:@types/canvas-confetti@^1.9.0",
@@ -54,7 +55,7 @@
         "npm:@types/react-dom@^18.3.7",
         "npm:@types/react@^18.3.23",
         "npm:@vitejs/plugin-react@6",
-        "npm:@vitest/coverage-v8@^4.1.0",
+        "npm:@vitest/coverage-v8@^4.1.12",
         "npm:ajv@^8.20.0",
         "npm:autoprefixer@^10.4.21",
         "npm:canvas-confetti@^1.9.4",
@@ -96,9 +97,10 @@
         "npm:vitest@^4.1.0",
         "npm:wrangler@^4.127.1",
         "npm:ws@^8.21.0",
-        "npm:zod@^3.25.76"
+        "npm:zod@^4.6.7"
       ],
       "overrides": {
+        "minimatch": "^11.0.1",
         "sharp": "^0.35.3"
       }
     }
