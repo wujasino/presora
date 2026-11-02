@@ -43,8 +43,8 @@ require separately configured service credentials. See
 
 ## What it does
 
-- **Brand visibility audits** — scores a brand across authority, sentiment, recency, mentions and accuracy, with per-model breakdowns
-- **RAG-grounded analysis** — brand knowledge is embedded (Voyage `voyage-3.5`) and stored in Supabase pgvector, then retrieved into the prompt so results stay specific instead of generic
+- **Brand visibility audits** — queries the selected models through OpenRouter first, then tries direct Anthropic and Gemini providers if the primary route returns no results; scores responses across authority, sentiment, recency, mentions and accuracy
+- **Optional brand-knowledge context (RAG)** — ingested brand knowledge is embedded with Voyage `voyage-3.5` and stored in Supabase pgvector; matching context is retrieved for scans when available
 - **AI setup assistant with tool calling** — proposes monitoring changes (brand, competitors, cadence, alert thresholds) through structured tools; the user reviews and confirms before changes are saved
 - **Automations & monitoring** — recurring brand monitors with alert metrics and thresholds, one config per user
 - **Embeddable score badge** — a public SVG endpoint (`/.netlify/functions/badge?brand=…`) that any site can drop in
@@ -64,7 +64,7 @@ require separately configured service credentials. See
 | Visualisation | Recharts, three.js / react-force-graph-3d, Framer Motion |
 | Backend | Node.js on Netlify serverless functions |
 | Data & Auth | Supabase — PostgreSQL, pgvector, Auth, Row-Level Security, Storage |
-| AI | Anthropic Claude (brand analysis + separate monitoring setup assistant), Voyage AI embeddings, ElevenLabs TTS |
+| AI | OpenRouter (primary multi-model scans), Anthropic Claude and Google Gemini (direct scan fallbacks; Claude-powered assistants and result features), Voyage AI embeddings, ElevenLabs TTS |
 | Payments | Stripe — checkout, customer portal, webhook-driven plan upgrades |
 | Email | Resend (transactional), Mailchimp (newsletter) |
 | Testing | Vitest + Testing Library (unit), Playwright (E2E + API contract) |
@@ -72,9 +72,10 @@ require separately configured service credentials. See
 
 ## Engineering highlights
 
-- **RAG pipeline end-to-end** — ingestion function, chunking, Voyage embeddings, pgvector similarity search, context injection into the analysis prompt
-- **Separate assistant boundaries** — brand scans use retrieved pgvector context (RAG); the monitoring setup assistant uses Claude tool-calling and static instructions, not RAG. Proposed setting changes are confirmed by the user before persistence.
+- **Provider and context boundaries** — scans use OpenRouter first, direct Anthropic/Gemini calls as provider fallbacks, and optional retrieved pgvector context (RAG). If no provider returns a result, the deterministic placeholder is marked as fallback and surfaced as unavailable rather than a real analysis.
+- **Separate assistant boundaries** — the monitoring setup assistant uses Claude tool-calling and static instructions, not scan RAG or scan-provider fallbacks. Proposed setting changes are confirmed by the user before persistence.
 - **Tool-calling assistant** — monitoring changes are staged as proposals, then validated and saved by the serverless function using the JWT-verified user id
+- **Bounded content moderation** — brand-knowledge input, the pre-scan moderation endpoint, and sales-chat input use the OpenAI Moderation API when configured, with a local keyword blocklist fallback. This is a limited content filter, not comprehensive prompt-injection protection, and it does not cover every model input path.
 - **Defense in depth on data access** — RLS policies on every user-owned table (analyses, monitors, recovery codes, newsletter, rate limits), plus service-role functions that never trust a client-supplied user id
 - **Layered rate limiting** — per-user windows and daily caps enforced in Postgres, with an in-memory limiter as a secondary guard, and a separate guest quota path for unauthenticated trials
 - **Auth hardening** — OTP-based password reset with attempt lockout, one-time recovery codes, Google OAuth routed through a Netlify proxy so the Supabase project ref never leaks into the browser
@@ -94,6 +95,11 @@ require separately configured service credentials. See
   credentials.
 - The GitHub Actions E2E workflow is manually triggered or scheduled nightly. It
   is not currently a merge or deployment gate.
+- No n8n workflow or configuration is included in this repository; any separate
+  n8n deployment cannot be verified from this codebase.
+- The public Git history records repository activity but does not establish when
+  work on the project originally began; this README makes no verified start-date
+  claim.
 - For security reporting and scope, see [SECURITY.md](SECURITY.md).
 
 ## Project structure
