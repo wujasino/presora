@@ -143,7 +143,7 @@ const WRITE_TOOLS = new Set(['set_brand', 'add_competitor', 'remove_competitor',
 
 /* ── Tool definitions exposed to Claude ──────────────────────────────── */
 
-const TOOLS = [
+export const MONITORING_ASSISTANT_TOOLS = [
   {
     name: 'get_config',
     description: 'Read the user\'s current brand monitoring configuration. Call this first if you are unsure of the current state.',
@@ -208,7 +208,7 @@ const TOOLS = [
   },
 ];
 
-const SYSTEM_PROMPT = `You are Presora's setup assistant. You help brand owners and marketers configure their AI-visibility monitoring entirely through chat — no forms.
+export const MONITORING_ASSISTANT_SYSTEM_PROMPT = `You are Presora's setup assistant. You help brand owners and marketers configure their AI-visibility monitoring entirely through chat — no forms.
 
 You can set the primary brand, add/remove competitors, set the scan schedule (daily/weekly/monthly), choose which AI models to query, and set a drop alert on a metric (sentiment/visibility/mentions).
 
@@ -223,6 +223,8 @@ Other guidelines:
 - Never invent competitors or brands the user did not mention.
 - You only configure monitoring. You do not run scans, change billing, or promise features that don't exist.`;
 
+export const MONITORING_ASSISTANT_MODEL = 'claude-sonnet-5';
+
 /* ── Anthropic tool-use loop ─────────────────────────────────────────── */
 
 const callAnthropic = (messages) => fetchWithTimeout('https://api.anthropic.com/v1/messages', {
@@ -233,10 +235,10 @@ const callAnthropic = (messages) => fetchWithTimeout('https://api.anthropic.com/
     'anthropic-version': '2023-06-01',
   },
   body: JSON.stringify({
-    model: 'claude-sonnet-5',
+    model: MONITORING_ASSISTANT_MODEL,
     max_tokens: 1024,
-    system: SYSTEM_PROMPT,
-    tools: TOOLS,
+    system: MONITORING_ASSISTANT_SYSTEM_PROMPT,
+    tools: MONITORING_ASSISTANT_TOOLS,
     messages,
   }),
 });

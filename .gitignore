@@ -30,8 +30,9 @@ dist-ssr
 .netlify
 .claude/
 
-# Obsidian vault (notes/) — local app state, not shared
-notes/.obsidian/
+# Private working notes and agent instructions
+/notes/
+/CLAUDE.md
 
 # Playwright E2E
 e2e/.auth/

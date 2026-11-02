@@ -5,7 +5,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Playwright-tests-2EAD33?logo=playwright&logoColor=white)
 
-[Live product →](https://presora.app) · [Test runs →](https://github.com/wujasino/presora/actions)
+[Live product →](https://presora.app) · [Production repository](https://github.com/wujasino/presora) · [E2E test project](https://github.com/wujasino/project-presora) · [Test runs →](https://github.com/wujasino/presora/actions)
 
 [Presora](https://presora.app) is a production SaaS for tracking brand visibility in
 AI-generated answers. This repository contains the React application, serverless
@@ -45,7 +45,7 @@ require separately configured service credentials. See
 
 - **Brand visibility audits** — scores a brand across authority, sentiment, recency, mentions and accuracy, with per-model breakdowns
 - **RAG-grounded analysis** — brand knowledge is embedded (Voyage `voyage-3.5`) and stored in Supabase pgvector, then retrieved into the prompt so results stay specific instead of generic
-- **AI assistant with tool calling** — a chat interface that configures monitoring (brand, competitors, cadence, alert thresholds) by writing to the database through structured tools, no forms required
+- **AI setup assistant with tool calling** — proposes monitoring changes (brand, competitors, cadence, alert thresholds) through structured tools; the user reviews and confirms before changes are saved
 - **Automations & monitoring** — recurring brand monitors with alert metrics and thresholds, one config per user
 - **Embeddable score badge** — a public SVG endpoint (`/.netlify/functions/badge?brand=…`) that any site can drop in
 - **Reports & PDF viewer** — audits rendered as reports with tokenized public share links
@@ -64,7 +64,7 @@ require separately configured service credentials. See
 | Visualisation | Recharts, three.js / react-force-graph-3d, Framer Motion |
 | Backend | Node.js on Netlify serverless functions |
 | Data & Auth | Supabase — PostgreSQL, pgvector, Auth, Row-Level Security, Storage |
-| AI | Anthropic Claude (analysis + tool-calling assistant), Voyage AI embeddings, ElevenLabs TTS |
+| AI | Anthropic Claude (brand analysis + separate monitoring setup assistant), Voyage AI embeddings, ElevenLabs TTS |
 | Payments | Stripe — checkout, customer portal, webhook-driven plan upgrades |
 | Email | Resend (transactional), Mailchimp (newsletter) |
 | Testing | Vitest + Testing Library (unit), Playwright (E2E + API contract) |
@@ -73,7 +73,8 @@ require separately configured service credentials. See
 ## Engineering highlights
 
 - **RAG pipeline end-to-end** — ingestion function, chunking, Voyage embeddings, pgvector similarity search, context injection into the analysis prompt
-- **Tool-calling agent** — the chat assistant reads and upserts monitoring config through typed tools, with the serverless function scoping every write to the JWT-verified user id
+- **Separate assistant boundaries** — brand scans use retrieved pgvector context (RAG); the monitoring setup assistant uses Claude tool-calling and static instructions, not RAG. Proposed setting changes are confirmed by the user before persistence.
+- **Tool-calling assistant** — monitoring changes are staged as proposals, then validated and saved by the serverless function using the JWT-verified user id
 - **Defense in depth on data access** — RLS policies on every user-owned table (analyses, monitors, recovery codes, newsletter, rate limits), plus service-role functions that never trust a client-supplied user id
 - **Layered rate limiting** — per-user windows and daily caps enforced in Postgres, with an in-memory limiter as a secondary guard, and a separate guest quota path for unauthenticated trials
 - **Auth hardening** — OTP-based password reset with attempt lockout, one-time recovery codes, Google OAuth routed through a Netlify proxy so the Supabase project ref never leaks into the browser
@@ -82,6 +83,7 @@ require separately configured service credentials. See
 - **Versioned SQL migrations** covering schema, policies, triggers and storage buckets
 - **Shipped and debugged in production** across auth, serverless runtime limits, Stripe webhooks and third-party API failures
 - **Error monitoring & analytics ready, opt-in** — Sentry and Plausible are wired up but inert until `VITE_SENTRY_DSN` / `VITE_PLAUSIBLE_DOMAIN` are set, so nothing ships half-configured or points at a fake project
+- Anthropic per-request token usage and cost are not currently persisted or calculated.
 ## Reviewer guide
 
 - Start with `src/` for the frontend and `netlify/functions/` for serverless API
@@ -185,6 +187,17 @@ mail.
 npm test    # Vitest unit tests
 npm run e2e # Playwright E2E — see "Testing" below for what's covered and how it's set up
 ```
+
+The optional live monitoring-assistant prompt evaluation is separate from the
+mocked E2E suite. It checks 20 curated requests against expected Claude tool calls
+and arguments; it does not score answer quality. It makes paid Anthropic API
+requests and prints provider-reported token totals without storing them:
+
+```bash
+npm run evaluate:monitoring-assistant -- --confirm-cost
+```
+
+Set `ANTHROPIC_API_KEY` before running it. It is not part of CI.
 
 ## Testing
 
