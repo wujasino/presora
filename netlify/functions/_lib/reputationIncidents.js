@@ -1,3 +1,5 @@
+import { analyzeBrandReputation } from './brandReputation.js';
+
 const HEDGE_PATTERNS = [
   /\bmight be\b/i, /\bmay be\b/i, /\bpossibly\b/i, /\bnot (?:certain|sure)\b/i,
   /\bI(?:'m| am) not (?:aware|familiar)\b/i, /\bI don't have (?:specific|enough|detailed)\b/i,
@@ -139,6 +141,31 @@ export const syncReputationIncidents = async ({ admin, monitor, analysisId, prev
     result,
     competitor,
   });
+
+  const snippets = (Array.isArray(result.sources) ? result.sources : [])
+    .map((source) => {
+      const association = typeof source?.association === 'string' ? source.association.trim() : '';
+      return association ? `${String(source?.model || 'Unknown model').slice(0, 80)}: ${association}` : '';
+    })
+    .filter(Boolean)
+    .join('\n')
+    .slice(0, 4_000);
+
+  if (detected.length > 0 && snippets && process.env.GROQ_API_KEY) {
+    try {
+      const review = await analyzeBrandReputation({
+        brandName: monitor.brand,
+        llmResponseSnippet: snippets,
+      });
+      if (review) {
+        const incident = detected.find((item) => item.type === 'model_uncertainty') || detected[0];
+        incident.evidence = { ...incident.evidence, groqAnalysis: review.analysis };
+      }
+    } catch (error) {
+      console.error(`reputation-incidents: Groq analysis failed for monitor ${monitor.id}:`, error.message);
+    }
+  }
+
   const now = new Date().toISOString();
 
   const { data: currentRows, error: currentRowsError } = await admin

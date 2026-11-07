@@ -236,6 +236,12 @@ const ReputationGuard = () => {
                   </div>
                   <h2 className="text-base font-semibold text-foreground">{incident.title}</h2>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{incident.summary}</p>
+                  {typeof incident.evidence?.groqAnalysis === 'string' && (
+                    <div className="mt-3 rounded-lg border border-primary/15 bg-primary/5 p-3">
+                      <p className="text-[10px] font-semibold uppercase tracking-wider text-primary">Groq AI review</p>
+                      <p className="mt-1 text-sm leading-relaxed text-foreground/90">{incident.evidence.groqAnalysis}</p>
+                    </div>
+                  )}
                 </div>
                 <ShieldAlert className={cn('h-5 w-5 shrink-0', incident.severity === 'critical' ? 'text-red-500' : 'text-amber-500')} />
               </div>
